@@ -1,22 +1,30 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8"/>
+{{ if .IsHome }}
+  <html>
+    <head>
+      <meta http-equiv="refresh" content="0; url=/about"/>
+    </head>
+  </html>
+{{ else }}
+  <html>
+    <head>
+      <meta charset="UTF-8"/>
 
-    <meta name="description" content="{{ .Summary }}" />
-    <meta name="author" content="{{ .Site.Params.Author }}">
+      <meta name="description" content="{{ .Summary }}"/>
+      <meta name="author" content="{{ .Site.Params.Author }}"/>
 
-    <meta property="og:url" content="{{ .Permalink }}"/>
-    <meta property="og:title" content="{{ block "title" . }}{{ end }}"/>
-    <meta property="og:description" content="{{ .Summary }}"/>
-    <meta property="og:site_name" content="{{ .Site.Params.Author }}"/>
+      <meta property="og:url" content="{{ .Permalink }}"/>
+      <meta property="og:title" content="{{ block "title" . }}{{ end }}"/>
+      <meta property="og:description" content="{{ .Summary }}"/>
+      <meta property="og:site_name" content="{{ .Site.Params.Author }}"/>
 
-    <title>{{ block "title" . }}{{ end }}</title>
+      <title>{{ block "title" . }}{{ end }}</title>
 
-    {{ partial "meta.html" . }}
-  </head>
-  <body>
-    {{ partial "site-header.html" . }}
-    {{ block "main" . }}{{ end }}
-  </body>
-</html>
+      {{ partial "meta.html" . }}
+    </head>
+    <body>
+      {{ partial "site-header.html" . }}
+      {{ block "main" . }}{{ end }}
+    </body>
+  </html>
+{{ end }}

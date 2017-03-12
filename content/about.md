@@ -1,6 +1,5 @@
 +++
 title = "About"
-type = "about"
 +++
 
 #### What's this?

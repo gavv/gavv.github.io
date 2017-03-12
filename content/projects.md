@@ -1,6 +1,5 @@
 +++
 title = "Projects"
-type = "projects"
 +++
 
 #### Projects
