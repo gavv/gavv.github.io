@@ -1,0 +1,20 @@
+{{ define "title" }}
+  {{ .Site.Title }} - {{ .Title }}
+{{ end }}
+{{ define "main" }}
+  <section role="main">
+    {{ range $i, $p := (.Paginate .Data.Pages).Pages }}
+      {{ with $p }}
+        <article>
+          {{ partial "post-header.html" (dict "Post" . "Site" .Site "IsPage" $.IsPage) }}
+          <section class="post-excerpt">
+            <p>
+              {{ .Summary | truncate 330 }}
+            </p>
+          </section>
+        </article>
+      {{ end }}
+    {{ end }}
+  </section>
+  {{ partial "pagination.html" . }}
+{{ end }}

@@ -1,0 +1,22 @@
+{{ define "title" }}
+  {{ if eq .Type "blog" }}
+    {{ .Title }}
+  {{ else }}
+    {{ .Site.Title }} - {{ .Title }}
+  {{ end }}
+{{ end }}
+{{ define "main" }}
+  <section role="main">
+    <article>
+      {{ if eq .Type "blog" }}
+        {{ partial "post-header.html" (dict "Post" . "Site" .Site "IsPage" $.IsPage) }}
+      {{ end }}
+      <section>
+        {{ .Content }}
+      </section>
+    </article>
+  </section>
+  {{ if eq .Type "blog" }}
+    {{ partial "post-footer.html" (dict "Post" .) }}
+  {{ end }}
+{{ end }}

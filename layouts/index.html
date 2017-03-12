@@ -1,0 +1,15 @@
+{{ define "title" }}
+  {{ range where .Data.Pages "Type" "about" }}
+    {{ .Site.Title }} - {{ .Title }}
+  {{ end }}
+{{ end }}
+{{ define "main" }}
+  {{ range where .Data.Pages "Type" "about" }}
+    <section role="main">
+      <article>
+          {{ .Content }}
+        </section>
+      </article>
+    </section>
+  {{ end }}
+{{ end }}

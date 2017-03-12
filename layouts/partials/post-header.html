@@ -1,0 +1,23 @@
+{{ with .Post }}
+  <header class="post-header">
+    <h1 class="post-title">
+      {{ if $.IsPage }}
+        {{ .Title }}
+      {{ else }}
+        <a href="{{ .Permalink | relURL }}">{{ .Title }}</a>
+      {{ end }}
+    </h1>
+    <div class="post-time">
+      <time datetime="{{ .Date.Format "2006-01-02" }}">
+        {{ .Date.Format "02 Jan 2006" }}
+      </time>
+    </div>
+    <div class="post-tags">
+      {{ range .Params.tags }}
+      <div class="post-tag">
+        <a href="/tags/{{ . }}">{{ . }}</a>
+      </div>
+      {{ end }}
+    </div>
+  </header>
+{{ end }}
