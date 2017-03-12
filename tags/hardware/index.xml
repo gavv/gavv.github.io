@@ -1,0 +1,24 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>hardware on Victor Gaydov</title>
+    <link>http://gavv.net/tags/hardware/</link>
+    <description>Recent content in hardware on Victor Gaydov</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 15 Mar 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://gavv.net/tags/hardware/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Debian Linux on Dell XPS 15</title>
+      <link>http://gavv.net/articles/dell-xps15/</link>
+      <pubDate>Wed, 15 Mar 2023 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.net/articles/dell-xps15/</guid>
+      <description>This is a small report and how-to on running Debian on Dell XPS 15 9520.
+TL;DR:
+on the whole, it works well use Debian Bookworm or later be aware of sound quality issues of built-in speakers on Linux be aware of possible issues with dock station after hibernation Table of contents
+Installing Debian Video 3.5K OLED display WORKS Touch display WORKS Integrated Intel video card WORKS Discrete NVIDIA video card REPORTED TO WORK Audio Speakers WORKS WITH ISSUES 3.</description>
+    </item>
+    
+  </channel>
+</rss>

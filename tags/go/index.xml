@@ -1,0 +1,25 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>go on Victor Gaydov</title>
+    <link>http://gavv.net/tags/go/</link>
+    <description>Recent content in go on Victor Gaydov</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 04 Jul 2016 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://gavv.net/tags/go/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>httpexpect.v1: end-to-end HTTP API testing for Go</title>
+      <link>http://gavv.net/articles/httpexpect-v1/</link>
+      <pubDate>Mon, 04 Jul 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.net/articles/httpexpect-v1/</guid>
+      <description>httpexpect is a new Go package for end-to-end HTTP and REST API testing.
+It provides convenient chainable helpers for building HTTP request, sending it, and inspecting received HTTP response and its payload.
+Links:
+repo on GitHub announcement on Reddit The key point is that request construction and response assertions become concise and declarative:
+// create httpexpect instance e := httpexpect.New(t, &amp;#34;http://example.com&amp;#34;) // check that &amp;#34;GET /fruits&amp;#34; returns empty JSON array e.</description>
+    </item>
+    
+  </channel>
+</rss>

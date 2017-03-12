@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+  <html lang="en-US">
+    <head>
+      <meta charset="UTF-8"/>
+
+      <meta name="description" content="httpexpect is a new Go package for end-to-end HTTP and REST API testing.
+It provides convenient chainable helpers for building HTTP request, sending it, and inspecting received HTTP response and its payload.
+Links:
+repo on GitHub announcement on Reddit The key point is that request construction and response assertions become concise and declarative:
+// create httpexpect instance e := httpexpect.New(t, &#34;http://example.com&#34;) // check that &#34;GET /fruits&#34; returns empty JSON array e."/>
+      <meta name="author" content="Victor Gaydov"/>
+
+      <meta property="og:url" content="http://gavv.net/articles/httpexpect-v1/"/>
+      <meta property="og:title" content="
+  
+    httpexpect.v1: end-to-end HTTP API testing for Go
+  
+"/>
+      <meta property="og:description" content="httpexpect is a new Go package for end-to-end HTTP and REST API testing.
+It provides convenient chainable helpers for building HTTP request, sending it, and inspecting received HTTP response and its payload.
+Links:
+repo on GitHub announcement on Reddit The key point is that request construction and response assertions become concise and declarative:
+// create httpexpect instance e := httpexpect.New(t, &#34;http://example.com&#34;) // check that &#34;GET /fruits&#34; returns empty JSON array e."/>
+      <meta property="og:site_name" content="Victor Gaydov"/>
+
+      <link rel="canonical" href="http://gavv.net/articles/httpexpect-v1/"/>
+
+      <title>
+  
+    httpexpect.v1: end-to-end HTTP API testing for Go
+  
+</title>
+
+      <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+<link rel="stylesheet" href="/css/main.css"/>
+<link rel="stylesheet" href="/css/prism.css"/>
+<link rel="stylesheet" href="/css/lightbox.min.css"/>
+
+<link rel="shortcut icon" href="/images/favicon.ico">
+
+<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+
+<link rel="stylesheet"
+      href="//fonts.googleapis.com/css?family=Open+Sans|Lustria|Roboto+Mono">
+
+<script src="/js/lightbox-plus-jquery.min.js">
+</script>
+
+<script>
+    lightbox.option({
+      'wrapAround': true,
+      'resizeDuration': 0,
+      'fadeDuration': 0,
+      'imageFadeDuration': 0,
+    })
+</script>
+
+<script src="/js/prism.js">
+</script>
+
+<script>
+var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+if (width < 480) {
+  document.write('<script src="/js/hyphenator-loader.js"><\/script>');
+}
+</script>
+
+    </head>
+    <body>
+      <div id="toplevel">
+        <header id="header" class="no-print">
+  <div id="caption">
+    Victor Gaydov
+  </div>
+  <div id="menu">
+    <div>
+      <div>
+        
+          <a href="/about/" class="menu-item">
+        
+            About
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/software/" class="menu-item">
+        
+            Software
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/articles/" class="menu-item menu-selected">
+        
+            Articles
+          </a>
+      </div>
+    </div>
+    <div id="header-buttons">
+      <div>
+        <a href="https://fosstodon.org/@gavv" class="image-button">
+          <i class="fa-brands fa-mastodon"></i>
+        </a>
+        <a href="/index.xml" class="image-button">
+          <i class="rss-button fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+        
+  <section role="main">
+    <article>
+      
+        
+  <header class="post-header">
+    <h1 class="post-title">
+      
+        httpexpect.v1: end-to-end HTTP API testing for Go
+      
+    </h1>
+    <div class="post-time">
+      <time datetime="2016-07-04">
+        04 Jul 2016
+      </time>
+    </div>
+    <div class="post-tags">
+      
+      <div class="post-tag">
+        <a href="/tags/go">go</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/http">http</a>
+      </div>
+      
+    </div>
+  </header>
+
+
+      
+      <section>
+        <p><code>httpexpect</code> is a new Go package for end-to-end HTTP and REST API testing.</p>
+<p>It provides convenient chainable helpers for building HTTP request, sending it, and inspecting received HTTP response and its payload.</p>
+<p>Links:</p>
+<ul>
+<li><a href="https://github.com/gavv/httpexpect">repo on GitHub</a></li>
+<li><a href="https://www.reddit.com/r/golang/comments/4qrhjd/httpexpect_v1_released_endtoend_http_api_testing/">announcement on Reddit</a></li>
+</ul>
+<p>The key point is that request construction and response assertions become concise and declarative:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// create httpexpect instance
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">e</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">httpexpect</span>.<span style="color:#a6e22e">New</span>(<span style="color:#a6e22e">t</span>, <span style="color:#e6db74">&#34;http://example.com&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// check that &#34;GET /fruits&#34; returns empty JSON array
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">GET</span>(<span style="color:#e6db74">&#34;/fruits&#34;</span>).
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Expect</span>().
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Status</span>(<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusOK</span>).<span style="color:#a6e22e">JSON</span>().<span style="color:#a6e22e">Array</span>().<span style="color:#a6e22e">Empty</span>()
+</span></span></code></pre></div><p>You can find more examples in the <a href="https://github.com/gavv/httpexpect#quick-start">Quick Start</a>.</p>
+<p>The first stable branch is released and available on gopkg: <a href="http://gopkg.in/gavv/httpexpect.v1"><code>httpexpect.v1</code></a>.</p>
+<p>There is a compatibility promise for this branch.</p>
+
+      </section>
+    </article>
+  </section>
+  
+    
+  <footer id="footer">
+    <script>
+      $('h2, h3, h4').each(function() {
+        var id = $(this).attr('id');
+        $(this).prepend(
+          '<a class="anchor" href="#' + id +'"><i class="fa fa-paragraph"></i></a>'
+        );
+      })
+    </script>
+
+    <div id="disqus_thread" class="no-print"></div>
+    <script>
+      (function() {
+        var d = document, s = d.createElement('script');
+        s.src = '//gavv.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+    </script>
+    <noscript>Enable JavaScript to view the
+        <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+    </noscript>
+  </footer>
+
+
+  
+
+      </div>
+    </body>
+  </html>
+

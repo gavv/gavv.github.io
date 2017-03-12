@@ -1,0 +1,104 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>roc on Victor Gaydov</title>
+    <link>http://gavv.net/tags/roc/</link>
+    <description>Recent content in roc on Victor Gaydov</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 15 Jun 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://gavv.net/tags/roc/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Roc Toolkit 0.4 &#43; updated tutorial for live audio streaming</title>
+      <link>http://gavv.net/articles/roc-0.4/</link>
+      <pubDate>Sat, 15 Jun 2024 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.net/articles/roc-0.4/</guid>
+      <description>Table of contents
+What&amp;rsquo;s in this release Migration from 0.3 Linux (PipeWire modules) Linux (PulseAudio modules) Linux (bare ALSA) Cross-compile to Raspberry Pi (PulseAudio modules) Cross-compile to Raspberry Pi (bare ALSA) macOS (virtual device) macOS (CLI tools) Android app Troubleshooting What&amp;rsquo;s in this release Roc Toolkit implements real-time streaming over unreliable networks like Internet and Wi-Fi, with high quality and low latency.
+It can connect audio apps and devices across network, which run PipeWire, PulseAudio, bare ALSA, macOS CoreAudio, and Android.</description>
+    </item>
+    
+    <item>
+      <title>Roc Toolkit 0.3 is out!</title>
+      <link>http://gavv.net/articles/roc-0.3/</link>
+      <pubDate>Wed, 22 Nov 2023 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.net/articles/roc-0.3/</guid>
+      <description>What&amp;rsquo;s new Roc Toolkit implements real-time streaming over unreliable networks like Internet and Wi-Fi. It works on Linux and macOS and provides C library, CLI tools, modules for PulseAudio and PipeWire, and Android app.
+The 0.3 release was focused on:
+reducing minimum allowed latency running in CPU-constrained environments extending C API Full changelog is available here.
+Latency To allow lower latencies, two changes were made:
+All pipeline elements were reworked to accept arbitrary frame sizes.</description>
+    </item>
+    
+    <item>
+      <title>Two C&#43;&#43;17 projects are looking for contributors</title>
+      <link>http://gavv.net/articles/cpp-help-wanted/</link>
+      <pubDate>Wed, 20 Sep 2023 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.net/articles/cpp-help-wanted/</guid>
+      <description>Signal Estimator project issues This one implements a tool (both CLI and GUI) for measuring audio latency and glitches.
+The idea behind the tool is simple: you have an audio loopback that connects audio output to audio input; the tool writes impulses to the output, waits until the same impulses are received from the input, and measures the delay or other properties.
+I&amp;rsquo;m using this tool at work for measuring latency of various audio software.</description>
+    </item>
+    
+    <item>
+      <title>Updated tutorial for Roc 0.2</title>
+      <link>http://gavv.net/articles/roc-tutorial-0.2/</link>
+      <pubDate>Mon, 27 Feb 2023 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.net/articles/roc-tutorial-0.2/</guid>
+      <description>Table of contents
+What&amp;rsquo;s new? Linux desktop (PulseAudio) Linux desktop (PipeWire) Raspberry Pi (ALSA) Raspberry Pi (PulseAudio) macOS Android Troubleshooting UPDATE You can find tutorial updated for 0.4.x release series in this article. What&amp;rsquo;s new? This article is an updated version of previous tutorial. An overview of the new release is available here.
+There are two main changes that affect users:
+PulseAudio modules moved to a separate repo and have their own build system and new build instructions.</description>
+    </item>
+    
+    <item>
+      <title>Roc Toolkit 0.2 released</title>
+      <link>http://gavv.net/articles/roc-0.2/</link>
+      <pubDate>Sun, 26 Feb 2023 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.net/articles/roc-0.2/</guid>
+      <description>(Roc Droid logo)
+What is Roc? Roc is a toolkit for real-time streaming over unreliable networks. It works with desktop and embedded Linux, ALSA, PulseAudio, PipeWire, macOS, and Android.
+For a quick intro, see project repo and two previous articles: 1, 2.
+Summary Full changelog is available here.
+The main focus of this release was:
+polishing C API creating bindings for Go and Java Android support preparing internals for control and signaling protocols We also created a small Android app.</description>
+    </item>
+    
+    <item>
+      <title>A step-by-step tutorial for live audio streaming with Roc</title>
+      <link>http://gavv.net/articles/roc-tutorial/</link>
+      <pubDate>Wed, 14 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.net/articles/roc-tutorial/</guid>
+      <description>Table of contents
+What is Roc? What&amp;rsquo;s new? Ubuntu desktop Raspberry Pi (ALSA) Raspberry Pi (PulseAudio) macOS Android / Termux UPDATE You can find tutorial updated for 0.4.x release series in this article. What is Roc? Roc is an open-source toolkit for real-time audio streaming over the network. You can learn about the project here: overview, features, usage.
+Among other things, Roc can be used as a network transport for PulseAudio, ALSA, or macOS CoreAudio, and connect audio applications and devices across the network.</description>
+    </item>
+    
+    <item>
+      <title>Roc 0.1 released: real-time streaming over the network</title>
+      <link>http://gavv.net/articles/roc-0.1/</link>
+      <pubDate>Tue, 28 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.net/articles/roc-0.1/</guid>
+      <description>What is Roc? I&amp;rsquo;m happy to announce the first release of Roc Toolkit, version 0.1.0!
+Roc provides a C API for real-time audio transport. The user just writes a stream to the one end and reads it from another end. Roc, in turn, performs encoding and decoding, and, more importantly, deals with the problems related to the real-time delivery: counters network jitter and packet reordering, maintains constant latency, restores lost packets, compensates the clocks difference.</description>
+    </item>
+    
+    <item>
+      <title>Working on a new network transport for PulseAudio and ALSA</title>
+      <link>http://gavv.net/articles/new-network-transport/</link>
+      <pubDate>Fri, 03 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.net/articles/new-network-transport/</guid>
+      <description>Intro Last few years I was working on Roc Toolkit, an open-source solution for real-time media streaming over the network. Due to lack of free time, we postponed release several times, but now it&amp;rsquo;s almost ready. This article is, inter alia, some kind of a pre-release announcement.
+You can read more about the project here. The project scope is quite wide. It provides a general-purpose library and tools that can be used in numerous use-cases.</description>
+    </item>
+    
+  </channel>
+</rss>

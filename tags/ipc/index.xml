@@ -1,0 +1,23 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ipc on Victor Gaydov</title>
+    <link>http://gavv.net/tags/ipc/</link>
+    <description>Recent content in ipc on Victor Gaydov</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 29 Jul 2016 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://gavv.net/tags/ipc/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>File locking in Linux</title>
+      <link>http://gavv.net/articles/file-locks/</link>
+      <pubDate>Fri, 29 Jul 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.net/articles/file-locks/</guid>
+      <description>Table of contents
+Introduction Advisory locking Common features Differing features File descriptors and i-nodes BSD locks (flock) POSIX record locks (fcntl) lockf function Open file description locks (fcntl) Emulating Open file description locks Test program Command-line tools Mandatory locking Example usage Introduction File locking is a mutual-exclusion mechanism for files. Linux supports two major kinds of file locks:
+advisory locks mandatory locks Below we discuss all lock types available in POSIX and Linux and provide usage examples.</description>
+    </item>
+    
+  </channel>
+</rss>

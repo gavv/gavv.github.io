@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+  <html lang="en-US">
+    <head>
+      <meta charset="UTF-8"/>
+
+      <meta name="description" content="Table of contents
+What is Xlib? Printing pressed keys Embedding window What is Xlib? Xlib (also known as libX11) is an X11 client library. It contains functions for interacting with an X server.
+This page provides several code snippets implementing complete X11 programs.
+Printing pressed keys The source code is available on GitHub: xlib_hello.c.
+The snippet creates a new window and handles X11 events:
+prints all received events to stdout prints pressed keys into a graphical window quits when the close button is pressed Some documentation that was useful for me:"/>
+      <meta name="author" content="Victor Gaydov"/>
+
+      <meta property="og:url" content="http://gavv.net/articles/xlib-usage-examples/"/>
+      <meta property="og:title" content="
+  
+    Xlib usage examples
+  
+"/>
+      <meta property="og:description" content="Table of contents
+What is Xlib? Printing pressed keys Embedding window What is Xlib? Xlib (also known as libX11) is an X11 client library. It contains functions for interacting with an X server.
+This page provides several code snippets implementing complete X11 programs.
+Printing pressed keys The source code is available on GitHub: xlib_hello.c.
+The snippet creates a new window and handles X11 events:
+prints all received events to stdout prints pressed keys into a graphical window quits when the close button is pressed Some documentation that was useful for me:"/>
+      <meta property="og:site_name" content="Victor Gaydov"/>
+
+      <link rel="canonical" href="http://gavv.net/articles/xlib-usage-examples/"/>
+
+      <title>
+  
+    Xlib usage examples
+  
+</title>
+
+      <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+<link rel="stylesheet" href="/css/main.css"/>
+<link rel="stylesheet" href="/css/prism.css"/>
+<link rel="stylesheet" href="/css/lightbox.min.css"/>
+
+<link rel="shortcut icon" href="/images/favicon.ico">
+
+<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+
+<link rel="stylesheet"
+      href="//fonts.googleapis.com/css?family=Open+Sans|Lustria|Roboto+Mono">
+
+<script src="/js/lightbox-plus-jquery.min.js">
+</script>
+
+<script>
+    lightbox.option({
+      'wrapAround': true,
+      'resizeDuration': 0,
+      'fadeDuration': 0,
+      'imageFadeDuration': 0,
+    })
+</script>
+
+<script src="/js/prism.js">
+</script>
+
+<script>
+var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+if (width < 480) {
+  document.write('<script src="/js/hyphenator-loader.js"><\/script>');
+}
+</script>
+
+    </head>
+    <body>
+      <div id="toplevel">
+        <header id="header" class="no-print">
+  <div id="caption">
+    Victor Gaydov
+  </div>
+  <div id="menu">
+    <div>
+      <div>
+        
+          <a href="/about/" class="menu-item">
+        
+            About
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/software/" class="menu-item">
+        
+            Software
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/articles/" class="menu-item menu-selected">
+        
+            Articles
+          </a>
+      </div>
+    </div>
+    <div id="header-buttons">
+      <div>
+        <a href="https://fosstodon.org/@gavv" class="image-button">
+          <i class="fa-brands fa-mastodon"></i>
+        </a>
+        <a href="/index.xml" class="image-button">
+          <i class="rss-button fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+        
+  <section role="main">
+    <article>
+      
+        
+  <header class="post-header">
+    <h1 class="post-title">
+      
+        Xlib usage examples
+      
+    </h1>
+    <div class="post-time">
+      <time datetime="2016-07-05">
+        05 Jul 2016
+      </time>
+    </div>
+    <div class="post-tags">
+      
+      <div class="post-tag">
+        <a href="/tags/linux">linux</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/x11">x11</a>
+      </div>
+      
+    </div>
+  </header>
+
+
+      
+      <section>
+        <p><strong>Table of contents</strong></p>
+<ul>
+<li><a href="#what-is-xlib">What is Xlib?</a></li>
+<li><a href="#printing-pressed-keys">Printing pressed keys</a></li>
+<li><a href="#embedding-window">Embedding window</a></li>
+</ul>
+<hr>
+<h2 id="what-is-xlib">What is Xlib?</h2>
+<p><a href="https://en.wikipedia.org/wiki/Xlib">Xlib</a> (also known as libX11) is an X11 client library. It contains functions for interacting with an X server.</p>
+<p>This page provides several code snippets implementing complete X11 programs.</p>
+<hr>
+<h2 id="printing-pressed-keys">Printing pressed keys</h2>
+<p>The source code is available on GitHub: <a href="https://github.com/gavv/snippets/blob/master/xlib/xlib_hello.c"><code>xlib_hello.c</code></a>.</p>
+<p>The snippet creates a new window and handles X11 events:</p>
+<ul>
+<li>prints all received events to stdout</li>
+<li>prints pressed keys into a graphical window</li>
+<li>quits when the close button is pressed</li>
+</ul>
+<p>Some documentation that was useful for me:</p>
+<ul>
+<li><a href="http://menehune.opt.wfu.edu/Kokua/Irix_6.5.21_doc_cd/usr/share/Insight/library/SGI_bookshelves/SGI_Developer/books/XLib_PG/sgi_html/index.html">Xlib Programming Manual, Vol. 1</a>, especially <a href="http://menehune.opt.wfu.edu/Kokua/Irix_6.5.21_doc_cd/usr/share/Insight/library/SGI_bookshelves/SGI_Developer/books/XLib_PG/sgi_html/ch08.html">Events</a> chapter</li>
+<li><a href="https://tronche.com/gui/x/xlib/">The Xlib Manual</a></li>
+<li><a href="http://rosettacode.org/wiki/Window_creation/X11">Window creation/X11</a> on Rosetta Code</li>
+</ul>
+<hr>
+<h2 id="embedding-window">Embedding window</h2>
+<p>The snippet implements a container window that can be used as a parent for an arbitrary X11 window.</p>
+<h3 id="window-hierarchy">Window hierarchy</h3>
+<p>In X11, all windows are organized in a hierarchy, starting from a <a href="https://en.wikipedia.org/wiki/Root_window">root window</a>, so that every window (except root) has a parent window. Since this hierarchy is global, the child and parent windows are not required to belong to the same process.</p>
+<p>There are two ways of setting the window parent:</p>
+<ul>
+<li>when a new window is created, its creator specifies its parent window ID</li>
+<li>any applications can change the parent of any window, given its window ID</li>
+</ul>
+<p>The latter feature is used by <a href="https://en.wikipedia.org/wiki/Re-parenting_window_manager">re-paranting window managers</a> (i.e. any modern window manager).</p>
+<h3 id="embedding">Embedding</h3>
+<p>There are no special requirements for the child window that can be embedded. Almost every X11 application is already prepared for embedding its top-level window into some parent window (typically a window manager frame that contains the close button).</p>
+<p>The parent window, however, should implement some specific event handling.</p>
+<p>See details here:</p>
+<ul>
+<li><a href="https://tronche.com/gui/x/xlib/events/processing-overview.html">Event Processing Overview</a></li>
+<li><a href="https://tronche.com/gui/x/xlib/window-and-session-manager/changing-window-parent.html">Changing the Parent of a Window</a></li>
+<li><a href="https://github.com/tcltk/tk/blob/master/unix/tkUnixEmbed.c"><code>tkUnixEmbed.c</code></a> from the Tcl/Tk source code</li>
+</ul>
+<p>Some applications allow to specify the parent window ID that they will pass to <code>XCreateWindow</code> instead of the screen root when creating their window, e.g.:</p>
+<ul>
+<li><code>mplayer</code> accepts <code>-wid</code> command line argument</li>
+<li><code>xterm</code> accepts <code>-into</code> command line argument</li>
+</ul>
+<h3 id="the-snippet">The snippet</h3>
+<p>The source code is available on GitHub: <a href="https://github.com/gavv/snippets/blob/master/xlib/xlib_container.c"><code>xlib_container.c</code></a>.</p>
+<p>The snippet does the following:</p>
+<ul>
+<li>creates a new window with a blue background, that will be used as a container</li>
+<li>forks and executes a child process, appending the container window ID to its command line arguments</li>
+<li>handles container-specific window events</li>
+</ul>
+<p>Here is the result of embedding an <code>xterm</code> window:</p>
+<pre tabindex="0"><code>$ ./xlib_container xterm -into
+</code></pre><p><img src="/articles/xlib-usage-examples/embedded_xterm.png" alt=""></p>
+<p>Note the blue frame around the <code>xterm</code> window, which is the container window background.</p>
+
+      </section>
+    </article>
+  </section>
+  
+    
+  <footer id="footer">
+    <script>
+      $('h2, h3, h4').each(function() {
+        var id = $(this).attr('id');
+        $(this).prepend(
+          '<a class="anchor" href="#' + id +'"><i class="fa fa-paragraph"></i></a>'
+        );
+      })
+    </script>
+
+    <div id="disqus_thread" class="no-print"></div>
+    <script>
+      (function() {
+        var d = document, s = d.createElement('script');
+        s.src = '//gavv.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+    </script>
+    <noscript>Enable JavaScript to view the
+        <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+    </noscript>
+  </footer>
+
+
+  
+
+      </div>
+    </body>
+  </html>
+

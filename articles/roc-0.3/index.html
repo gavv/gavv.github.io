@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+  <html lang="en-US">
+    <head>
+      <meta charset="UTF-8"/>
+
+      <meta name="description" content="What&rsquo;s new Roc Toolkit implements real-time streaming over unreliable networks like Internet and Wi-Fi. It works on Linux and macOS and provides C library, CLI tools, modules for PulseAudio and PipeWire, and Android app.
+The 0.3 release was focused on:
+reducing minimum allowed latency running in CPU-constrained environments extending C API Full changelog is available here.
+Latency To allow lower latencies, two changes were made:
+All pipeline elements were reworked to accept arbitrary frame sizes."/>
+      <meta name="author" content="Victor Gaydov"/>
+
+      <meta property="og:url" content="http://gavv.net/articles/roc-0.3/"/>
+      <meta property="og:title" content="
+  
+    Roc Toolkit 0.3 is out!
+  
+"/>
+      <meta property="og:description" content="What&rsquo;s new Roc Toolkit implements real-time streaming over unreliable networks like Internet and Wi-Fi. It works on Linux and macOS and provides C library, CLI tools, modules for PulseAudio and PipeWire, and Android app.
+The 0.3 release was focused on:
+reducing minimum allowed latency running in CPU-constrained environments extending C API Full changelog is available here.
+Latency To allow lower latencies, two changes were made:
+All pipeline elements were reworked to accept arbitrary frame sizes."/>
+      <meta property="og:site_name" content="Victor Gaydov"/>
+
+      <link rel="canonical" href="http://gavv.net/articles/roc-0.3/"/>
+
+      <title>
+  
+    Roc Toolkit 0.3 is out!
+  
+</title>
+
+      <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+<link rel="stylesheet" href="/css/main.css"/>
+<link rel="stylesheet" href="/css/prism.css"/>
+<link rel="stylesheet" href="/css/lightbox.min.css"/>
+
+<link rel="shortcut icon" href="/images/favicon.ico">
+
+<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+
+<link rel="stylesheet"
+      href="//fonts.googleapis.com/css?family=Open+Sans|Lustria|Roboto+Mono">
+
+<script src="/js/lightbox-plus-jquery.min.js">
+</script>
+
+<script>
+    lightbox.option({
+      'wrapAround': true,
+      'resizeDuration': 0,
+      'fadeDuration': 0,
+      'imageFadeDuration': 0,
+    })
+</script>
+
+<script src="/js/prism.js">
+</script>
+
+<script>
+var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+if (width < 480) {
+  document.write('<script src="/js/hyphenator-loader.js"><\/script>');
+}
+</script>
+
+    </head>
+    <body>
+      <div id="toplevel">
+        <header id="header" class="no-print">
+  <div id="caption">
+    Victor Gaydov
+  </div>
+  <div id="menu">
+    <div>
+      <div>
+        
+          <a href="/about/" class="menu-item">
+        
+            About
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/software/" class="menu-item">
+        
+            Software
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/articles/" class="menu-item menu-selected">
+        
+            Articles
+          </a>
+      </div>
+    </div>
+    <div id="header-buttons">
+      <div>
+        <a href="https://fosstodon.org/@gavv" class="image-button">
+          <i class="fa-brands fa-mastodon"></i>
+        </a>
+        <a href="/index.xml" class="image-button">
+          <i class="rss-button fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+        
+  <section role="main">
+    <article>
+      
+        
+  <header class="post-header">
+    <h1 class="post-title">
+      
+        Roc Toolkit 0.3 is out!
+      
+    </h1>
+    <div class="post-time">
+      <time datetime="2023-11-22">
+        22 Nov 2023
+      </time>
+    </div>
+    <div class="post-tags">
+      
+      <div class="post-tag">
+        <a href="/tags/audio">audio</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/networking">networking</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/roc">roc</a>
+      </div>
+      
+    </div>
+  </header>
+
+
+      
+      <section>
+        <h2 id="whats-new">What&rsquo;s new</h2>
+<p><a href="https://github.com/roc-streaming/roc-toolkit">Roc Toolkit</a> implements real-time streaming over unreliable networks like Internet and Wi-Fi. It works on Linux and macOS and provides <a href="https://roc-streaming.org/toolkit/docs/api.html">C library</a>, <a href="https://roc-streaming.org/toolkit/docs/tools/command_line_tools.html">CLI tools</a>, modules for <a href="https://roc-streaming.org/toolkit/docs/tools/sound_server_modules.html">PulseAudio and PipeWire</a>, and <a href="https://github.com/roc-streaming/roc-droid/">Android app</a>.</p>
+<p>The 0.3 release was focused on:</p>
+<ul>
+<li>reducing minimum allowed latency</li>
+<li>running in CPU-constrained environments</li>
+<li>extending C API</li>
+</ul>
+<p>Full changelog is <a href="https://roc-streaming.org/toolkit/docs/development/changelog.html#version-0-3-0-nov-22-2023">available here</a>.</p>
+<h2 id="latency">Latency</h2>
+<p>To allow lower latencies, two changes were made:</p>
+<ul>
+<li>
+<p>All pipeline elements were reworked to accept arbitrary frame sizes. Earlier, some of them were using frames of fixed size which put limitations on the minimum possible latency.</p>
+</li>
+<li>
+<p>A new clock synchronization profile was implemented, suitable for low latencies. Clock synchronization algorithm is responsible for maintaining the latency close to the target value and compensating <a href="https://roc-streaming.org/toolkit/docs/internals/fe_resampler.html">clock drift</a> between sender and receiver.</p>
+<p>Existing profile, now called &ldquo;gradual&rdquo;, is very smooth and tolerates high network jitter, but can cause (slow) latency oscillations, putting limitations on the minimum latency. The new profile, called &ldquo;responsive&rdquo;, is designed for environments with low jitter and latency. It reacts quicker and does not cause big oscillations.</p>
+<p>By default, profile is selected automatically based on the requested latency.</p>
+</li>
+</ul>
+<p>In my tests on Ethernet, I was able to achieve latency of <strong>7 ms</strong> for streaming, plus 12 ms for two USB sound cards (cards that I used for testing require 6 ms for input and output).</p>
+<p>Here is the test bench that I used to measure latency (I already posted it earlier on mastodon):</p>
+<div>
+  <a data-lightbox="test_bench" href="/articles/roc-0.3/test_bench.jpg">
+    <img src="/articles/roc-0.3/test_bench.jpg" width="500px"/>
+  </a>
+</div>
+<p>Legend:</p>
+<ul>
+<li><code>S0</code>, <code>S1</code>, <code>S2</code> - sound cards</li>
+<li><code>L1</code>, <code>L3</code> - jack cables</li>
+<li><code>L2</code> - Ethernet cable</li>
+<li><code>PC</code> - laptop with <a href="https://github.com/gavv/signal-estimator">signal-estimator</a>, which writes audio to <code>S0</code> output, reads from <code>S0</code> input, and measures latency</li>
+<li><code>R1</code> - Raspberry Pi with Roc sender, which reads audio from <code>S1</code> input and sends it over network</li>
+<li><code>R2</code> - Raspberry Pi with Roc receiver, which reads audio from network and writes it to <code>S2</code> output</li>
+</ul>
+<p>(There is also a jack splitter that duplicates sound from <code>L3</code> to speakers).</p>
+<h2 id="c-api">C API</h2>
+<p>A huge part of this release was improvements in the C API.</p>
+<p>To name a few:</p>
+<ul>
+<li>
+<p>A new networkless version of <code>roc_sender</code> / <code>roc_receiver</code>, called <code>roc_sender_encoder</code> / <code>roc_receiver_decoder</code>.</p>
+<p>In this API, Roc doesn&rsquo;t deliver packets by itself; the user is responsible for delivery and can use any network transport. In particular, you can use this API to integrate Roc with third-party network transports like libjuice.</p>
+<p>Using Roc with libjuice allows combining features from both. Roc implements encoding, loss repair (FEC), jitter buffer, clock drift compensation, format conversions, and libjuice provides P2P connectivity with NAT traversal.</p>
+<p>(Someday Roc will support ICE natively, but for now there is no specific estimate for that).</p>
+</li>
+<li>
+<p>Support removing slots on the fly.</p>
+<p>&ldquo;Slots&rdquo; represent connected peers, so adding / removing slots is needed when peers enter / leave session dynamically. Earlier it was possible to add slots, but not to remove them.</p>
+</li>
+<li>
+<p>Initial version of metrics API.</p>
+<p>Allows to query counters from sender and receiver. Currently, metrics include current jitter buffer size and estimated end-to-end latency.</p>
+</li>
+<li>
+<p>Overhaul of frame and encoding configuration.</p>
+</li>
+<li>
+<p>Support for mono, stereo, and multitrack channel layouts with up to 1024 channels.</p>
+</li>
+<li>
+<p>API to register custom network (packet) encodings.</p>
+</li>
+</ul>
+<p>For the full list, <a href="https://roc-streaming.org/toolkit/docs/development/changelog.html#version-0-3-0-nov-22-2023">see changelog</a>.</p>
+<h2 id="speexdec-resampler">Speexdec resampler</h2>
+<p>Roc uses resampling for two purposes: to convert between network and sound card sample rates, and for clock drift compensation.</p>
+<p>Before 0.3, Roc had two resampler backends: &ldquo;builtin&rdquo; (high quality, high scaling precision, and higher CPU usage), and &ldquo;speex&rdquo; (high quality, worse scaling precision, and medium CPU usage).</p>
+<p>New &ldquo;speexdec&rdquo; backend combines speex for base rate conversion and old bad decimation for the dynamic part needed to compensate clock drift. Since the dynamic part of the scaling factor is very close to 1.0, the decimation usually affects only 5-20 samples/second, which is quite tolerable.</p>
+<p>It may be useful in two cases:</p>
+<ul>
+<li>
+<p>When CPU resources are very limited, and you can&rsquo;t use higher-quality &ldquo;builtin&rdquo; and &ldquo;speex&rdquo; resamplers, you can use &ldquo;speexdec&rdquo; and configure network rate to be the same as sound card rate. In this case &ldquo;speexdec&rdquo; just performs decimation, which is really cheap.</p>
+</li>
+<li>
+<p>When CPU resources are moderately limited, and you can&rsquo;t use &ldquo;builtin&rdquo; resampler, you can use either &ldquo;speex&rdquo; or &ldquo;speexdec&rdquo;. &ldquo;speex&rdquo; gives higher quality, but worse scaling precision, and &ldquo;speexdec&rdquo; allows to sacrify some quality for better scaling precision. Better scaling precision means lower latency oscillations, which means lower minimum allowed latency.</p>
+</li>
+</ul>
+<p>In most cases, when CPU is not very limited, and / or latency is not very low, &ldquo;builtin&rdquo; and &ldquo;speex&rdquo; resamplers will work fine. &ldquo;speexdec&rdquo; is just yet another option in user&rsquo;s toolbox to cover less typical scenarios.</p>
+<p>Original motivation for developing &ldquo;speexdec&rdquo; was running multi-session cloud instances on cheap ARM virtual machines billed by processor time.</p>
+<p>See more details <a href="https://roc-streaming.org/toolkit/docs/internals/fe_resampler.html">in documentation</a>.</p>
+<h2 id="hacktoberfest">Hacktoberfest</h2>
+<p>This hacktoberfest went great for Roc!</p>
+<p>We received a dozen good patches, including lock-free PRNG (eliminating one of the few remaining priority inversion traps), improved memory protection for pools, and various refactoring that we&rsquo;ve been putting off for long.</p>
+<p>What truly matters to me is that several people continue contributing after hacktoberfest too.</p>
+<p>Thank you so much!</p>
+<p>If you would like to join the project too, you&rsquo;re welcome and please take a look at the <a href="https://roc-streaming.org/toolkit/docs/development/contribution_guidelines.html">contribution guide</a>. We always have plenty of detailed <a href="https://github.com/roc-streaming/roc-toolkit/labels/help%20wanted">help-wanted</a> issues for newcomers.</p>
+<h2 id="whats-next">What&rsquo;s next</h2>
+<p>We already started work in the following directions:</p>
+<ul>
+<li>computing end-to-end latency (overall delay from sender to receiver, including I/O and network)</li>
+<li>adaptive latency mode (dynamically adjust jitter buffer size depending on network conditions)</li>
+<li>sender-side clock drift compensation (as an alternative to receiver-side, for cases when receiver has limited CPU resources, but sender doesn&rsquo;t)</li>
+<li>surround sound support and automatic mapping between different surround layouts</li>
+</ul>
+<p>As usual, you can follow updates on the project <a href="https://roc-streaming.org/toolkit/docs/about_project/contacts.html">mailing list</a> or on my <a href="https://fosstodon.org/@gavv">mastodon</a>.</p>
+
+      </section>
+    </article>
+  </section>
+  
+    
+  <footer id="footer">
+    <script>
+      $('h2, h3, h4').each(function() {
+        var id = $(this).attr('id');
+        $(this).prepend(
+          '<a class="anchor" href="#' + id +'"><i class="fa fa-paragraph"></i></a>'
+        );
+      })
+    </script>
+
+    <div id="disqus_thread" class="no-print"></div>
+    <script>
+      (function() {
+        var d = document, s = d.createElement('script');
+        s.src = '//gavv.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+    </script>
+    <noscript>Enable JavaScript to view the
+        <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+    </noscript>
+  </footer>
+
+
+  
+
+      </div>
+    </body>
+  </html>
+

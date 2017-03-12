@@ -1,0 +1,22 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>scons on Victor Gaydov</title>
+    <link>http://gavv.net/tags/scons/</link>
+    <description>Recent content in scons on Victor Gaydov</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 06 Jul 2016 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://gavv.net/tags/scons/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>SCons rebuilds generated source files every launch</title>
+      <link>http://gavv.net/articles/sconsign-bug/</link>
+      <pubDate>Wed, 06 Jul 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.net/articles/sconsign-bug/</guid>
+      <description>Problem In a large project that uses SCons, VariantDir, and source code generation, happens one of the following:
+generated source files are rebuilt every time when scons is launched if .sconsign.dblite is removed manually, scons crashes with the following trace: OSError: [Errno 2] No such file or directory: &amp;#39;.sconsign.dblite&amp;#39;: File &amp;#34;/usr/lib64/python2.7/site-packages/SCons/Script/Main.py&amp;#34;, line 1372: _exec_main(parser, values) File &amp;#34;/usr/lib64/python2.7/site-packages/SCons/Script/Main.py&amp;#34;, line 1335: _main(parser) File &amp;#34;/usr/lib64/python2.7/site-packages/SCons/Script/Main.py&amp;#34;, line 1099: nodes = _build_targets(fs, options, targets, target_top) File &amp;#34;/usr/lib64/python2.</description>
+    </item>
+    
+  </channel>
+</rss>
