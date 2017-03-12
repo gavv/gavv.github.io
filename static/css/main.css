@@ -113,7 +113,7 @@ pre, pre code, pre code span {
 
 /* layout */
 
-body {
+body > div {
     max-width: 880px;
     width: 100%;
     min-height: 100%;

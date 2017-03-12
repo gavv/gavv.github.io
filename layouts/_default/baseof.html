@@ -23,8 +23,10 @@
       {{ partial "meta.html" . }}
     </head>
     <body>
-      {{ partial "site-header.html" . }}
-      {{ block "main" . }}{{ end }}
+      <div>
+        {{ partial "site-header.html" . }}
+        {{ block "main" . }}{{ end }}
+      </div>
     </body>
   </html>
 {{ end }}
