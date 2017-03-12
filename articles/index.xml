@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Articles on Victor Gaydov</title>
+    <link>http://gavv.github.io/articles/</link>
+    <description>Recent content in Articles on Victor Gaydov</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 14 Aug 2019 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://gavv.github.io/articles/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>A step-by-step tutorial for live audio streaming with Roc</title>
+      <link>http://gavv.github.io/articles/roc-tutorial/</link>
+      <pubDate>Wed, 14 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.github.io/articles/roc-tutorial/</guid>
+      <description>Table of contents
+ What is Roc? What&amp;rsquo;s new? Ubuntu desktop Raspberry Pi (ALSA) Raspberry Pi (PulseAudio) macOS Android / Termux  What is Roc? Roc is an open-source toolkit for real-time audio streaming over the network. You can learn about the project here: overview, features, usage.
+Among other things, Roc can be used as a network transport for PulseAudio, ALSA, or macOS CoreAudio, and connect audio applications and devices across the network.</description>
+    </item>
+    
+    <item>
+      <title>Roc 0.1 released: real-time streaming over the network</title>
+      <link>http://gavv.github.io/articles/roc-0.1/</link>
+      <pubDate>Tue, 28 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.github.io/articles/roc-0.1/</guid>
+      <description>What is Roc? I&amp;rsquo;m happy to announce the first release of Roc Toolkit, version 0.1.0!
+Roc provides a C API for real-time audio transport. The user just writes a stream to the one end and reads it from another end. Roc, in turn, performs encoding and decoding, and, more importantly, deals with the problems related to the real-time delivery: counters network jitter and packet reordering, maintains constant latency, restores lost packets, compensates the clocks difference.</description>
+    </item>
+    
+    <item>
+      <title>Working on a new network transport for PulseAudio and ALSA</title>
+      <link>http://gavv.github.io/articles/new-network-transport/</link>
+      <pubDate>Fri, 03 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.github.io/articles/new-network-transport/</guid>
+      <description>Intro Last few years I was working on Roc Toolkit, an open-source solution for real-time media streaming over the network. Due to lack of free time, we postponed release several times, but now it&amp;rsquo;s almost ready. This article is, inter alia, some kind of a pre-release announcement.
+You can read more about the project here. The project scope is quite wide. It provides a general-purpose library and tools that can be used in numerous use-cases.</description>
+    </item>
+    
+    <item>
+      <title>Ephemeral ports and SO_REUSEADDR</title>
+      <link>http://gavv.github.io/articles/ephemeral-port-reuse/</link>
+      <pubDate>Sun, 03 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.github.io/articles/ephemeral-port-reuse/</guid>
+      <description>Ephemeral ports The ephemeral port range is a range of ports used by the kernel when the user wants the socket to be bound to a random unused port.
+In particular, bind, listen, connect, and sendto may automatically allocate an ephemeral port for AF_INET and AF_INET6 sockets. This behavior is described in the ip_local_port_range section of the ip(7) man page.
+This feature is not specified in POSIX but is available in many operating systems that implement BSD sockets, including Linux.</description>
+    </item>
+    
+    <item>
+      <title>PulseAudio under the hood</title>
+      <link>http://gavv.github.io/articles/pulseaudio-under-the-hood/</link>
+      <pubDate>Thu, 21 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.github.io/articles/pulseaudio-under-the-hood/</guid>
+      <description>Table of contents
+ Preface About PulseAudio High-level components Key abstractions D-Bus API C API Protocols and networking Device drivers Sound processing Sample cache Stream management Time management Power saving Automatic setup and routing Desktop integrations Compatibility layers Server internals Module list GUI tools Command line tools Configuration Portability Example setups Example clients and modules Critique  Preface I&amp;rsquo;m working on the Roc Toolkit open-source project, a development kit for realtime audio streaming over the network.</description>
+    </item>
+    
+    <item>
+      <title>Using MiniSAPServer and MiniSAPListener for SAP/SDP</title>
+      <link>http://gavv.github.io/articles/minisaplistener/</link>
+      <pubDate>Fri, 09 Dec 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.github.io/articles/minisaplistener/</guid>
+      <description>MiniSAPServer is a small program that periodically sends SAP/SDP messages, given a config file and destination address.
+I&amp;rsquo;ve prepared a complementary MiniSAPListener program which listens for SAP/SDP messages, and prints them to stdout or passes to a shell command. The source code is mostly extracted from PulseAudio RTP receiver.
+To send custom SAP/SDP messages, one should create two configuration files for MiniSAPServer, one with SAP configuration, and another with an SDP message.</description>
+    </item>
+    
+    <item>
+      <title>File locking in Linux</title>
+      <link>http://gavv.github.io/articles/file-locks/</link>
+      <pubDate>Fri, 29 Jul 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.github.io/articles/file-locks/</guid>
+      <description>Table of contents
+ Introduction Advisory locking  Common features Differing features File descriptors and i-nodes BSD locks (flock) POSIX record locks (fcntl) lockf function Open file description locks (fcntl) Emulating Open file description locks Test program Command-line tools  Mandatory locking  Example usage   Introduction File locking is a mutual-exclusion mechanism for files. Linux supports two major kinds of file locks:
+ advisory locks mandatory locks  Below we discuss all lock types available in POSIX and Linux and provide usage examples.</description>
+    </item>
+    
+    <item>
+      <title>Reusing UNIX domain socket (SO_REUSEADDR for AF_UNIX)</title>
+      <link>http://gavv.github.io/articles/unix-socket-reuse/</link>
+      <pubDate>Thu, 07 Jul 2016 00:00:01 +0000</pubDate>
+      
+      <guid>http://gavv.github.io/articles/unix-socket-reuse/</guid>
+      <description>Unix domain sockets are a networkless version of Internet sockets.
+They have several advantages:
+ Unix domain sockets are files, so file-system permissions may be used for them when one end is closed (e.g. process exits), SIGPIPE is delivered to another end performance may be up to 2x better  See details here.
+Lack of SO_REUSEADDR A socket file is created by bind(2) call. If the file already exists, EADDRINUSE is returned.</description>
+    </item>
+    
+    <item>
+      <title>Decoding and playing audio files in Linux</title>
+      <link>http://gavv.github.io/articles/decode-play/</link>
+      <pubDate>Thu, 07 Jul 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.github.io/articles/decode-play/</guid>
+      <description>Table of contents
+ Overview FFmpeg SoX ALSA (libasound) PulseAudio libsndfile Other libraries Notes  Overview I was playing with various media libraries recently and have prepared several snippets demonstrating how one can decode and play an audio file in two separate steps.
+The source code is available on GitHub here and there.
+The following libraries are used:
+ FFmpeg SoX ALSA (libasound) PulseAudio libsndfile  Each snippet is a small program.</description>
+    </item>
+    
+    <item>
+      <title>SCons rebuilds generated source files every launch</title>
+      <link>http://gavv.github.io/articles/sconsign-bug/</link>
+      <pubDate>Wed, 06 Jul 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.github.io/articles/sconsign-bug/</guid>
+      <description>Problem In a large project that uses SCons, VariantDir, and source code generation, happens one of the following:
+ generated source files are rebuilt every time when scons is launched if .sconsign.dblite is removed manually, scons crashes with the following trace:  OSError: [Errno 2] No such file or directory: &#39;.sconsign.dblite&#39;: File &amp;quot;/usr/lib64/python2.7/site-packages/SCons/Script/Main.py&amp;quot;, line 1372: _exec_main(parser, values) File &amp;quot;/usr/lib64/python2.7/site-packages/SCons/Script/Main.py&amp;quot;, line 1335: _main(parser) File &amp;quot;/usr/lib64/python2.7/site-packages/SCons/Script/Main.py&amp;quot;, line 1099: nodes = _build_targets(fs, options, targets, target_top) File &amp;quot;/usr/lib64/python2.</description>
+    </item>
+    
+    <item>
+      <title>Xlib usage examples</title>
+      <link>http://gavv.github.io/articles/xlib-usage-examples/</link>
+      <pubDate>Tue, 05 Jul 2016 00:00:01 +0000</pubDate>
+      
+      <guid>http://gavv.github.io/articles/xlib-usage-examples/</guid>
+      <description>Table of contents
+ What is Xlib? Printing pressed keys Embedding window  What is Xlib? Xlib (also known as libX11) is an X11 client library. It contains functions for interacting with an X server.
+This page provides several code snippets implementing complete X11 programs.
+Printing pressed keys The source code is available on GitHub: xlib_hello.c.
+The snippet creates a new window and handles X11 events:
+ prints all received events to stdout prints pressed keys into a graphical window quits when the close button is pressed  Some documentation that was useful for me:</description>
+    </item>
+    
+    <item>
+      <title>Detecting USB devices with libudev</title>
+      <link>http://gavv.github.io/articles/libudev-usb/</link>
+      <pubDate>Tue, 05 Jul 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.github.io/articles/libudev-usb/</guid>
+      <description>Below you can find code snippets that match USB devices using libudev.
+A good tutorial is available here: libudev and Sysfs Tutorial.
+Listing and monitoring USB devices The snippet first prints all detected USB devices, and then enters monitoring mode and prints USB devices when they are inserted or removed.
+Source code on GitHub: udev_monitor_usb.c
+Example output:
+$ ./a.out usb usb_device exists 1d6b:0001 /dev/bus/usb/002/001 usb usb_device exists 046d:c05b /dev/bus/usb/002/002 usb usb_device exists 1d6b:0001 /dev/bus/usb/003/001 usb usb_device exists 1d6b:0001 /dev/bus/usb/004/001 usb usb_device exists 1d6b:0001 /dev/bus/usb/005/001 usb usb_device exists 1d6b:0002 /dev/bus/usb/001/001 usb usb_device add 8564:1000 /dev/bus/usb/001/026 usb usb_device remove 0000:0000 /dev/bus/usb/001/026 ^C  Listing USB storage devices The snippet prints detected USB storage devices.</description>
+    </item>
+    
+    <item>
+      <title>httpexpect.v1: end-to-end HTTP API testing for Go</title>
+      <link>http://gavv.github.io/articles/httpexpect-v1/</link>
+      <pubDate>Mon, 04 Jul 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.github.io/articles/httpexpect-v1/</guid>
+      <description>httpexpect is a new Go package for end-to-end HTTP and REST API testing.
+It provides convenient chainable helpers for building HTTP request, sending it, and inspecting received HTTP response and its payload.
+Links:
+ repo on GitHub announcement on Reddit  The key point is that request construction and response assertions become concise and declarative:
+// create httpexpect instance e := httpexpect.New(t, &amp;quot;http://example.com&amp;quot;) // check that &amp;quot;GET /fruits&amp;quot; returns empty JSON array e.</description>
+    </item>
+    
+  </channel>
+</rss>

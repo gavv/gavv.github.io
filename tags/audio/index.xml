@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Audio on Victor Gaydov</title>
+    <link>http://gavv.github.io/tags/audio/</link>
+    <description>Recent content in Audio on Victor Gaydov</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 14 Aug 2019 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://gavv.github.io/tags/audio/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>A step-by-step tutorial for live audio streaming with Roc</title>
+      <link>http://gavv.github.io/articles/roc-tutorial/</link>
+      <pubDate>Wed, 14 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.github.io/articles/roc-tutorial/</guid>
+      <description>Table of contents
+ What is Roc? What&amp;rsquo;s new? Ubuntu desktop Raspberry Pi (ALSA) Raspberry Pi (PulseAudio) macOS Android / Termux  What is Roc? Roc is an open-source toolkit for real-time audio streaming over the network. You can learn about the project here: overview, features, usage.
+Among other things, Roc can be used as a network transport for PulseAudio, ALSA, or macOS CoreAudio, and connect audio applications and devices across the network.</description>
+    </item>
+    
+    <item>
+      <title>Roc 0.1 released: real-time streaming over the network</title>
+      <link>http://gavv.github.io/articles/roc-0.1/</link>
+      <pubDate>Tue, 28 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.github.io/articles/roc-0.1/</guid>
+      <description>What is Roc? I&amp;rsquo;m happy to announce the first release of Roc Toolkit, version 0.1.0!
+Roc provides a C API for real-time audio transport. The user just writes a stream to the one end and reads it from another end. Roc, in turn, performs encoding and decoding, and, more importantly, deals with the problems related to the real-time delivery: counters network jitter and packet reordering, maintains constant latency, restores lost packets, compensates the clocks difference.</description>
+    </item>
+    
+    <item>
+      <title>Working on a new network transport for PulseAudio and ALSA</title>
+      <link>http://gavv.github.io/articles/new-network-transport/</link>
+      <pubDate>Fri, 03 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.github.io/articles/new-network-transport/</guid>
+      <description>Intro Last few years I was working on Roc Toolkit, an open-source solution for real-time media streaming over the network. Due to lack of free time, we postponed release several times, but now it&amp;rsquo;s almost ready. This article is, inter alia, some kind of a pre-release announcement.
+You can read more about the project here. The project scope is quite wide. It provides a general-purpose library and tools that can be used in numerous use-cases.</description>
+    </item>
+    
+    <item>
+      <title>PulseAudio under the hood</title>
+      <link>http://gavv.github.io/articles/pulseaudio-under-the-hood/</link>
+      <pubDate>Thu, 21 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.github.io/articles/pulseaudio-under-the-hood/</guid>
+      <description>Table of contents
+ Preface About PulseAudio High-level components Key abstractions D-Bus API C API Protocols and networking Device drivers Sound processing Sample cache Stream management Time management Power saving Automatic setup and routing Desktop integrations Compatibility layers Server internals Module list GUI tools Command line tools Configuration Portability Example setups Example clients and modules Critique  Preface I&amp;rsquo;m working on the Roc Toolkit open-source project, a development kit for realtime audio streaming over the network.</description>
+    </item>
+    
+    <item>
+      <title>Decoding and playing audio files in Linux</title>
+      <link>http://gavv.github.io/articles/decode-play/</link>
+      <pubDate>Thu, 07 Jul 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.github.io/articles/decode-play/</guid>
+      <description>Table of contents
+ Overview FFmpeg SoX ALSA (libasound) PulseAudio libsndfile Other libraries Notes  Overview I was playing with various media libraries recently and have prepared several snippets demonstrating how one can decode and play an audio file in two separate steps.
+The source code is available on GitHub here and there.
+The following libraries are used:
+ FFmpeg SoX ALSA (libasound) PulseAudio libsndfile  Each snippet is a small program.</description>
+    </item>
+    
+  </channel>
+</rss>

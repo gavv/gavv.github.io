@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+
+  <html lang="en-US">
+    <head>
+      <meta charset="UTF-8"/>
+
+      <meta name="description" content=""/>
+      <meta name="author" content="Victor Gaydov"/>
+
+      <meta property="og:url" content="http://gavv.github.io/tags/linux/"/>
+      <meta property="og:title" content="
+  Victor Gaydov - Linux
+"/>
+      <meta property="og:description" content=""/>
+      <meta property="og:site_name" content="Victor Gaydov"/>
+
+      <link rel="canonical" href="http://gavv.github.io/tags/linux/"/>
+
+      <title>
+  Victor Gaydov - Linux
+</title>
+
+      <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+<link rel="stylesheet" href="/css/main.css"/>
+<link rel="stylesheet" href="/css/prism.css"/>
+<link rel="stylesheet" href="/css/lightbox.min.css"/>
+
+<link rel="shortcut icon" href="/images/favicon.ico">
+
+<link rel="stylesheet"
+      href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css">
+
+<link rel="stylesheet"
+      href="//fonts.googleapis.com/css?family=Open+Sans|Lustria|Roboto+Mono">
+
+<script src="/js/lightbox-plus-jquery.min.js">
+</script>
+
+<script>
+    lightbox.option({
+      'wrapAround': true,
+      'resizeDuration': 0,
+      'fadeDuration': 0,
+      'imageFadeDuration': 0,
+    })
+</script>
+
+<script src="/js/prism.js">
+</script>
+
+<script>
+var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+if (width < 480) {
+  document.write('<script src="/js/hyphenator-loader.js"><\/script>');
+}
+</script>
+
+<script src="/js/analytics.js">
+</script>
+
+    </head>
+    <body>
+      <div id="toplevel">
+        <header id="header" class="no-print">
+  <div id="caption">
+    Victor Gaydov
+  </div>
+  <div id="menu">
+    <div>
+      <div>
+        
+          <a href="/about/" class="menu-item">
+        
+            About
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/software/" class="menu-item">
+        
+            Software
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/articles/" class="menu-item menu-selected">
+        
+            Articles
+          </a>
+      </div>
+    </div>
+    <div id="header-buttons">
+      <div>
+        <a href="https://twitter.com/gavv42" class="image-button">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="/index.xml" class="image-button">
+          <i class="rss-button fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+        
+  
+    <section role="banner">
+      <div class="tag-header">
+        Filtered by:  <span class="tag-title">linux</span>
+      </div>
+    </section>
+  
+  <section role="main">
+    
+      
+        <article>
+          
+  <header class="post-header">
+    <h1 class="post-title">
+      
+        <a href="/articles/new-network-transport/">Working on a new network transport for PulseAudio and ALSA</a>
+      
+    </h1>
+    <div class="post-time">
+      <time datetime="2019-05-03">
+        03 May 2019
+      </time>
+    </div>
+    <div class="post-tags">
+      
+      <div class="post-tag">
+        <a href="/tags/linux">linux</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/audio">audio</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/networking">networking</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/roc">roc</a>
+      </div>
+      
+    </div>
+  </header>
+
+
+          <section class="post-excerpt">
+            <p>
+              Intro Last few years I was working on Roc Toolkit, an open-source solution for real-time media streaming over the network. Due to lack of free time, we postponed release several times, but now it&rsquo;s almost ready. This article is, inter alia, some kind of a pre-release announcement.
+You can read more about the project here. …
+            </p>
+          </section>
+        </article>
+      
+    
+      
+        <article>
+          
+  <header class="post-header">
+    <h1 class="post-title">
+      
+        <a href="/articles/ephemeral-port-reuse/">Ephemeral ports and SO_REUSEADDR</a>
+      
+    </h1>
+    <div class="post-time">
+      <time datetime="2017-12-03">
+        03 Dec 2017
+      </time>
+    </div>
+    <div class="post-tags">
+      
+      <div class="post-tag">
+        <a href="/tags/linux">linux</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/networking">networking</a>
+      </div>
+      
+    </div>
+  </header>
+
+
+          <section class="post-excerpt">
+            <p>
+              Ephemeral ports The ephemeral port range is a range of ports used by the kernel when the user wants the socket to be bound to a random unused port.
+In particular, bind, listen, connect, and sendto may automatically allocate an ephemeral port for AF_INET and AF_INET6 sockets. This behavior is described in the ip_local_port_range …
+            </p>
+          </section>
+        </article>
+      
+    
+      
+        <article>
+          
+  <header class="post-header">
+    <h1 class="post-title">
+      
+        <a href="/articles/pulseaudio-under-the-hood/">PulseAudio under the hood</a>
+      
+    </h1>
+    <div class="post-time">
+      <time datetime="2017-09-21">
+        21 Sep 2017
+      </time>
+    </div>
+    <div class="post-tags">
+      
+      <div class="post-tag">
+        <a href="/tags/linux">linux</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/audio">audio</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/networking">networking</a>
+      </div>
+      
+    </div>
+  </header>
+
+
+          <section class="post-excerpt">
+            <p>
+              Table of contents
+ Preface About PulseAudio High-level components Key abstractions D-Bus API C API Protocols and networking Device drivers Sound processing Sample cache Stream management Time management Power saving Automatic setup and routing Desktop integrations Compatibility layers Server internals Module list GUI tools …
+            </p>
+          </section>
+        </article>
+      
+    
+      
+        <article>
+          
+  <header class="post-header">
+    <h1 class="post-title">
+      
+        <a href="/articles/minisaplistener/">Using MiniSAPServer and MiniSAPListener for SAP/SDP</a>
+      
+    </h1>
+    <div class="post-time">
+      <time datetime="2016-12-09">
+        09 Dec 2016
+      </time>
+    </div>
+    <div class="post-tags">
+      
+      <div class="post-tag">
+        <a href="/tags/linux">linux</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/networking">networking</a>
+      </div>
+      
+    </div>
+  </header>
+
+
+          <section class="post-excerpt">
+            <p>
+              MiniSAPServer is a small program that periodically sends SAP/SDP messages, given a config file and destination address.
+I&rsquo;ve prepared a complementary MiniSAPListener program which listens for SAP/SDP messages, and prints them to stdout or passes to a shell command. The source code is mostly extracted from PulseAudio RTP …
+            </p>
+          </section>
+        </article>
+      
+    
+      
+        <article>
+          
+  <header class="post-header">
+    <h1 class="post-title">
+      
+        <a href="/articles/file-locks/">File locking in Linux</a>
+      
+    </h1>
+    <div class="post-time">
+      <time datetime="2016-07-29">
+        29 Jul 2016
+      </time>
+    </div>
+    <div class="post-tags">
+      
+      <div class="post-tag">
+        <a href="/tags/linux">linux</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/posix">posix</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/ipc">ipc</a>
+      </div>
+      
+    </div>
+  </header>
+
+
+          <section class="post-excerpt">
+            <p>
+              Table of contents
+ Introduction Advisory locking  Common features Differing features File descriptors and i-nodes BSD locks (flock) POSIX record locks (fcntl) lockf function Open file description locks (fcntl) Emulating Open file description locks Test program Command-line tools  Mandatory locking  Example usage   Introduction …
+            </p>
+          </section>
+        </article>
+      
+    
+      
+        <article>
+          
+  <header class="post-header">
+    <h1 class="post-title">
+      
+        <a href="/articles/unix-socket-reuse/">Reusing UNIX domain socket (SO_REUSEADDR for AF_UNIX)</a>
+      
+    </h1>
+    <div class="post-time">
+      <time datetime="2016-07-07">
+        07 Jul 2016
+      </time>
+    </div>
+    <div class="post-tags">
+      
+      <div class="post-tag">
+        <a href="/tags/linux">linux</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/posix">posix</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/networking">networking</a>
+      </div>
+      
+    </div>
+  </header>
+
+
+          <section class="post-excerpt">
+            <p>
+              Unix domain sockets are a networkless version of Internet sockets.
+They have several advantages:
+ Unix domain sockets are files, so file-system permissions may be used for them when one end is closed (e.g. process exits), SIGPIPE is delivered to another end performance may be up to 2x better  See details here.
+Lack of …
+            </p>
+          </section>
+        </article>
+      
+    
+      
+        <article>
+          
+  <header class="post-header">
+    <h1 class="post-title">
+      
+        <a href="/articles/decode-play/">Decoding and playing audio files in Linux</a>
+      
+    </h1>
+    <div class="post-time">
+      <time datetime="2016-07-07">
+        07 Jul 2016
+      </time>
+    </div>
+    <div class="post-tags">
+      
+      <div class="post-tag">
+        <a href="/tags/linux">linux</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/audio">audio</a>
+      </div>
+      
+    </div>
+  </header>
+
+
+          <section class="post-excerpt">
+            <p>
+              Table of contents
+ Overview FFmpeg SoX ALSA (libasound) PulseAudio libsndfile Other libraries Notes  Overview I was playing with various media libraries recently and have prepared several snippets demonstrating how one can decode and play an audio file in two separate steps.
+The source code is available on GitHub here and there. …
+            </p>
+          </section>
+        </article>
+      
+    
+      
+        <article>
+          
+  <header class="post-header">
+    <h1 class="post-title">
+      
+        <a href="/articles/xlib-usage-examples/">Xlib usage examples</a>
+      
+    </h1>
+    <div class="post-time">
+      <time datetime="2016-07-05">
+        05 Jul 2016
+      </time>
+    </div>
+    <div class="post-tags">
+      
+      <div class="post-tag">
+        <a href="/tags/linux">linux</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/x11">x11</a>
+      </div>
+      
+    </div>
+  </header>
+
+
+          <section class="post-excerpt">
+            <p>
+              Table of contents
+ What is Xlib? Printing pressed keys Embedding window  What is Xlib? Xlib (also known as libX11) is an X11 client library. It contains functions for interacting with an X server.
+This page provides several code snippets implementing complete X11 programs.
+Printing pressed keys The source code is available on …
+            </p>
+          </section>
+        </article>
+      
+    
+      
+        <article>
+          
+  <header class="post-header">
+    <h1 class="post-title">
+      
+        <a href="/articles/libudev-usb/">Detecting USB devices with libudev</a>
+      
+    </h1>
+    <div class="post-time">
+      <time datetime="2016-07-05">
+        05 Jul 2016
+      </time>
+    </div>
+    <div class="post-tags">
+      
+      <div class="post-tag">
+        <a href="/tags/linux">linux</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/udev">udev</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/usb">usb</a>
+      </div>
+      
+    </div>
+  </header>
+
+
+          <section class="post-excerpt">
+            <p>
+              Below you can find code snippets that match USB devices using libudev.
+A good tutorial is available here: libudev and Sysfs Tutorial.
+Listing and monitoring USB devices The snippet first prints all detected USB devices, and then enters monitoring mode and prints USB devices when they are inserted or removed.
+Source code on …
+            </p>
+          </section>
+        </article>
+      
+    
+  </section>
+  <nav role="pagination">
+  <div class="paginator no-print">
+    
+
+    
+
+    <div class="page-number">
+      page 1 of 1
+    </div>
+  </div>
+</nav>
+
+
+      </div>
+    </body>
+  </html>
+

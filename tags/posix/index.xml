@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posix on Victor Gaydov</title>
+    <link>http://gavv.github.io/tags/posix/</link>
+    <description>Recent content in Posix on Victor Gaydov</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 29 Jul 2016 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://gavv.github.io/tags/posix/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>File locking in Linux</title>
+      <link>http://gavv.github.io/articles/file-locks/</link>
+      <pubDate>Fri, 29 Jul 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.github.io/articles/file-locks/</guid>
+      <description>Table of contents
+ Introduction Advisory locking  Common features Differing features File descriptors and i-nodes BSD locks (flock) POSIX record locks (fcntl) lockf function Open file description locks (fcntl) Emulating Open file description locks Test program Command-line tools  Mandatory locking  Example usage   Introduction File locking is a mutual-exclusion mechanism for files. Linux supports two major kinds of file locks:
+ advisory locks mandatory locks  Below we discuss all lock types available in POSIX and Linux and provide usage examples.</description>
+    </item>
+    
+    <item>
+      <title>Reusing UNIX domain socket (SO_REUSEADDR for AF_UNIX)</title>
+      <link>http://gavv.github.io/articles/unix-socket-reuse/</link>
+      <pubDate>Thu, 07 Jul 2016 00:00:01 +0000</pubDate>
+      
+      <guid>http://gavv.github.io/articles/unix-socket-reuse/</guid>
+      <description>Unix domain sockets are a networkless version of Internet sockets.
+They have several advantages:
+ Unix domain sockets are files, so file-system permissions may be used for them when one end is closed (e.g. process exits), SIGPIPE is delivered to another end performance may be up to 2x better  See details here.
+Lack of SO_REUSEADDR A socket file is created by bind(2) call. If the file already exists, EADDRINUSE is returned.</description>
+    </item>
+    
+  </channel>
+</rss>

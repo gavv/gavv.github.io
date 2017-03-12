@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+
+  <html lang="en-US">
+    <head>
+      <meta charset="UTF-8"/>
+
+      <meta name="description" content="Table of contents
+ What is Roc? What&rsquo;s new? Ubuntu desktop Raspberry Pi (ALSA) Raspberry Pi (PulseAudio) macOS Android / Termux  What is Roc? Roc is an open-source toolkit for real-time audio streaming over the network. You can learn about the project here: overview, features, usage.
+Among other things, Roc can be used as a network transport for PulseAudio, ALSA, or macOS CoreAudio, and connect audio applications and devices across the network."/>
+      <meta name="author" content="Victor Gaydov"/>
+
+      <meta property="og:url" content="http://gavv.github.io/articles/roc-tutorial/"/>
+      <meta property="og:title" content="
+  
+    A step-by-step tutorial for live audio streaming with Roc
+  
+"/>
+      <meta property="og:description" content="Table of contents
+ What is Roc? What&rsquo;s new? Ubuntu desktop Raspberry Pi (ALSA) Raspberry Pi (PulseAudio) macOS Android / Termux  What is Roc? Roc is an open-source toolkit for real-time audio streaming over the network. You can learn about the project here: overview, features, usage.
+Among other things, Roc can be used as a network transport for PulseAudio, ALSA, or macOS CoreAudio, and connect audio applications and devices across the network."/>
+      <meta property="og:site_name" content="Victor Gaydov"/>
+
+      <link rel="canonical" href="http://gavv.github.io/articles/roc-tutorial/"/>
+
+      <title>
+  
+    A step-by-step tutorial for live audio streaming with Roc
+  
+</title>
+
+      <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+<link rel="stylesheet" href="/css/main.css"/>
+<link rel="stylesheet" href="/css/prism.css"/>
+<link rel="stylesheet" href="/css/lightbox.min.css"/>
+
+<link rel="shortcut icon" href="/images/favicon.ico">
+
+<link rel="stylesheet"
+      href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css">
+
+<link rel="stylesheet"
+      href="//fonts.googleapis.com/css?family=Open+Sans|Lustria|Roboto+Mono">
+
+<script src="/js/lightbox-plus-jquery.min.js">
+</script>
+
+<script>
+    lightbox.option({
+      'wrapAround': true,
+      'resizeDuration': 0,
+      'fadeDuration': 0,
+      'imageFadeDuration': 0,
+    })
+</script>
+
+<script src="/js/prism.js">
+</script>
+
+<script>
+var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+if (width < 480) {
+  document.write('<script src="/js/hyphenator-loader.js"><\/script>');
+}
+</script>
+
+<script src="/js/analytics.js">
+</script>
+
+    </head>
+    <body>
+      <div id="toplevel">
+        <header id="header" class="no-print">
+  <div id="caption">
+    Victor Gaydov
+  </div>
+  <div id="menu">
+    <div>
+      <div>
+        
+          <a href="/about/" class="menu-item">
+        
+            About
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/software/" class="menu-item">
+        
+            Software
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/articles/" class="menu-item menu-selected">
+        
+            Articles
+          </a>
+      </div>
+    </div>
+    <div id="header-buttons">
+      <div>
+        <a href="https://twitter.com/gavv42" class="image-button">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="/index.xml" class="image-button">
+          <i class="rss-button fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+        
+  <section role="main">
+    <article>
+      
+        
+  <header class="post-header">
+    <h1 class="post-title">
+      
+        A step-by-step tutorial for live audio streaming with Roc
+      
+    </h1>
+    <div class="post-time">
+      <time datetime="2019-08-14">
+        14 Aug 2019
+      </time>
+    </div>
+    <div class="post-tags">
+      
+      <div class="post-tag">
+        <a href="/tags/audio">audio</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/networking">networking</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/roc">roc</a>
+      </div>
+      
+    </div>
+  </header>
+
+
+      
+      <section>
+        
+
+<p><a data-lightbox="roc_devicec" href="/articles/roc-tutorial/roc_devices.jpg">
+  <img src="/articles/roc-tutorial/roc_devices.jpg" width="430px"/>
+</a></p>
+
+<p><strong>Table of contents</strong></p>
+
+<ul>
+<li><a href="#what-is-roc">What is Roc?</a></li>
+<li><a href="#what-s-new">What&rsquo;s new?</a></li>
+<li><a href="#ubuntu-desktop">Ubuntu desktop</a></li>
+<li><a href="#raspberry-pi-alsa">Raspberry Pi (ALSA)</a></li>
+<li><a href="#raspberry-pi-pulseaudio">Raspberry Pi (PulseAudio)</a></li>
+<li><a href="#macos">macOS</a></li>
+<li><a href="#android-termux">Android / Termux</a></li>
+</ul>
+
+<hr />
+
+<h2 id="what-is-roc">What is Roc?</h2>
+
+<p>Roc is an open-source toolkit for real-time audio streaming over the network. You can learn about the project here: <a href="https://roc-streaming.org/toolkit/docs/about_project/overview.html">overview</a>, <a href="https://roc-streaming.org/toolkit/docs/about_project/features.html">features</a>, <a href="https://roc-streaming.org/toolkit/docs/about_project/usage.html">usage</a>.</p>
+
+<p>Among other things, Roc can be used as a network transport for PulseAudio, ALSA, or macOS CoreAudio,  and connect audio applications and devices across the network. Roc has the following benefits in this case:</p>
+
+<ul>
+<li><p>compared to built-in PulseAudio transports and other software that uses TCP or bare RTP, Roc can provide quite low latency and good service quality over Wi-Fi <em>at the same time</em>;</p></li>
+
+<li><p>compared to Opus-based transports, Roc can stream high-quality lossless audio and still provide loss recovery; though, Opus support is also planned and is on the way;</p></li>
+
+<li><p>Roc can interconnect audio apps and devices across different platforms and audio systems;</p></li>
+
+<li><p>Roc transparently integrates into the PulseAudio workflow and can be controlled via the usual PulseAudio GUIs, just like the built-in PulseAudio transports, but provides a better service quality on Wi-Fi.</p></li>
+</ul>
+
+<p>My <a href="https://gavv.github.io/articles/new-network-transport/">earlier article</a> describes how does Roc achieve this and provides some comparison with other software including built-in PulseAudio transports.</p>
+
+<p>What can you do with this? Some examples:</p>
+
+<ul>
+<li><p>you can connect speakers to a Raspberry Pi box and stream sound from your other devices to it;</p></li>
+
+<li><p>you can also stream sound to your Android phone;</p></li>
+
+<li><p>you can set up some music server with remote control (like MPD) and then stream sound from it to other devices;</p></li>
+
+<li><p>you can set up several devices and switch between them on the fly via standard PulseAudio GUI or CLI; you can also route different apps to different devices;</p></li>
+
+<li><p>all of these can work over Wi-Fi with acceptable service quality.</p></li>
+</ul>
+
+<p>This tutorial describes how to use Roc to connect audio apps and devices running on Ubuntu or macOS desktop, Raspberry Pi board, or an Android phone.</p>
+
+<hr />
+
+<h2 id="what-s-new">What&rsquo;s new?</h2>
+
+<p>Since the <a href="https://gavv.github.io/articles/roc-0.1/">last publication</a>, I and Dmitriy have prepared two minor bugfix releases: <a href="https://roc-streaming.org/toolkit/docs/development/changelog.html#version-0-1-1-jun-18-2019">0.1.1</a> and <a href="https://roc-streaming.org/toolkit/docs/development/changelog.html#version-0-1-2-aug-14-2019">0.1.2</a>. They fix numerous build issues reported by users, fix OpenFEC crashes and bugs in networking code, and add initial Android support.</p>
+
+<p>Thanks to everyone who have reported bugs and contributed patches! Special thanks to <a href="https://github.com/S-trace">S-trace</a> who has helped a lot with the <a href="https://github.com/roc-streaming/roc-toolkit/issues/222">porting to Android</a>.</p>
+
+<p>Now we will focus on <a href="https://github.com/roc-streaming/roc-toolkit/issues?q=is%3Aopen+is%3Aissue+milestone%3A0.2.0">0.2</a>, which will add RTCP and RTSP support and the Control API. These protocols will open a way towards adding more audio encodings, including non-stereo channel sets, non-44100 sample rates, and Opus support. These features are planned for 0.3 release.</p>
+
+<p>Longer-term plans (after 0.3) include service discovery, adaptive streaming, multi-room, a relay tool, and an Android app. These features are not scheduled to a specific release yet. I&rsquo;ll post updates to our <a href="https://roc-streaming.org/toolkit/docs/about_project/contacts.html">mailing list</a> and to <a href="https://twitter.com/gavv42">my twitter</a>.</p>
+
+<p>If you want to <strong>help the project</strong> in any way, you&rsquo;re highly welcome! We&rsquo;ve prepared <a href="https://roc-streaming.org/toolkit/docs/development/contribution_guidelines.html">contribution guidelines</a> and a bunch of issues tagged as <a href="https://github.com/roc-streaming/roc-toolkit/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22">&ldquo;help wanted&rdquo;</a> and <a href="https://github.com/roc-streaming/roc-toolkit/issues?q=is%3Aissue+is%3Aopen+label%3A%22easy+hacks%22">&ldquo;easy hacks&rdquo;</a> (see the documentation for details).</p>
+
+<p>Finally, I&rsquo;ve decided to write a step-by-step tutorial for typical usage scenarios. So here we go.</p>
+
+<hr />
+
+<h2 id="ubuntu-desktop">Ubuntu desktop</h2>
+
+<p>The following instructions are suitable for Ubuntu 16.04 or later. If you&rsquo;re using another Linux distro, consult the <a href="https://roc-streaming.org/toolkit/docs/building/user_cookbook.html">User cookbook</a> page from Roc documentation.</p>
+
+<p>These instructions assume that you&rsquo;re using PulseAudio and want to use Roc PulseAudio modules. The full documentation for them is available <a href="https://roc-streaming.org/toolkit/docs/running/pulseaudio_modules.html">here</a>.</p>
+
+<p>If you don&rsquo;t want to use PulseAudio, you can use Roc command-line tools that can work, for example, with bare ALSA. The documentation for them is available <a href="https://roc-streaming.org/toolkit/docs/running/command_line_tools.html">here</a> and <a href="https://roc-streaming.org/toolkit/docs/manuals.html">here</a>.</p>
+
+<h3 id="install-dependencies">Install dependencies</h3>
+
+<pre><code>$ sudo apt-get install g++ pkg-config scons ragel gengetopt \
+    libuv1-dev libunwind-dev libpulse-dev libsox-dev libcpputest-dev \
+    libtool intltool autoconf automake make cmake
+</code></pre>
+
+<h3 id="clone-build-install">Clone, build, install</h3>
+
+<pre><code>$ git clone https://github.com/roc-streaming/roc-toolkit.git
+$ cd roc-toolkit
+$ scons -Q --enable-pulseaudio-modules --build-3rdparty=openfec,pulseaudio
+$ sudo scons -Q --enable-pulseaudio-modules --build-3rdparty=openfec,pulseaudio install
+</code></pre>
+
+<h3 id="configure-pulseaudio-sink">Configure PulseAudio sink</h3>
+
+<p>Perform this step if you want to <strong>send</strong> sound from your computer to remote Roc receivers, for example, to send sound from a browser or an audio player to a Raspberry Pi box with speakers.</p>
+
+<p>For every remote receiver, e.g. for every Raspberry Pi box running roc-recv, add the following line to <strong><code>/etc/pulse/default.pa</code></strong>:</p>
+
+<pre><code>load-module module-roc-sink remote_ip=&lt;IP&gt; sink_properties=device.description=&lt;NAME&gt;
+</code></pre>
+
+<p>Here, <strong><code>&lt;IP&gt;</code></strong> is the IP address of the Roc receiver, and <strong><code>&lt;NAME&gt;</code></strong> is a human-readable name that will be displayed in the PulseAudio GUI.</p>
+
+<p>For example:</p>
+
+<pre><code>load-module module-roc-sink remote_ip=192.168.0.100 sink_properties=device.description=Raspberry
+</code></pre>
+
+<p>This will create a PulseAudio sink that sends all sound written to it to a specific Roc receiver. Local applications like browsers and audio players can then be connected to this sink using usual PulseAudio GUIs like pavucontrol.</p>
+
+<p>Restart PulseAudio:</p>
+
+<pre><code>$ pulseaudio --kill
+$ pulseaudio --start
+</code></pre>
+
+<h3 id="configure-pulseaudio-sink-input">Configure PulseAudio sink-input</h3>
+
+<p>Perform this step if you want to <strong>receive</strong> sound from remote Roc senders, for example from a Roc sink on another computer, and play it on your computer.</p>
+
+<p>Add the following line to <strong><code>/etc/pulse/default.pa</code></strong>:</p>
+
+<pre><code>load-module module-roc-sink-input sink_input_properties=media.name=&lt;NAME&gt;
+</code></pre>
+
+<p>Here, <strong><code>&lt;NAME&gt;</code></strong> is a human-readable name that will be displayed in the PulseAudio GUI.</p>
+
+<p>For example:</p>
+
+<pre><code>load-module module-roc-sink-input sink_input_properties=media.name=Roc
+</code></pre>
+
+<p>This will create a PulseAudio sink-input that receives the sound from arbitrary Roc senders and writes it to a local sink. This sink-input can then be connected to a sink, typically a sound card, using usual PulseAudio GUIs like pavucontrol.</p>
+
+<p>Restart PulseAudio:</p>
+
+<pre><code>$ pulseaudio --kill
+$ pulseaudio --start
+</code></pre>
+
+<h3 id="using-pavucontrol">Using pavucontrol</h3>
+
+<p>Here is how you can connect VLC player to a Roc <strong>sink</strong> named &ldquo;Raspberry&rdquo; (which sends sound to a Raspberry Pi box) using pavucontrol tool:</p>
+
+<p><img src="/articles/roc-tutorial/pavucontrol_roc_sink.png" width="680px"
+    style="border: solid 1px; border-color: #bebab0;"/></p>
+
+<p>And here is how you can connect Roc <strong>sink-input</strong> named &ldquo;Roc&rdquo; (which receives sound from remote Roc sinks) to a specific local sound card:</p>
+
+<p><img src="/articles/roc-tutorial/pavucontrol_roc_sink_input.png" width="680px"
+    style="border: solid 1px; border-color: #bebab0;"/></p>
+
+<h3 id="service-discovery">Service discovery</h3>
+
+<p>It would be much handier if Roc was automatically discovering receivers available in LAN and creating a Roc sink for each one, just like PulseAudio does it for its &ldquo;native&rdquo; tunnel sinks.</p>
+
+<p>In our <a href="https://roc-streaming.org/toolkit/docs/development/roadmap.html">roadmap</a>, we have service discovery API and the corresponding support in tools and PulseAudio modules.</p>
+
+<hr />
+
+<h2 id="raspberry-pi-alsa">Raspberry Pi (ALSA)</h2>
+
+<p>The following instructions are suitable for Raspberry Pi 2 and 3 with Raspbian. If you&rsquo;re using another board or distro, consult the <a href="https://roc-streaming.org/toolkit/docs/building/user_cookbook.html">User cookbook</a>, <a href="https://roc-streaming.org/toolkit/docs/portability/tested_boards.html">Tested boards</a>, and <a href="https://roc-streaming.org/toolkit/docs/portability/cross_compiling.html">Cross-compiling</a> pages from the documentation.</p>
+
+<p>These instructions assume that you want to use Docker to get a pre-packaged (binary) toolchain for cross-compiling. If you want to prepare the toolchain manually, consult the documentation above.</p>
+
+<p>These instructions also assume that you&rsquo;re using <strong>bare ALSA</strong> (without PulseAudio) <strong>on your board</strong>. If you&rsquo;re using PulseAudio instead, consult the <a href="#raspberry-pi-pulseaudio">next section</a>.</p>
+
+<h3 id="install-docker">Install Docker</h3>
+
+<p>Follow the <a href="https://docs.docker.com/install/linux/docker-ce/ubuntu/">official instructions</a> to install Docker from the upstream repo.</p>
+
+<p>Alternatively, you can install Docker packaged by Ubuntu maintainers:</p>
+
+<pre><code>$ sudo apt-get install docker.io
+</code></pre>
+
+<h3 id="cross-compile-roc">Cross-compile Roc</h3>
+
+<pre><code>$ git clone https://github.com/roc-streaming/roc-toolkit.git
+$ cd roc-toolkit
+$ docker run -t --rm -u &quot;${UID}&quot; -v &quot;${PWD}:${PWD}&quot; -w &quot;${PWD}&quot; \
+    rocproject/cross-arm-linux-gnueabihf \
+      scons -Q \
+        --disable-pulseaudio \
+        --disable-tests \
+        --host=arm-linux-gnueabihf \
+        --build-3rdparty=libuv,libunwind,openfec,alsa,sox
+</code></pre>
+
+<h3 id="install-roc">Install Roc</h3>
+
+<p>Copy binaries to the board:</p>
+
+<pre><code>$ scp ./bin/arm-linux-gnueabihf/roc-{recv,send} &lt;ADDRESS&gt;:
+</code></pre>
+
+<p>Here, <strong><code>&lt;ADDRESS&gt;</code></strong> is the IP address of your Raspberry Pi box.</p>
+
+<h3 id="install-dependencies-1">Install dependencies</h3>
+
+<p>To install runtime Roc dependencies, <strong>ssh</strong> to the box and run apt-get:</p>
+
+<pre><code>pi@raspberrypi:~ $ sudo apt-get install libasound2
+</code></pre>
+
+<h3 id="run-roc-recv">Run roc-recv</h3>
+
+<p>Perform this step if you want to <strong>receive</strong> sound from remote Roc senders, for example from a Roc sink on another computer, and play it on your Raspberry Pi box.</p>
+
+<p><strong>ssh</strong> to the box and run roc-recv:</p>
+
+<pre><code>pi@raspberrypi:~ $ /home/pi/roc-recv -vv -s rtp+rs8m::10001 -r rs8m::10002 -d alsa
+</code></pre>
+
+<p>You can test that it works by streaming to it a WAV file <strong>from your desktop</strong>:</p>
+
+<pre><code>$ roc-send -vv -s rtp+rs8m:&lt;ADDRESS&gt;:10001 -r rs8m:&lt;ADDRESS&gt;:10002 -i ./file.wav
+</code></pre>
+
+<p>Here, <strong><code>&lt;ADDRESS&gt;</code></strong> is the IP address of your Raspberry Pi box.</p>
+
+<p>You should hear the sound now. If you didn&rsquo;t, check roc-recv output for errors and ensure that ALSA works on your box. Some useful commands are <code>alsactl init</code>, <code>alsamixer</code>, and <code>aplay</code>.</p>
+
+<p>If everything works, you can now configure Roc sink or roc-send on your other devices to stream sound from them and play it on the Raspberry Pi box.</p>
+
+<h3 id="run-roc-send">Run roc-send</h3>
+
+<p>Perform this step if you want to <strong>send</strong> sound played on your Raspberry Pi box to a remote Roc receiver, for example to a Roc sink-input on another computer.</p>
+
+<p>First <strong>ssh</strong> to the box and configure a loopback ALSA device in <strong><code>/etc/asound.conf</code></strong>:</p>
+
+<pre><code>pcm.aloop {
+   type hw
+   card 2
+}
+
+ctl.aloop {
+   type hw
+   card 2
+}
+
+defaults.pcm.card 2
+defaults.ctl.card 2
+</code></pre>
+
+<p>Then load the loopback module:</p>
+
+<pre><code>pi@raspberrypi:~ $ sudo modprobe snd-aloop
+</code></pre>
+
+<p>&hellip;and run roc-send:</p>
+
+<pre><code>pi@raspberrypi:~ $ /home/pi/roc-send -vv -s rtp+rs8m:&lt;ADDRESS&gt;:10001 -r rs8m:&lt;ADDRESS&gt;:10002 \
+    -d alsa -i 'plughw:CARD=Loopback,DEV=1'
+</code></pre>
+
+<p>Here, <strong><code>&lt;ADDRESS&gt;</code></strong> is the destination IP address running Roc receiver, for example, <strong>your desktop</strong> computer running roc-recv or Roc sink-input.</p>
+
+<p>Note that the exact ALSA device name can be different. You can get the name by running <code>aplay -L</code> and searching for &ldquo;Loopback&rdquo; entries.</p>
+
+<p>You can test that it works by running roc-recv on the computer which address you have passed to roc-send:</p>
+
+<pre><code>$ roc-recv -vv -s rtp+rs8m::10001 -r rs8m::10002
+</code></pre>
+
+<p>&hellip;and then playing something to the loopback device on the <strong>Raspberry Pi</strong> box:</p>
+
+<pre><code>pi@raspberrypi:~ $ aplay file.wav
+</code></pre>
+
+<p>You should hear the sound now. If you didn&rsquo;t, check roc-send output for errors and ensure that the loopback device works on the box. You can test it using <code>aplay</code> and <code>arecord</code> tools.</p>
+
+<p>If everything works, you can now configure Roc sink-input or roc-recv on your other devices to receive and play the sound streamed from you Raspberry Pi box. On the Raspberry Pi box, you can run an audio player configured to use the loopback device.</p>
+
+<h3 id="add-roc-to-boot">Add Roc to boot</h3>
+
+<p>If you want to run roc-recv or roc-send on boot, you can <strong>ssh</strong> to the box and add something like this to <strong>/etc/rc.local</strong>:</p>
+
+<pre><code>while :; do
+  /home/pi/roc-recv -vv -s rtp+rs8m::10001 -r rs8m::10002 -d alsa 2&gt;&gt;/tmp/roc.log
+done
+</code></pre>
+
+<p>If you&rsquo;re using roc-send with the loopback device, you can also add snd-aloop to <strong>/etc/modules</strong>:</p>
+
+<pre><code>snd-aloop
+</code></pre>
+
+<h3 id="web-interface">Web interface?</h3>
+
+<p>For the single-board computer with bare ALSA it probably would be handy to have a daemon with a web interface allowing to configure and monitor Roc senders and receivers.</p>
+
+<p>Such a daemon can be probably written in Go or Python or other higher-level language compared to C++.</p>
+
+<p>Currently there are no plans for such a thing; however, if you think that it would be useful, please let us know. Even better, if you would like to help with this, feel free to contact us. See <a href="https://roc-streaming.org/toolkit/docs/about_project/contacts.html">contacts</a> page or just leave a comment.</p>
+
+<hr />
+
+<h2 id="raspberry-pi-pulseaudio">Raspberry Pi (PulseAudio)</h2>
+
+<p>The following instructions are suitable for Raspberry Pi 2 and 3 with Raspbian. If you&rsquo;re using another board or distro, consult the <a href="https://roc-streaming.org/toolkit/docs/building/user_cookbook.html">User cookbook</a>, <a href="https://roc-streaming.org/toolkit/docs/portability/tested_boards.html">Tested boards</a>, and <a href="https://roc-streaming.org/toolkit/docs/portability/cross_compiling.html">Cross-compiling</a> pages from the documentation.</p>
+
+<p>These instructions assume that you want to use Docker to get a pre-packaged (binary) toolchain for cross-compiling. If you want to prepare the toolchain manually, consult the documentation above.</p>
+
+<p>These instructions also assume that you&rsquo;re using <strong>PulseAudio on your board</strong>. If you&rsquo;re using bare ALSA instead, consult the <a href="#raspberry-pi-alsa">previous section</a>.</p>
+
+<h3 id="install-docker-1">Install Docker</h3>
+
+<p>Follow the <a href="https://docs.docker.com/install/linux/docker-ce/ubuntu/">official instructions</a> to install Docker from the upstream repo.</p>
+
+<p>Alternatively, you can install Docker packaged by Ubuntu maintainers:</p>
+
+<pre><code>$ sudo apt-get install docker.io
+</code></pre>
+
+<h3 id="cross-compile-roc-1">Cross-compile Roc</h3>
+
+<pre><code>$ git clone https://github.com/roc-streaming/roc-toolkit.git
+$ cd roc-toolkit
+$ docker run -t --rm -u &quot;${UID}&quot; -v &quot;${PWD}:${PWD}&quot; -w &quot;${PWD}&quot; \
+    rocproject/cross-arm-linux-gnueabihf \
+      scons -Q \
+        --enable-pulseaudio-modules \
+        --disable-tests \
+        --host=arm-linux-gnueabihf \
+        --build-3rdparty=libuv,libunwind,openfec,alsa,pulseaudio:&lt;VERSION&gt;,sox
+</code></pre>
+
+<p>Here, <strong><code>&lt;VERSION&gt;</code></strong> is the exact PulseAudio version installed <strong>on your board</strong>, e.g. &ldquo;10.0&rdquo;. You can determine it by ssh&rsquo;ing to the box and running <code>pulseaudio --version</code>.</p>
+
+<h3 id="install-roc-1">Install Roc</h3>
+
+<p>Copy binaries to the board:</p>
+
+<pre><code>$ scp ./bin/arm-linux-gnueabihf/libroc.so.*.* &lt;ADDRESS&gt;:
+$ scp ./bin/arm-linux-gnueabihf/module-roc-* &lt;ADDRESS&gt;:
+</code></pre>
+
+<p>and then <strong>ssh</strong> to the box and install libroc and PulseAudio modules into the system:</p>
+
+<pre><code>pi@raspberrypi:~ $ mv libroc.so.*.* /usr/lib/
+pi@raspberrypi:~ $ mv module-roc-* /usr/lib/pulse-&lt;VERSION&gt;/modules/
+</code></pre>
+
+<p>Here, <strong><code>&lt;ADDRESS&gt;</code></strong> is the IP address of your Raspberry Pi box, and <strong><code>&lt;VERSION&gt;</code></strong> is the exact PulseAudio version installed on your board.</p>
+
+<h3 id="install-dependencies-2">Install dependencies</h3>
+
+<p>To install runtime Roc dependencies, <strong>ssh</strong> to the box and run apt-get:</p>
+
+<pre><code>pi@raspberrypi:~ $ sudo apt-get install libasound2 libpulse0 libltdl7
+</code></pre>
+
+<h3 id="configure-pulseaudio-sink-input-1">Configure PulseAudio sink-input</h3>
+
+<p>Perform this step if you want to <strong>receive</strong> sound from remote Roc senders, for example from a Roc sink on another computer, and play it on your Raspberry Pi box.</p>
+
+<p><strong>ssh</strong> to the board and add the following line to <strong><code>/etc/pulse/default.pa</code></strong>:</p>
+
+<pre><code>load-module module-roc-sink-input
+</code></pre>
+
+<p>This will create a PulseAudio sink-input that receives the sound from arbitrary Roc senders and writes it to a local sink. This sink-input can then be connected to a sink, typically a sound card, using PulseAudio command-line tools.</p>
+
+<p>Then <strong>ssh</strong> to the board and restart PulseAudio:</p>
+
+<pre><code>pi@raspberrypi:~ $ pulseaudio --kill
+pi@raspberrypi:~ $ pulseaudio --start
+</code></pre>
+
+<p>and then attach the sink-input to a sound card (PulseAudio will remember this even after restart):</p>
+
+<pre><code>pi@raspberrypi:~ $ pactl move-sink-input &lt;SINK_INPUT_NUM&gt; &lt;SINK_NUM&gt;
+</code></pre>
+
+<p>Here, <strong><code>&lt;SINK_INPUT_NUM&gt;</code></strong> is the number of Roc sink-input, and <strong><code>&lt;SINK_NUM&gt;</code></strong> is the number of the sound card sink. You can determine these numbers by running <code>pactl list sink-inputs</code> and <code>pactl list sinks</code>, respectively.</p>
+
+<p>For example:</p>
+
+<pre><code>pi@raspberrypi:~ $ pactl move-sink-input 0 0
+</code></pre>
+
+<p>You can test that it works by streaming to it a WAV file <strong>from your desktop</strong>:</p>
+
+<pre><code>$ roc-send -vv -s rtp+rs8m:&lt;ADDRESS&gt;:10001 -r rs8m:&lt;ADDRESS&gt;:10002 -i ./file.wav
+</code></pre>
+
+<p>Here, <strong><code>&lt;ADDRESS&gt;</code></strong> is the IP address of your Raspberry Pi box.</p>
+
+<p>You should hear the sound now. If you didn&rsquo;t, check PulseAudio log for errors and ensure that PulseAudio works on your box. It might be useful to kill PulseAudio and run in foreground with increased verbosity: <code>pulseaudio -vvv</code>.</p>
+
+<p>If everything works, you can now configure Roc sink or roc-send on your other devices to stream sound from them and play it on the Raspberry Pi box.</p>
+
+<h3 id="configure-pulseaudio-sink-1">Configure PulseAudio sink</h3>
+
+<p>Perform this step if you want to <strong>send</strong> sound played on your Raspberry Pi box to a remote Roc receiver, for example to a Roc sink-input on another computer.</p>
+
+<p><strong>ssh</strong> to the board and add the following line to <strong><code>/etc/pulse/default.pa</code></strong>:</p>
+
+<pre><code>load-module module-roc-sink remote_ip=&lt;IP&gt;
+</code></pre>
+
+<p>Here, <strong><code>&lt;IP&gt;</code></strong> is the IP address of the Roc receiver which will receive and play the sound from the Raspberry Pi box.</p>
+
+<p>For example:</p>
+
+<pre><code>load-module module-roc-sink remote_ip=192.168.0.100
+</code></pre>
+
+<p>This will create a PulseAudio sink that sends all sound written to it to a specific Roc receiver. Local applications like audio players can then be connected to this sink using usual PulseAudio command-line tools.</p>
+
+<p>Then <strong>ssh</strong> to the board and restart PulseAudio:</p>
+
+<pre><code>pi@raspberrypi:~ $ pulseaudio --kill
+pi@raspberrypi:~ $ pulseaudio --start
+</code></pre>
+
+<p>and then you can make Roc sink the default sink:</p>
+
+<pre><code>pi@raspberrypi:~ $ pactl set-default-sink &lt;SINK_NUM&gt;
+</code></pre>
+
+<p>Here, <strong><code>&lt;SINK_NUM&gt;</code></strong> is the number of Roc sink, which can be determined by running <code>pactl list sinks</code>.</p>
+
+<p>After doing this, newly started PulseAudio clients will automatically use this sink as an audio output. PulseAudio will remember the default sink even after a restart.</p>
+
+<p>You can test your setup by running roc-recv on the computer which address you have passed to module-roc-sink:</p>
+
+<pre><code>$ roc-recv -vv -s rtp+rs8m::10001 -r rs8m::10002
+</code></pre>
+
+<p>&hellip;and then playing something to the loopback device on the <strong>Raspberry Pi</strong> box:</p>
+
+<pre><code>pi@raspberrypi:~ $ aplay file.wav
+</code></pre>
+
+<p>You should hear the sound now. If you didn&rsquo;t, check PulseAudio log for errors and ensure that PulseAudio works on your box. It might be useful to kill PulseAudio and run in foreground with increased verbosity: <code>pulseaudio -vvv</code>.</p>
+
+<p>If everything works, you can now configure Roc sink-input or roc-recv on your other devices to receive and play the sound streamed from you Raspberry Pi box. On the Raspberry Pi box, you can run an audio player.</p>
+
+<hr />
+
+<h2 id="macos">macOS</h2>
+
+<p>The following instructions are suitable for macOS 10.12 and later. If you&rsquo;re using an older version, consult the <a href="https://roc-streaming.org/toolkit/docs/building/user_cookbook.html">User cookbook</a> page from Roc documentation.</p>
+
+<h3 id="prepare-environment">Prepare environment</h3>
+
+<ul>
+<li>install Xcode Command Line Tools (<a href="http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/">instructions</a>) or Xcode (from App Store)</li>
+<li>install Homebrew (<a href="http://osxdaily.com/2018/03/07/how-install-homebrew-mac-os/">instructions</a>)</li>
+<li>install Git (<a href="https://www.atlassian.com/git/tutorials/install-git">instructions</a>)</li>
+</ul>
+
+<h3 id="install-dependencies-3">Install dependencies</h3>
+
+<pre><code>$ brew install scons ragel gengetopt sox libuv cpputest \
+    libtool autoconf automake make cmake
+</code></pre>
+
+<h3 id="clone-build-install-1">Clone, build, install</h3>
+
+<pre><code>$ git clone https://github.com/roc-streaming/roc-toolkit.git
+$ cd roc-toolkit
+$ scons -Q --build-3rdparty=openfec
+$ sudo scons -Q --build-3rdparty=openfec install
+</code></pre>
+
+<h3 id="run-roc-recv-1">Run roc-recv</h3>
+
+<p>If you want to <strong>receive</strong> sound from remote Roc senders, for example from a Roc sink on another computer and play it on your macOS computer, run roc-recv:</p>
+
+<pre><code>$ roc-recv -vv -s rtp+rs8m::10001 -r rs8m::10002
+</code></pre>
+
+<p>You can test that it works by streaming to it a WAV file:</p>
+
+<pre><code>$ roc-send -vv -s rtp+rs8m:&lt;ADDRESS&gt;:10001 -r rs8m:&lt;ADDRESS&gt;:10002 -i ./file.wav
+</code></pre>
+
+<p>Here, <strong><code>&lt;ADDRESS&gt;</code></strong> is the IP address of your macOS computer.</p>
+
+<p>If everything works, you can now configure Roc sink or roc-send on your other devices to stream sound from them and play it on the macOS computer.</p>
+
+<h3 id="run-roc-send-1">Run roc-send</h3>
+
+<p>If you want to <strong>send</strong> sound played on your macOS computer to a remote Roc receiver, for example to a Raspberry Pi box, you would need to create a <strong>virtual device</strong>.</p>
+
+<p>You can do it by <a href="http://osxdaily.com/2013/02/25/record-system-audio-mac-os-x-soundflower/"><strong>installing Soundflower</strong></a> (download a <a href="https://github.com/mattingalls/Soundflower/releases"><strong>recent release here</strong></a>).</p>
+
+<p>Then you can run roc-send:</p>
+
+<pre><code>$ roc-send -vv -s rtp+rs8m:&lt;ADDRESS&gt;:10001 -r rs8m:&lt;ADDRESS&gt;:10002 -d coreaudio -i &quot;Soundflower (2ch)&quot;
+</code></pre>
+
+<p>Here, <strong><code>&lt;ADDRESS&gt;</code></strong> is the destination IP address running Roc receiver, and &ldquo;Soundflower (2ch)&rdquo; is the Soundflower device name. It can be displayed by <code>system_profiler SPAudioDataType</code> command.</p>
+
+<p>You can test that it works by running roc-recv on the computer which address you have passed to roc-send:</p>
+
+<pre><code>$ roc-recv -vv -s rtp+rs8m::10001 -r rs8m::10002
+</code></pre>
+
+<p>&hellip;and then playing something on your macOS computer, e.g. using an audio player or a browser.</p>
+
+<p>Don&rsquo;t forget to make the &ldquo;Soundflower (2ch)&rdquo; the default output device in &ldquo;System Preferences -&gt; Sound -&gt; Output&rdquo;, as described in the instruction linked above.</p>
+
+<p><a data-lightbox="roc_devicec" href="/articles/roc-tutorial/macos_soundflower.jpg">
+  <img src="/articles/roc-tutorial/macos_soundflower.jpg" width="500px"/>
+</a></p>
+
+<p>You should hear the sound now. If you didn&rsquo;t, check roc-send output for errors and ensure that the Soundflower device works.</p>
+
+<p>If everything works, you can now configure Roc sink-input or roc-recv on your other devices to receive and play the sound streamed from your macOS computer.</p>
+
+<h3 id="macos-app">macOS app?</h3>
+
+<p>It would be much handier if Roc was automatically discovering receivers available in LAN and creating a virtual device for each one, just like PulseAudio does it for its &ldquo;native&rdquo; tunnel sinks.</p>
+
+<p>It is possible to do so by adding service discovery to Roc, adopting virtual device implementation from <a href="https://github.com/mattingalls/Soundflower">Soundflower</a>, and creating a macOS app that puts all these things together. The service discovery support is in our <a href="https://roc-streaming.org/toolkit/docs/development/roadmap.html">roadmap</a>; the rest is not so far.</p>
+
+<p>If you need such an app, please let us know because currently, it&rsquo;s not clear how much people would use it. Even better, if you would like to help with this, feel free to contact us. See <a href="https://roc-streaming.org/toolkit/docs/about_project/contacts.html">contacts</a> page or just leave a comment.</p>
+
+<hr />
+
+<h2 id="android-termux">Android / Termux</h2>
+
+<p>Android support is still work in progress and was not properly tested yet. I&rsquo;ve tried only Roc PulseAudio sink-input (Roc receiver) module so far. It requires Termux and PulseAudio Android port to be installed on the device.</p>
+
+<h3 id="install-termux">Install Termux</h3>
+
+<p>Install <a href="https://termux.com/">Termux app</a> from Google Play or F-Droid.</p>
+
+<h3 id="install-pulseaudio-and-roc">Install PulseAudio and Roc</h3>
+
+<p>Open Termux on your Android device and enter these commands:</p>
+
+<pre><code>$ pkg install unstable-repo
+$ pkg install roc
+$ pkg install pulseaudio
+</code></pre>
+
+<p>It will look like this:</p>
+
+<p><a data-lightbox="roc_devicec" href="/articles/roc-tutorial/termux_pkg.jpg">
+  <img src="/articles/roc-tutorial/termux_pkg.jpg" width="500px"/>
+</a></p>
+
+<h3 id="configure-pulseaudio-sink-input-2">Configure PulseAudio sink-input</h3>
+
+<p>Add the following line to <strong><code>/data/data/com.termux/files/usr/etc/pulse/default.pa</code></strong>:</p>
+
+<pre><code>load-module module-roc-sink-input
+</code></pre>
+
+<p>This will create a PulseAudio sink-input that <strong>receives</strong> the sound from arbitrary Roc senders and writes it to a local sound card.</p>
+
+<p>Restart PulseAudio:</p>
+
+<pre><code>$ pulseaudio --kill
+$ pulseaudio --start
+</code></pre>
+
+<p>Now you can configure Roc sink or roc-send on your other devices to stream sound from them and play it on the Android device.</p>
+
+<h3 id="android-app">Android app?</h3>
+
+<p>The described solution may work but it is, obviously, not very convenient. It would be much better to have a native Android app with a GUI and do not require Termux and PulseAudio.</p>
+
+<p>We have plans for an app, but there is no estimate yet.</p>
+
+<p>If you need such an app, please let us know because currently, it&rsquo;s not clear how much people would use it. Even better, if you would like to help with this, feel free to contact us. See <a href="https://roc-streaming.org/toolkit/docs/about_project/contacts.html">contacts</a> page or just leave a comment.</p>
+
+      </section>
+    </article>
+  </section>
+  
+    
+  <footer id="footer">
+    <script>
+      $('h2, h3, h4').each(function() {
+        var id = $(this).attr('id');
+        $(this).prepend(
+          '<a class="anchor" href="#' + id +'"><i class="fa fa-paragraph"></i></a>'
+        );
+      })
+    </script>
+
+    <div id="disqus_thread" class="no-print"></div>
+    <script>
+    (function() {
+        var d = document, s = d.createElement('script');
+        s.src = '//gavv.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    </script>
+    <noscript>Enable JavaScript to view the
+        <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+    </noscript>
+  </footer>
+
+
+  
+
+      </div>
+    </body>
+  </html>
+

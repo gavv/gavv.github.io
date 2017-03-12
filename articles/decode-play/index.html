@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+
+  <html lang="en-US">
+    <head>
+      <meta charset="UTF-8"/>
+
+      <meta name="description" content="Table of contents
+ Overview FFmpeg SoX ALSA (libasound) PulseAudio libsndfile Other libraries Notes  Overview I was playing with various media libraries recently and have prepared several snippets demonstrating how one can decode and play an audio file in two separate steps.
+The source code is available on GitHub here and there.
+The following libraries are used:
+ FFmpeg SoX ALSA (libasound) PulseAudio libsndfile  Each snippet is a small program."/>
+      <meta name="author" content="Victor Gaydov"/>
+
+      <meta property="og:url" content="http://gavv.github.io/articles/decode-play/"/>
+      <meta property="og:title" content="
+  
+    Decoding and playing audio files in Linux
+  
+"/>
+      <meta property="og:description" content="Table of contents
+ Overview FFmpeg SoX ALSA (libasound) PulseAudio libsndfile Other libraries Notes  Overview I was playing with various media libraries recently and have prepared several snippets demonstrating how one can decode and play an audio file in two separate steps.
+The source code is available on GitHub here and there.
+The following libraries are used:
+ FFmpeg SoX ALSA (libasound) PulseAudio libsndfile  Each snippet is a small program."/>
+      <meta property="og:site_name" content="Victor Gaydov"/>
+
+      <link rel="canonical" href="http://gavv.github.io/articles/decode-play/"/>
+
+      <title>
+  
+    Decoding and playing audio files in Linux
+  
+</title>
+
+      <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+<link rel="stylesheet" href="/css/main.css"/>
+<link rel="stylesheet" href="/css/prism.css"/>
+<link rel="stylesheet" href="/css/lightbox.min.css"/>
+
+<link rel="shortcut icon" href="/images/favicon.ico">
+
+<link rel="stylesheet"
+      href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css">
+
+<link rel="stylesheet"
+      href="//fonts.googleapis.com/css?family=Open+Sans|Lustria|Roboto+Mono">
+
+<script src="/js/lightbox-plus-jquery.min.js">
+</script>
+
+<script>
+    lightbox.option({
+      'wrapAround': true,
+      'resizeDuration': 0,
+      'fadeDuration': 0,
+      'imageFadeDuration': 0,
+    })
+</script>
+
+<script src="/js/prism.js">
+</script>
+
+<script>
+var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+if (width < 480) {
+  document.write('<script src="/js/hyphenator-loader.js"><\/script>');
+}
+</script>
+
+<script src="/js/analytics.js">
+</script>
+
+    </head>
+    <body>
+      <div id="toplevel">
+        <header id="header" class="no-print">
+  <div id="caption">
+    Victor Gaydov
+  </div>
+  <div id="menu">
+    <div>
+      <div>
+        
+          <a href="/about/" class="menu-item">
+        
+            About
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/software/" class="menu-item">
+        
+            Software
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/articles/" class="menu-item menu-selected">
+        
+            Articles
+          </a>
+      </div>
+    </div>
+    <div id="header-buttons">
+      <div>
+        <a href="https://twitter.com/gavv42" class="image-button">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="/index.xml" class="image-button">
+          <i class="rss-button fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+        
+  <section role="main">
+    <article>
+      
+        
+  <header class="post-header">
+    <h1 class="post-title">
+      
+        Decoding and playing audio files in Linux
+      
+    </h1>
+    <div class="post-time">
+      <time datetime="2016-07-07">
+        07 Jul 2016
+      </time>
+    </div>
+    <div class="post-tags">
+      
+      <div class="post-tag">
+        <a href="/tags/linux">linux</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/audio">audio</a>
+      </div>
+      
+    </div>
+  </header>
+
+
+      
+      <section>
+        
+
+<p><strong>Table of contents</strong></p>
+
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#ffmpeg">FFmpeg</a></li>
+<li><a href="#sox">SoX</a></li>
+<li><a href="#alsa-libasound">ALSA (libasound)</a></li>
+<li><a href="#pulseaudio">PulseAudio</a></li>
+<li><a href="#libsndfile">libsndfile</a></li>
+<li><a href="#other-libraries">Other libraries</a></li>
+<li><a href="#notes">Notes</a></li>
+</ul>
+
+<hr />
+
+<h2 id="overview">Overview</h2>
+
+<p>I was playing with various media libraries recently and have prepared several snippets demonstrating how one can decode and play an audio file in two separate steps.</p>
+
+<p>The source code is available on GitHub <a href="https://github.com/gavv/snippets/tree/master/decode_play">here</a> and <a href="https://github.com/gavv/snippets/tree/master/pa">there</a>.</p>
+
+<p>The following libraries are used:</p>
+
+<ul>
+<li><a href="https://www.ffmpeg.org/">FFmpeg</a></li>
+<li><a href="http://sox.sourceforge.net/">SoX</a></li>
+<li><a href="http://www.alsa-project.org/main/index.php/Main_Page">ALSA</a> (libasound)</li>
+<li><a href="https://www.freedesktop.org/wiki/Software/PulseAudio/">PulseAudio</a></li>
+<li><a href="http://www.mega-nerd.com/libsndfile/">libsndfile</a></li>
+</ul>
+
+<p>Each snippet is a small program. There are two kinds of them:</p>
+
+<ul>
+<li>decoders demonstrate reading an audio file and decoding raw PCM samples from it</li>
+<li>players demonstrate sending the raw PCM samples to the sound card</li>
+</ul>
+
+<p>Since all snippets use the same sample format and use stdin or stdout, any decoder may be combined with any player via a pipe, for example:</p>
+
+<pre><code>$ ./ffmpeg_decode     foo.mp3   |  ./alsa_play_tuned
+$ ./sox_decode_chain  foo.mp3   |  ./ffmpeg_play
+$ ./sndfile_decode    foo.flac  |  ./sox_play
+</code></pre>
+
+<p>Below you can find a brief description of every snippet and some side notes.</p>
+
+<hr />
+
+<h2 id="ffmpeg">FFmpeg</h2>
+
+<h3 id="ffmpeg-decode-https-github-com-gavv-snippets-blob-master-decode-play-ffmpeg-decode-cpp"><a href="https://github.com/gavv/snippets/blob/master/decode_play/ffmpeg_decode.cpp"><code>ffmpeg_decode</code></a></h3>
+
+<p>This snippet decodes a file using FFmpeg (with automatic resampling and channel mapping).</p>
+
+<p>Initialization:</p>
+
+<ul>
+<li>open the input file context (<code>AVFormatContext</code>) and look for an audio stream in it</li>
+<li>find a decoder (<code>AVCodec</code>) for the audio stream</li>
+<li>initialize the decoder context (<code>AVCodecContext</code>) for the decoder (<code>AVCodec</code>)</li>
+<li>initialize the swresample context (<code>SwrContext</code>) that will convert from decoder output to our PCM format and perform resampling if necessary</li>
+</ul>
+
+<p>Decoding loop:</p>
+
+<ul>
+<li>read an audio packet (<code>AVPacket</code>) from the input file (<code>AVFormatContext</code>)</li>
+<li>decode an audio frame (<code>AVFrame</code>) from the the audio packet (<code>AVPacket</code>) using decoder context (<code>AVCodecContext</code>)</li>
+<li>convert the decoded frame (<code>AVFrame</code>) to raw samples (byte buffer) using swresample context (<code>SwrContext</code>)</li>
+<li>write the raw samples to stdout</li>
+</ul>
+
+<p>Notes:</p>
+
+<ul>
+<li>swresample context (<code>SwrContext</code>) enables buffering if input data is larger than the passed buffer, so we also read all buffered data (if any) before processing the next frame. The buffering can be avoided by carefully choosing the buffer size.</li>
+</ul>
+
+<h3 id="ffmpeg-play-https-github-com-gavv-snippets-blob-master-decode-play-ffmpeg-play-cpp"><a href="https://github.com/gavv/snippets/blob/master/decode_play/ffmpeg_play.cpp"><code>ffmpeg_play</code></a></h3>
+
+<p>This snippet plays decoded samples using FFmpeg.</p>
+
+<p>Initialization:</p>
+
+<ul>
+<li>open an output device (<code>AVOutputFormat</code>)</li>
+<li>create the output device context (<code>AVFormatContext</code>) for the output device</li>
+<li>add an audio stream (<code>AVStream</code>) for the output device context, which contains the encoder context (<code>AVCodecContext</code>)</li>
+<li>initialize the encoder context (<code>AVCodecContext</code>) parameters for our PCM format</li>
+</ul>
+
+<p>Playback loop:</p>
+
+<ul>
+<li>read raw samples (byte buffer) from stdin</li>
+<li>construct an audio packet (<code>AVPacket</code>) that references our buffer with raw samples</li>
+<li>write the audio packet to the output device context (<code>AVFormatContext</code>)</li>
+</ul>
+
+<h3 id="ffmpeg-play-encoder-https-github-com-gavv-snippets-blob-master-decode-play-ffmpeg-play-encoder-cpp"><a href="https://github.com/gavv/snippets/blob/master/decode_play/ffmpeg_play_encoder.cpp"><code>ffmpeg_play_encoder</code></a></h3>
+
+<p>This snippet is a bit complicated version of the previous one, demonstrating encoder usage.</p>
+
+<p>Initialization:</p>
+
+<ul>
+<li>open an output device (<code>AVOutputFormat</code>)</li>
+<li>create the output device context (<code>AVFormatContext</code>) for the output device</li>
+<li>add an audio stream (<code>AVStream</code>) for output device context, which contains the encoder context (<code>AVCodecContext</code>)</li>
+<li>initialize the encoder context (<code>AVCodecContext</code>) parameters for our PCM format</li>
+<li>open an encoder (<code>AVCodec</code>) for our output format and attach it to the encoder context (<code>AVCodecContext</code>)</li>
+</ul>
+
+<p>Playback loop:</p>
+
+<ul>
+<li>read raw samples (byte buffer) from stdin</li>
+<li>construct an audio frame (<code>AVFrame</code>) that references our buffer with raw samples</li>
+<li>encode the audio frame (<code>AVFrame</code>) into audio packet (<code>AVPacket</code>) using encoder context (<code>AVCodecContext</code>)</li>
+<li>write the audio packet to the output device context (<code>AVFormatContext</code>)</li>
+</ul>
+
+<hr />
+
+<h2 id="sox">SoX</h2>
+
+<h3 id="sox-decode-simple-https-github-com-gavv-snippets-blob-master-decode-play-sox-decode-simple-cpp"><a href="https://github.com/gavv/snippets/blob/master/decode_play/sox_decode_simple.cpp"><code>sox_decode_simple</code></a></h3>
+
+<p>This snippet decodes a file using SoX (without resampling and channel mapping).</p>
+
+<p>Initialization:</p>
+
+<ul>
+<li>open an input file (<code>sox_format_t</code>)</li>
+</ul>
+
+<p>Decoding loop:</p>
+
+<ul>
+<li>read samples from the input file</li>
+<li>write samples to stdout</li>
+</ul>
+
+<h3 id="sox-decode-chain-https-github-com-gavv-snippets-blob-master-decode-play-sox-decode-chain-cpp"><a href="https://github.com/gavv/snippets/blob/master/decode_play/sox_decode_chain.cpp"><code>sox_decode_chain</code></a></h3>
+
+<p>This snippet also decodes file using SoX, but uses effects chain and supports resampling and channel mapping.</p>
+
+<p>It opens input file and constructs effects chain:</p>
+
+<ol>
+<li><code>input</code> effect reads samples from the input file</li>
+<li><code>gain</code> and <code>rate</code> effects are added if the input file rate differs from the output rate, to perform resampling</li>
+<li><code>channels</code> effect is added if the input file channel set differs from the output channel set, to perform channel mapping</li>
+<li><code>stdout</code> effect writes samples to stdout</li>
+</ol>
+
+<p>When the effects chain is constructed, it is executed using <code>sox_flow_effects()</code>.</p>
+
+<h3 id="sox-play-https-github-com-gavv-snippets-blob-master-decode-play-sox-play-cpp"><a href="https://github.com/gavv/snippets/blob/master/decode_play/sox_play.cpp"><code>sox_play</code></a></h3>
+
+<p>This snippet plays decoded samples using SoX.</p>
+
+<p>Initialization:</p>
+
+<ul>
+<li>open an output device (<code>sox_format_t</code>)</li>
+</ul>
+
+<p>Playback loop:</p>
+
+<ul>
+<li>read samples from stdin</li>
+<li>write samples to the output device</li>
+</ul>
+
+<hr />
+
+<h2 id="alsa-libasound">ALSA (libasound)</h2>
+
+<h3 id="alsa-play-simple-https-github-com-gavv-snippets-blob-master-decode-play-alsa-play-simple-cpp"><a href="https://github.com/gavv/snippets/blob/master/decode_play/alsa_play_simple.cpp"><code>alsa_play_simple</code></a></h3>
+
+<p>This snippet plays decoded samples using ALSA with the default parameters.</p>
+
+<p>Initialization:</p>
+
+<ul>
+<li>open an output device (<code>snd_pcm_t</code>)</li>
+<li>set the output format</li>
+<li>get the period size</li>
+</ul>
+
+<p>Playback loop:</p>
+
+<ul>
+<li>read samples from stdin (full period)</li>
+<li>write samples to the output device</li>
+</ul>
+
+<h3 id="alsa-play-tuned-https-github-com-gavv-snippets-blob-master-decode-play-alsa-play-tuned-cpp"><a href="https://github.com/gavv/snippets/blob/master/decode_play/alsa_play_tuned.cpp"><code>alsa_play_tuned</code></a></h3>
+
+<p>This snippet also uses ALSA to play decoded samples but with non-default configuration.</p>
+
+<p>The most important thing here is <em>ring buffer</em> parameters.</p>
+
+<p>When a program plays sound using libasound, samples are actually written to the internal ring buffer. ALSA reads samples from the buffer every timer tick.</p>
+
+<p>If a program tries to write to a full buffer, a <em>buffer overrun</em> occurs. If ALSA tries to read from an empty buffer, a <em>buffer underrun</em> occurs. These two events are also called <em>xruns</em>. As the result, the user hears sound lags and sees &ldquo;alsa xrun&rdquo; messages in console.</p>
+
+<p>To avoid xruns, you can tweak four ring buffer parameters:</p>
+
+<ul>
+<li><code>buffer_size</code> - the number of samples in the ring buffer</li>
+<li><code>buffer_time</code> - duration of the whole buffer in microseconds</li>
+<li><code>period_size</code> - the number of samples that ALSA reads from the buffer every timer tick (no more than the <code>buffer_size</code>)</li>
+<li><code>period_time</code> - duration of the timer tick in microseconds (no more than the <code>buffer_time</code>)</li>
+</ul>
+
+<p>And also two related parameters:</p>
+
+<ul>
+<li><code>start_threshold</code> - before reading the very first sample from the buffer, ALSA waits until there are <code>start_threshold</code> samples in it</li>
+<li><code>avail_min</code> - before reading the next batch of samples from the buffer (every timer tick), ALSA waits until there are at least <code>avail_min</code> samples in it</li>
+</ul>
+
+<p>These parameters are always a compromise between the robustness and latency.</p>
+
+<p>Here are my recommendations:</p>
+
+<ul>
+<li><code>period_size</code> should be set to the number of samples that the program writes to pcm at a time; the higher it is, the higher the latency is, but the lesser the probability of xrun is</li>
+<li><code>buffer_size</code> should be a multiple of <code>period_size</code> and several times more</li>
+<li><code>start_threshold</code> should be set to <code>buffer_size</code></li>
+<li><code>avail_min</code> should be set to <code>period_size</code></li>
+</ul>
+
+<hr />
+
+<h2 id="pulseaudio">PulseAudio</h2>
+
+<h3 id="pa-play-simple-https-github-com-gavv-snippets-blob-master-pa-pa-play-simple-c"><a href="https://github.com/gavv/snippets/blob/master/pa/pa_play_simple.c"><code>pa_play_simple</code></a></h3>
+
+<p>This snippet plays decoded samples using PulseAudio <a href="https://freedesktop.org/software/pulseaudio/doxygen/index.html#simple_sec">Simple API</a>.</p>
+
+<p>Initialization:</p>
+
+<ul>
+<li>create <code>pa_simple</code> object which represents a connection to PulseAudio server plus playback stream</li>
+</ul>
+
+<p>Playback loop:</p>
+
+<ul>
+<li>read samples from stdin</li>
+<li>write samples to PulseAudio server</li>
+</ul>
+
+<h3 id="pa-play-async-cb-https-github-com-gavv-snippets-blob-master-pa-pa-play-async-cb-c"><a href="https://github.com/gavv/snippets/blob/master/pa/pa_play_async_cb.c"><code>pa_play_async_cb</code></a></h3>
+
+<p>This snippet plays decoded samples using PulseAudio <a href="https://freedesktop.org/software/pulseaudio/doxygen/index.html#async_sec">Asynchronous API</a>.</p>
+
+<p>Initialization:</p>
+
+<ul>
+<li>create <code>pa_mainloop</code> object that will be used to run our program</li>
+<li>create <code>pa_context</code> object that represents a connection to the server</li>
+<li>setup callback for context state updates</li>
+<li>run the mainloop</li>
+</ul>
+
+<p>When the connection is established, our callback is invoked. Now we should create a stream:</p>
+
+<ul>
+<li>create <code>pa_stream</code> object that represents a playback stream</li>
+<li>configure buffer parameters and stream flags</li>
+<li>setup callback to be invoked when the server wants more samples</li>
+</ul>
+
+<p>There are four parameters of the server-side stream buffer:</p>
+
+<ul>
+<li><code>maxlength</code> - maximum buffer length (in bytes)</li>
+<li><code>tlength</code> - desired buffer length, i.e. the target latency (in bytes)</li>
+<li><code>prebuf</code> - start threshold, i.e. the minimum number of bytes to be accumulated in buffer before starting the stream (in bytes)</li>
+<li><code>minreq</code> - minimum number of samples to be requested from the client each time (in bytes)</li>
+</ul>
+
+<p>We also enable three stream flags:</p>
+
+<ul>
+<li><p><code>PA_STREAM_AUTO_TIMING_UPDATE</code></p>
+
+<p>Automatically update current latency (stream buffer size) from the server. We just print current latency to stderr.</p></li>
+
+<li><p><code>PA_STREAM_INTERPOLATE_TIMING</code></p>
+
+<p>Interpolate reported latency values between timing updates. We want the latency values printed to stderr to change smoothly.</p></li>
+
+<li><p><code>PA_STREAM_ADJUST_LATENCY</code></p>
+
+<p>With this flag, <code>tlength</code> becomes the target size for the stream buffer plus device buffer, instead of just stream buffer. PulseAudio will do two things:</p>
+
+<ul>
+<li><p>adjust the device buffer size (ALSA ring buffer size) to be the minimum <em>tlength</em> value among of the all connected streams</p></li>
+
+<li><p>request samples from the client in such way that there is always about <em>tlength - dlength</em> bytes remaining in the stream buffer, where <em>dlength</em> is the device buffer size</p></li>
+</ul></li>
+</ul>
+
+<p>When PulseAudio server wants more samples, it invokes our callback which does the following:</p>
+
+<ul>
+<li>ask PulseAudio to allocate a memory for next batch of samples</li>
+<li>read requested amount of samples from stdin to the buffer</li>
+<li>write the buffer to PulseAudio</li>
+</ul>
+
+<p>We could also do memory allocation by ourselves. However, delegating this function to PulseAudio prevents us from unnecessary copying when PulseAudio uses the zero-copy mode. Zero copy is usually a default for local clients.</p>
+
+<h3 id="pa-play-async-poll-https-github-com-gavv-snippets-blob-master-pa-pa-play-async-poll-c"><a href="https://github.com/gavv/snippets/blob/master/pa/pa_play_async_poll.c"><code>pa_play_async_poll</code></a></h3>
+
+<p>This snippet is just like previous one, but it uses polling instead of callbacks. Polling is performed between mainloop iterations.</p>
+
+<p>This approach could be also used with a <a href="https://freedesktop.org/software/pulseaudio/doxygen/threaded_mainloop.html">threaded mainloop</a>. In this case, polling may be performed from another thread after obtaining a lock.</p>
+
+<hr />
+
+<h2 id="libsndfile">libsndfile</h2>
+
+<h3 id="sndfile-decode-https-github-com-gavv-snippets-blob-master-decode-play-sndfile-decode-cpp"><a href="https://github.com/gavv/snippets/blob/master/decode_play/sndfile_decode.cpp"><code>sndfile_decode</code></a></h3>
+
+<p>This snippet decodes a file using libsndfile.</p>
+
+<p>Initialization:</p>
+
+<ul>
+<li>open an input file (<code>SNDFILE</code>)</li>
+</ul>
+
+<p>Decoding loop:</p>
+
+<ul>
+<li>read samples from the input file</li>
+<li>write samples to stdout</li>
+</ul>
+
+<hr />
+
+<h2 id="other-libraries">Other libraries</h2>
+
+<p>There are no snippets for these libraries, but they may be also useful.</p>
+
+<p>Portable audio I/O:</p>
+
+<ul>
+<li><a href="http://libsound.io/">libsoundio</a></li>
+<li><a href="https://www.xiph.org/ao/">libao</a></li>
+<li><a href="http://www.portaudio.com/">PortAudio</a></li>
+<li><a href="https://github.com/thestk/rtaudio">RtAudio</a></li>
+</ul>
+
+<p>Media frameworks:</p>
+
+<ul>
+<li><a href="https://www.libsdl.org/">SDL</a></li>
+<li><a href="https://gstreamer.freedesktop.org/">GStreamer</a></li>
+<li><a href="http://doc.qt.io/qt-5/qtmultimedia-index.html">Qt Multimedia</a></li>
+<li><a href="https://www.openal.org/">OpenAL</a></li>
+</ul>
+
+<hr />
+
+<h2 id="notes">Notes</h2>
+
+<p>SoX can use libsndfile for reading files. FFmpeg can use SoX for more precise resampling.</p>
+
+<p>Both SoX and FFmpeg can use ALSA and PulseAudio for audio output. But note that FFmpeg tools use SDL for audio output instead.</p>
+
+<p>PulseAudio usually uses ALSA for audio output. It may also use SoX for high-quality resampling.</p>
+
+<p>All libraries listed here (with or without snippets) are cross-platform.</p>
+
+      </section>
+    </article>
+  </section>
+  
+    
+  <footer id="footer">
+    <script>
+      $('h2, h3, h4').each(function() {
+        var id = $(this).attr('id');
+        $(this).prepend(
+          '<a class="anchor" href="#' + id +'"><i class="fa fa-paragraph"></i></a>'
+        );
+      })
+    </script>
+
+    <div id="disqus_thread" class="no-print"></div>
+    <script>
+    (function() {
+        var d = document, s = d.createElement('script');
+        s.src = '//gavv.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    </script>
+    <noscript>Enable JavaScript to view the
+        <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+    </noscript>
+  </footer>
+
+
+  
+
+      </div>
+    </body>
+  </html>
+

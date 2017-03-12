@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+
+  <html lang="en-US">
+    <head>
+      <meta charset="UTF-8"/>
+
+      <meta name="description" content="Intro Last few years I was working on Roc Toolkit, an open-source solution for real-time media streaming over the network. Due to lack of free time, we postponed release several times, but now it&rsquo;s almost ready. This article is, inter alia, some kind of a pre-release announcement.
+You can read more about the project here. The project scope is quite wide. It provides a general-purpose library and tools that can be used in numerous use-cases."/>
+      <meta name="author" content="Victor Gaydov"/>
+
+      <meta property="og:url" content="http://gavv.github.io/articles/new-network-transport/"/>
+      <meta property="og:title" content="
+  
+    Working on a new network transport for PulseAudio and ALSA
+  
+"/>
+      <meta property="og:description" content="Intro Last few years I was working on Roc Toolkit, an open-source solution for real-time media streaming over the network. Due to lack of free time, we postponed release several times, but now it&rsquo;s almost ready. This article is, inter alia, some kind of a pre-release announcement.
+You can read more about the project here. The project scope is quite wide. It provides a general-purpose library and tools that can be used in numerous use-cases."/>
+      <meta property="og:site_name" content="Victor Gaydov"/>
+
+      <link rel="canonical" href="http://gavv.github.io/articles/new-network-transport/"/>
+
+      <title>
+  
+    Working on a new network transport for PulseAudio and ALSA
+  
+</title>
+
+      <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+<link rel="stylesheet" href="/css/main.css"/>
+<link rel="stylesheet" href="/css/prism.css"/>
+<link rel="stylesheet" href="/css/lightbox.min.css"/>
+
+<link rel="shortcut icon" href="/images/favicon.ico">
+
+<link rel="stylesheet"
+      href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css">
+
+<link rel="stylesheet"
+      href="//fonts.googleapis.com/css?family=Open+Sans|Lustria|Roboto+Mono">
+
+<script src="/js/lightbox-plus-jquery.min.js">
+</script>
+
+<script>
+    lightbox.option({
+      'wrapAround': true,
+      'resizeDuration': 0,
+      'fadeDuration': 0,
+      'imageFadeDuration': 0,
+    })
+</script>
+
+<script src="/js/prism.js">
+</script>
+
+<script>
+var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+if (width < 480) {
+  document.write('<script src="/js/hyphenator-loader.js"><\/script>');
+}
+</script>
+
+<script src="/js/analytics.js">
+</script>
+
+    </head>
+    <body>
+      <div id="toplevel">
+        <header id="header" class="no-print">
+  <div id="caption">
+    Victor Gaydov
+  </div>
+  <div id="menu">
+    <div>
+      <div>
+        
+          <a href="/about/" class="menu-item">
+        
+            About
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/software/" class="menu-item">
+        
+            Software
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/articles/" class="menu-item menu-selected">
+        
+            Articles
+          </a>
+      </div>
+    </div>
+    <div id="header-buttons">
+      <div>
+        <a href="https://twitter.com/gavv42" class="image-button">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="/index.xml" class="image-button">
+          <i class="rss-button fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+        
+  <section role="main">
+    <article>
+      
+        
+  <header class="post-header">
+    <h1 class="post-title">
+      
+        Working on a new network transport for PulseAudio and ALSA
+      
+    </h1>
+    <div class="post-time">
+      <time datetime="2019-05-03">
+        03 May 2019
+      </time>
+    </div>
+    <div class="post-tags">
+      
+      <div class="post-tag">
+        <a href="/tags/linux">linux</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/audio">audio</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/networking">networking</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/roc">roc</a>
+      </div>
+      
+    </div>
+  </header>
+
+
+      
+      <section>
+        
+
+<h2 id="intro">Intro</h2>
+
+<p>Last few years I was working on <a href="https://roc-streaming.org/">Roc Toolkit</a>, an open-source solution for real-time media streaming over the network. Due to lack of free time, we postponed release several times, but now it&rsquo;s almost ready. This article is, inter alia, some kind of a pre-release announcement.</p>
+
+<p>You can read more about the project <a href="https://roc-streaming.org/toolkit/docs/about_project.html">here</a>. The project scope is quite wide. It provides a general-purpose library and tools that can be used in numerous use-cases. However, to start with something feasible and practical, we decided to focus the first few releases on the home audio use-case.</p>
+
+<p>Other tools exist that solve the same or similar tasks, including built-in PulseAudio transports. However, they usually don&rsquo;t provide a good service quality when the latency is not high (I&rsquo;ve tested latencies from 100 to 300 ms so far) and the network is not reliable (in particular on Wi-Fi). This is the use-case where Roc can help you.</p>
+
+<p>Roc has the following tools for home audio:</p>
+
+<ul>
+<li><p>Two command-line tools, the first reads a stream from an audio device and transmits it to the network, and the second receives the stream and plays it. These tools can be used with PulseAudio, with bare ALSA, with macOS CoreAudio, and probably with other backends too.</p></li>
+
+<li><p>PulseAudio sink and sink input that virtually do the same but provide seamless integration into the usual PulseAudio workflow.</p></li>
+</ul>
+
+<p>This article explains what features are available in Roc, how it is compared to the other software, how to use it, and what plans we have.</p>
+
+<h2 id="example-setup">Example setup</h2>
+
+<p>Here is my demo setup:</p>
+
+<ul>
+<li><p>An Orange Pi box with an external Wi-Fi antenna, a USB soundcard, and large speakers. It runs PulseAudio with a Roc sink input.</p></li>
+
+<li><p>Two Raspberry Pi boxes with internal Wi-Fi antennas and smaller speakers. They both run bare ALSA (without PulseAudio) and the roc-recv command-line tool.</p></li>
+
+<li><p>A laptop running PulseAudio with three Roc sinks, one for each box.</p></li>
+</ul>
+
+<div style="display: flex; padding-top: 5px; padding-bottom: 5px;">
+  <div style="margin-right: 5px;">
+    <div>
+      <a data-lightbox="opi-l2" href="/articles/new-network-transport/photos/opi-l2.jpg">
+        <img src="/articles/new-network-transport/photos/opi-l2.jpg"/>
+      </a>
+    </div>
+    <i>Orange Pi Lite2</i>
+  </div>
+  <div style="margin-left: 5px; margin-right: 5px;">
+    <div>
+      <a data-lightbox="rpi-3b" href="/articles/new-network-transport/photos/rpi-3b.jpg">
+        <img src="/articles/new-network-transport/photos/rpi-3b.jpg"/>
+      </a>
+    </div>
+    <i>Raspberry Pi 3B</i>
+  </div>
+  <div style="margin-left: 5px;">
+    <div>
+      <a data-lightbox="rpi-zw" href="/articles/new-network-transport/photos/rpi-zw.jpg">
+        <img src="/articles/new-network-transport/photos/rpi-zw.jpg"/>
+      </a>
+    </div>
+    <i>Raspberry Pi Zero W</i>
+  </div>
+</div>
+
+<p>All three boxes and the laptop are connected to the wireless LAN. The latency is configured to 100ms on the Roc sink input on the Orange Pi box and to 150ms on the roc-recv instances on the Raspberry Pi boxes.</p>
+
+<p>Each box has a corresponding Roc sink on the laptop. It allows connecting any audio application running on the laptop to any box via usual PulseAudio GUIs like pavucontrol.</p>
+
+<p>Here is a video demonstrating this:</p>
+
+<div class="youtube">
+  <iframe src="https://www.youtube.com/embed/W0oS8mqTWYM">
+  </iframe>
+</div>
+
+<h2 id="design-overview">Design overview</h2>
+
+<p>Real-time streaming has the following implications:</p>
+
+<ul>
+<li>the latency should be constant;</li>
+<li>the latency should be low;</li>
+<li>the real-time input on the sender and real-time output on the receiver (e.g. soundcards) may have different clock domains.</li>
+</ul>
+
+<p>Roc achieves this as follows:</p>
+
+<ul>
+<li><p>The sender sends samples at a constant rate. The receiver first accumulates samples in the incoming queue until its size becomes equal to the required latency and then starts reading samples from the queue at a constant rate. This allows to keep the latency constant.</p></li>
+
+<li><p>The sender and receiver use FEC codes instead of acknowledgments and retransmissions. This allows to keep the latency low.</p></li>
+
+<li><p>The receiver estimates the sender&rsquo;s rate by observing the incoming queue size and adjusts its own rate to it. This allows to compensate the clocks difference.</p></li>
+</ul>
+
+<p>Thereby, the incoming queue at the receiver serves for the three purposes at the same time. It is used as a jitter buffer, as a recovery buffer, and for rate estimation. The first use is usual. The rest two are briefly discussed below.</p>
+
+<p>If you want to learn more about the implementation, see the <a href="https://roc-streaming.org/toolkit/docs/internals.html">internals</a> section in our documentation. In particular, take a look at the <a href="https://roc-streaming.org/toolkit/docs/internals/data_flow.html">data flow</a> page.</p>
+
+<h2 id="loss-recovery">Loss recovery</h2>
+
+<p>If you&rsquo;re using an unreliable network such as 802.11, you should cope with packet losses somehow.</p>
+
+<p>One approach is to send ACKS or NACKS and retransmit lost packets. This approach, however, doesn&rsquo;t fit well with the real-time and low-latency requirements.</p>
+
+<p>Another approach is to use Forward Erasure Correction (FEC) codes. The idea is that the sender adds some redundant packets to the stream which then can be used on the receiver to recover some amount of losses.</p>
+
+<p>Roc uses the second approach. It implements the <a href="https://tools.ietf.org/html/rfc6363">FECFRAME</a> specification with two FEC schemes. The implementation is based on the <a href="http://openfec.org/">OpenFEC</a> library. See details in <a href="https://roc-streaming.org/toolkit/docs/internals/fec.html">our documentation</a>.</p>
+
+<p>The following screencast demonstrates the packet recovery feature on a noisy channel:</p>
+
+<p><img src="/articles/new-network-transport/screencast/roc-recv.gif"/></p>
+
+<p>Roc cuts the packet stream into blocks. If a block contains some lost or recovered packets, the block state is reported in the following format:</p>
+
+<pre><code>..r......r.....X.... ....xx....
+</code></pre>
+
+<p>A block state report consists of two parts separated with space. The left part is for audio packets, and the right part is for redundant packets. Each packet in a block is denoted with one of these symbols:</p>
+
+<ul>
+<li><code>&quot;.&quot;</code> &ndash; the packet was received (hooray)</li>
+<li><code>&quot;r&quot;</code> &ndash; the packet was lost but recovered  (hooray)</li>
+<li><code>&quot;X&quot;</code> (uppercase) &ndash; the audio packet was lost and was not recovered (we&rsquo;ll hear a glitch)</li>
+<li><code>&quot;x&quot;</code> (lowercase) &ndash; the redundant packet was lost and was not recovered (no big deal)</li>
+</ul>
+
+<p>Note that the receiver reports only blocks that contain some lost or recovered packets. Blocks that were received without losses are not reported.</p>
+
+<h2 id="clock-adjustment">Clock adjustment</h2>
+
+<p>If you&rsquo;re streaming audio between different devices, you should also deal with the fact that every device has its own clock domain with a bit different frequency, even if nominally the frequencies are the same.</p>
+
+<p>The difference is quite small, but when the latency is low and the stream continues for hours, this difference will accumulate and lead to the latency lag and eventually to underruns or overruns on the receiver.</p>
+
+<p>Roc deals with it by adjusting the stream rate on the receiver side using a resampler. See details in <a href="https://roc-streaming.org/toolkit/docs/internals/fe_resampler.html">our documentation</a>.</p>
+
+<p>The following diagram demonstrates the incoming queue size at the receiver when it is running with or without clock adjustment. As you can see, without the adjustment the queue has decreased by 40 milliseconds in a half of an hour.</p>
+
+<p><img src="/articles/new-network-transport/plots/queue.png"/></p>
+
+<h2 id="protocols-and-encodings">Protocols and encodings</h2>
+
+<p>Roc doesn&rsquo;t invent new protocols and heavily relies on existing open specifications. This allows us to take advantage of their careful design and potential interoperability with other software.</p>
+
+<p>Roc is designed to support arbitrary transport protocols, but for now, it implements RTP with A/V profile and FECFRAME with two FEC schemes, Reed-Solomon and LDPC-Staircase. See details in <a href="https://roc-streaming.org/toolkit/docs/internals/network_protocols.html">our documentation</a>.</p>
+
+<p>There are also plans to add support for RTCP (for receiver feedback), SAP/SDP (for service discovery), and RTSP (for session negotiation and control) in upcoming releases.</p>
+
+<p>Roc is also designed to support arbitrary encodings, but currently, it supports only the so-called CD-quality audio, i.e. 44100 Hz PCM 16-bit stereo. We are planning to add support for more audio encodings in the near future, in particular, add support for <a href="http://opus-codec.org/">Opus</a>. We&rsquo;re also planning to add video support, but probably a bit later.</p>
+
+<h2 id="comparison-with-other-transports">Comparison with other transports</h2>
+
+<p>PulseAudio has two major types of network transport: &ldquo;native&rdquo; and RTP. You can read about them in <a href="https://gavv.github.io/articles/pulseaudio-under-the-hood/">this article</a>.</p>
+
+<p>The &ldquo;native&rdquo; transport is based on TCP, which is not well suited for the low-latency real-time streaming and shows worse service quality on lower latencies and an unreliable network. In contrast, Roc is based on RTP, which works on top of UDP and doesn&rsquo;t have these problems.</p>
+
+<p>The RTP transport uses UDP just like Roc does, but it doesn&rsquo;t implement loss recovery, so the service quality is also worse. The frequency estimation algorithms are also different. Arguably, the PulseAudio implementation is sometimes laggy, but this needs more testing.</p>
+
+<p>Some streaming software uses HTTP, in particular PulseAudio DLNA support. It works on top of TCP, which have problems that we already discussed above.</p>
+
+<p>Some media players and toolkits have network streaming support as well, e.g. VLC and FFmpeg. Usually, they use bare RTP without any loss recovery. BTW, some of them could improve the service quality by employing our library.</p>
+
+<p>Some applications integrate Opus, a lossy audio codec with built-in packet loss recovery. Roc, in contrast, supports lossless encoding and encoding-independent packet loss recovery. There are plans to add support for lossy encodings as well, including Opus.</p>
+
+<p>A number of libraries exist implementing RTP transport or the entire SIP stack. Many of them lack the loss recovery or clock adjustment features. Also, many of them have quite a low-level API, while Roc API is high-level and protocol-independent, hiding all the network transport machinery. On the other hand, Roc doesn&rsquo;t support various control protocols and audio encodings (but will in the future).</p>
+
+<p>Another related technology is WebRTC, which also uses RTP, Opus, and has a draft specification for encoding-independent FEC. It is mainly aimed to communication with web-browsers but is not limited to it. Since it has so much in common with our protocol stack, we&rsquo;re thinking about adding WebRTC support as well, but it&rsquo;s not a priority yet.</p>
+
+<p>There are also some more specialized technologies targeted to end-users and requiring either special hardware (Bluetooth) or certification (DLNA, AirPlay). Roc, in contrast, is a general-purpose and open-source solution.</p>
+
+<h2 id="comparison-with-pulseaudio-on-wi-fi">Comparison with PulseAudio on Wi-Fi</h2>
+
+<p>This section provides the results of a simple experiment.</p>
+
+<p>I was streaming a 30-minute audio file using Roc tools, PulseAudio &ldquo;native&rdquo; transport, and PulseAudio RTP transport. All three transports were configured to use 250ms latency. The channel was a noisy 2.4Hz Wi-Fi network. I additionally loaded the network with a youtube live translation running in the background.</p>
+
+<p>The diagram below shows the number of glitches per second for every second during a 30-minute period. As you can see, Roc performs better in this case, but still has a room for improvement.</p>
+
+<p><img src="/articles/new-network-transport/plots/glitches.png"/></p>
+
+<p>The input signal was a sine wave generated using the <code>sox</code> tool. The output signal was recorded at the receiver using the <code>parec</code> tool. The number of glitches was then calculated from the recorded output using <a href="https://gist.github.com/gavv/da4cdbbc796cb4d1f6e5c397408ed87b">this script</a>, which assumes that the input signal is smooth and counts the discontinuities in the output.</p>
+
+<p>The exact commands I run may be found in <a href="https://gist.github.com/gavv/e5834a8b0d30eb7ee48de30c88709660">this gist</a>.</p>
+
+<h2 id="typical-configuration">Typical configuration</h2>
+
+<p>The best configuration for Roc sender and receiver depends on your network characteristics and latency requirements. Here is the configuration that works well on my home Wi-Fi:</p>
+
+<ul>
+<li>Reed-Solomon FEC code</li>
+<li>150 ms network buffer</li>
+<li>6.4 ms packets (320 samples per channel per packet)</li>
+<li>128 ms FEC block with 20 source packets and 10 repair packets</li>
+</ul>
+
+<p>On this setup, most time all lost or delayed packets are successfully recovered. I see about one recovery per a few minutes. I hear glitches no more than once a half of an hour.</p>
+
+<p>However, these numbers can&rsquo;t be used everywhere. I saw Wi-Fi networks where 100 ms network buffer also worked well. On the other hand, I also saw Wi-Fi networks where 300 ms and even 500 ms buffer was not enough.</p>
+
+<h2 id="how-to-use">How to use</h2>
+
+<p>If you want to try Roc, consult the following documentation sections:</p>
+
+<ul>
+<li><a href="https://roc-streaming.org/toolkit/docs/building.html">Building</a> &mdash; building and installing;</li>
+<li><a href="https://roc-streaming.org/toolkit/docs/running.html">Running</a> &mdash; instructions for command-line tools and PulseAudio modules;</li>
+<li><a href="https://roc-streaming.org/toolkit/docs/manuals.html">Manuals</a> &mdash; reference for command-line tools;</li>
+<li><a href="https://roc-streaming.org/toolkit/docs/api.html">API</a> &mdash; reference and examples for the C library.</li>
+</ul>
+
+<p>As a quick start, it should be enough to take a look at these three pages:</p>
+
+<ul>
+<li><a href="https://roc-streaming.org/toolkit/docs/building/user_cookbook.html">User cookbook</a></li>
+<li><a href="https://roc-streaming.org/toolkit/docs/running/command_line_tools.html">Command-line tools</a></li>
+<li><a href="https://roc-streaming.org/toolkit/docs/running/pulseaudio_modules.html">PulseAudio modules</a></li>
+</ul>
+
+<p>Currently, Roc supports GNU/Linux (command-line tools and PulseAudio modules) and macOS (command-line tools). See details in <a href="https://roc-streaming.org/toolkit/docs/portability/supported_platforms.html">the documentation</a>.</p>
+
+<p>If you want to run Roc on a single-board computer, see also our <a href="https://roc-streaming.org/toolkit/docs/portability/tested_boards.html">tested boards</a> and <a href="https://roc-streaming.org/toolkit/docs/portability/cross_compiling.html">cross compiling</a> pages.</p>
+
+<p>Various *nix operating systems may work too but were not tested yet. Other ports, including Android and Windows, are planned but are not a high priority yet, unless someone would like to maintain them.</p>
+
+<h2 id="status-and-plans">Status and plans</h2>
+
+<p>We&rsquo;re going to make the first release (version 0.1) in a few weeks. We have to resolve two issues with the PulseAudio latency and FECFRAME support and after that, the transport part may be considered more or less usable.</p>
+
+<p>The next few releases will be focused on adding more audio encodings (lossless and lossy including Opus) and protocols (RTCP for receiver feedback, SAP/SDP for service discovery, and RTSP for session negotiation and control). These features are important for Roc in general and for PulseAudio integration particularly.</p>
+
+<p>There are a lot of longer-term plans, including smaller features like dynamic latency and bitrate adjustment and larger features like video support. See our <a href="https://roc-streaming.org/toolkit/docs/development/roadmap.html">roadmap</a> and the <a href="https://github.com/roc-streaming/roc-toolkit/projects/2">project board</a>.</p>
+
+<p>There are also a lot of tests to do. It would be interesting to measure the transport latency more precisely, to measure the service quality on different network conditions and types (various 802.11 versions, Internet), to compare FECFRAME and Opus loss recovery, to investigate the quality of our resampler, etc.</p>
+
+<p>If people find our PulseAudio modules useful, we&rsquo;ll consider submitting them to the upstream (if they would like to accept it). This is rather crucial because PulseAudio does not provide a stable API for external modules.</p>
+
+<p>Finally, there are some ideas of end-user applications on top of Roc, for instance, some open-source audio and video sharing tools for mobile and desktop. There are no concrete plans right now though.</p>
+
+<p>If you&rsquo;re interested in how the project would evolve, you can subscribe to <a href="https://twitter.com/gavv42">my twitter</a> or our <a href="https://www.freelists.org/list/roc">mailing list</a>.</p>
+
+<h2 id="feedback">Feedback</h2>
+
+<p>First of all, we&rsquo;d be happy to hear some feedback:</p>
+
+<ul>
+<li>does someone find the project useful?</li>
+<li>how do people want to use it?</li>
+<li>what features would they like to see?</li>
+</ul>
+
+<p>Second, we need testers. Please report to us any issues you&rsquo;ll find. We would also be glad to see the results of any measurements, comparisons, etc.</p>
+
+<p>Third, contributors are always welcome! We have quite a long roadmap. We&rsquo;d also be happy to see maintainers for new platforms.</p>
+
+<p>Finally, feel free to contact us if you want to discuss the integration of Roc into your project or building something larger on top of it.</p>
+
+<p>You can reach us <a href="https://github.com/roc-streaming/roc-toolkit">via GitHub</a> or via the <a href="https://www.freelists.org/list/roc">mailing list</a> (see instructions in README on GitHub).</p>
+
+<p>Thanks for reading!</p>
+
+      </section>
+    </article>
+  </section>
+  
+    
+  <footer id="footer">
+    <script>
+      $('h2, h3, h4').each(function() {
+        var id = $(this).attr('id');
+        $(this).prepend(
+          '<a class="anchor" href="#' + id +'"><i class="fa fa-paragraph"></i></a>'
+        );
+      })
+    </script>
+
+    <div id="disqus_thread" class="no-print"></div>
+    <script>
+    (function() {
+        var d = document, s = d.createElement('script');
+        s.src = '//gavv.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    </script>
+    <noscript>Enable JavaScript to view the
+        <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+    </noscript>
+  </footer>
+
+
+  
+
+      </div>
+    </body>
+  </html>
+
