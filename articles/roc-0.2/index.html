@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+  <html lang="en-US">
+    <head>
+      <meta charset="UTF-8"/>
+
+      <meta name="description" content="(Roc Droid logo)
+What is Roc? Roc is a toolkit for real-time streaming over unreliable networks. It works with desktop and embedded Linux, ALSA, PulseAudio, PipeWire, macOS, and Android.
+For a quick intro, see project repo and two previous articles: 1, 2.
+Summary Full changelog is available here.
+The main focus of this release was:
+polishing C API creating bindings for Go and Java Android support preparing internals for control and signaling protocols We also created a small Android app."/>
+      <meta name="author" content="Victor Gaydov"/>
+
+      <meta property="og:url" content="http://gavv.net/articles/roc-0.2/"/>
+      <meta property="og:title" content="
+  
+    Roc Toolkit 0.2 released
+  
+"/>
+      <meta property="og:description" content="(Roc Droid logo)
+What is Roc? Roc is a toolkit for real-time streaming over unreliable networks. It works with desktop and embedded Linux, ALSA, PulseAudio, PipeWire, macOS, and Android.
+For a quick intro, see project repo and two previous articles: 1, 2.
+Summary Full changelog is available here.
+The main focus of this release was:
+polishing C API creating bindings for Go and Java Android support preparing internals for control and signaling protocols We also created a small Android app."/>
+      <meta property="og:site_name" content="Victor Gaydov"/>
+
+      <link rel="canonical" href="http://gavv.net/articles/roc-0.2/"/>
+
+      <title>
+  
+    Roc Toolkit 0.2 released
+  
+</title>
+
+      <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+<link rel="stylesheet" href="/css/main.css"/>
+<link rel="stylesheet" href="/css/prism.css"/>
+<link rel="stylesheet" href="/css/lightbox.min.css"/>
+
+<link rel="shortcut icon" href="/images/favicon.ico">
+
+<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+
+<link rel="stylesheet"
+      href="//fonts.googleapis.com/css?family=Open+Sans|Lustria|Roboto+Mono">
+
+<script src="/js/lightbox-plus-jquery.min.js">
+</script>
+
+<script>
+    lightbox.option({
+      'wrapAround': true,
+      'resizeDuration': 0,
+      'fadeDuration': 0,
+      'imageFadeDuration': 0,
+    })
+</script>
+
+<script src="/js/prism.js">
+</script>
+
+<script>
+var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+if (width < 480) {
+  document.write('<script src="/js/hyphenator-loader.js"><\/script>');
+}
+</script>
+
+<script src="/js/analytics.js">
+</script>
+
+    </head>
+    <body>
+      <div id="toplevel">
+        <header id="header" class="no-print">
+  <div id="caption">
+    Victor Gaydov
+  </div>
+  <div id="menu">
+    <div>
+      <div>
+        
+          <a href="/about/" class="menu-item">
+        
+            About
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/software/" class="menu-item">
+        
+            Software
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/articles/" class="menu-item menu-selected">
+        
+            Articles
+          </a>
+      </div>
+    </div>
+    <div id="header-buttons">
+      <div>
+        <a href="https://fosstodon.org/@gavv" class="image-button">
+          <i class="fa-brands fa-mastodon"></i>
+        </a>
+        <a href="/index.xml" class="image-button">
+          <i class="rss-button fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+        
+  <section role="main">
+    <article>
+      
+        
+  <header class="post-header">
+    <h1 class="post-title">
+      
+        Roc Toolkit 0.2 released
+      
+    </h1>
+    <div class="post-time">
+      <time datetime="2023-02-26">
+        26 Feb 2023
+      </time>
+    </div>
+    <div class="post-tags">
+      
+      <div class="post-tag">
+        <a href="/tags/audio">audio</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/networking">networking</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/roc">roc</a>
+      </div>
+      
+    </div>
+  </header>
+
+
+      
+      <section>
+        <img src="/articles/roc-0.2/roc_droid.png" style="margin-top: 20px;"/>
+<p><em>(<a href="https://github.com/roc-streaming/roc-droid/">Roc Droid</a> logo)</em></p>
+<h2 id="what-is-roc">What is Roc?</h2>
+<p>Roc is a toolkit for real-time streaming over unreliable networks. It works with desktop and embedded Linux, ALSA, PulseAudio, PipeWire, macOS, and Android.</p>
+<p>For a quick intro, see <a href="https://github.com/roc-streaming/roc-toolkit">project repo</a> and two previous articles: <a href="https://gavv.net/articles/new-network-transport/">1</a>, <a href="https://gavv.net/articles/roc-0.1/">2</a>.</p>
+<h2 id="summary">Summary</h2>
+<p>Full changelog is <a href="https://roc-streaming.org/toolkit/docs/development/changelog.html#version-0-2-0-dec-19-2022">available here</a>.</p>
+<p>The main focus of this release was:</p>
+<ul>
+<li>polishing C API</li>
+<li>creating bindings for <a href="https://github.com/roc-streaming/roc-go">Go</a> and <a href="https://github.com/roc-streaming/roc-java/">Java</a></li>
+<li>Android support</li>
+<li>preparing internals for control and signaling protocols</li>
+</ul>
+<p>We also created a small <a href="https://github.com/roc-streaming/roc-droid/">Android app</a>.</p>
+<p>PulseAudio modules were moved to a <a href="https://github.com/roc-streaming/roc-pulse/">separate repo</a>. Also I&rsquo;m happy to report that PipeWire now provides Roc modules out of the box, see <a href="https://roc-streaming.org/toolkit/docs/tools/sound_server_modules.html">details here</a>.</p>
+<p>A huge amount of work has been done that for now <a href="https://roc-streaming.org/toolkit/docs/internals.html">remains invisible</a>. Internals were reworked to be ready for adding control and signaling protocols. Roc has got an implementation of task-based pipeline, network, and control loops communicating via lock-free task and packet queues in a non-blocking and realtime-safe manner.</p>
+<p>Roc also got initial support for RTCP and SDP. RTSP is coming next. We also started work on adding encryption support using OpenSSL.</p>
+<p>Here is amount of changes since last 0.1.x release:</p>
+<pre tabindex="0"><code>$ git diff --stat v0.1.5..v0.2.1 | tail -1
+ 934 files changed, 94556 insertions(+), 24863 deletions(-)
+</code></pre><h2 id="tutorial">Tutorial</h2>
+<p>You can find step-by-step tutorial for the new release in <a href="https://gavv.net/articles/roc-tutorial-0.2/">this article</a>.</p>
+<h2 id="credits">Credits</h2>
+<p>Thanks to <a href="https://github.com/Asalle">Asal Mirzaieva</a>, who created and maintains Go bindings, <a href="https://github.com/MatteoArella">Matteo Arella</a>, who created and maintains Java bindings, and <a href="https://github.com/ortex/">Andrey Bushmin</a>, who maintains Java bindings and created the Android app.</p>
+<p>I want thank <a href="https://www.boring.tech/">Boring Technologies Inc.</a>, which sponsored part of the work on this release and hired me and <a href="https://github.com/baranovmv"> Mikhail Baranov </a> full-time for a few months.</p>
+<p>Special thanks to <a href="https://github.com/alexandremgo">Alexandre Magaud</a> who contributed a series of patches for SDP support, and <a href="https://github.com/valeryhime">Valeria Khomyakova</a> for Roc Droid UI and logo.</p>
+<p>And of course, big thanks to all the contributors! During this release, Roc got about 20 new contributors, which is really exciting for me. They all are <a href="https://roc-streaming.org/toolkit/docs/about_project/authors.html">listed here</a>.</p>
+<p>And last but not least, thanks to everybody who reported issues on GitHub, mailing list, and chat!</p>
+<h2 id="donations">Donations</h2>
+<p>I made up my mind to start receiving donations for the project. To start with, we have created accounts for Roc on <a href="https://opencollective.com/roc-streaming">OpenCollective</a> and <a href="https://liberapay.com/roc-streaming">Liberapay</a>.</p>
+<p>I don&rsquo;t expect significant income, however even small contributions should help; we will accumulate donated money and occasionally spend them to fund full-time work for a week or a few.</p>
+<p>See details on <a href="https://roc-streaming.org/toolkit/docs/about_project/sponsors.html">this page</a>.</p>
+<h2 id="community">Community</h2>
+<p>Besides mailing list, we now have a <a href="https://app.element.io/#/room/#roc-streaming:matrix.org">chat on Matrix</a> and a forum and Q&amp;A board on <a href="https://github.com/roc-streaming/roc-toolkit/discussions">GitHub discussions</a>.</p>
+<p>See <a href="https://roc-streaming.org/toolkit/docs/about_project/contacts.html">details here</a>. Welcome to join!</p>
+<h2 id="testing">Testing</h2>
+<p>I&rsquo;ve tested the toolkit on <a href="https://roc-streaming.org/toolkit/docs/portability/tested_devices.html">7 devices</a>. In addition, Android app was tested on a few versions of Android.</p>
+<p>I plan to expand the list of regularly tested devices in future: add non-ARM single board computers, add Android devices, and probably more *nix devices that are not Linux and macOS.</p>
+<h2 id="plans">Plans</h2>
+<p>My plans for a few next releases are:</p>
+<ul>
+<li>first of all, push fixes for pending bug reports and feature requests</li>
+<li>help people who started packaging work</li>
+<li>finish RTCP support</li>
+<li>finish SDP support and implement RTSP support</li>
+<li>allow fully configurable local and network encodings (sample format, depth, and rate, channel layout)</li>
+<li>low-latency audio backends for ALSA and CoreAudio</li>
+<li>virtual device for macOS</li>
+<li>encryption support</li>
+</ul>
+<p>Things that I would like to try next:</p>
+<ul>
+<li>more audio codecs (e.g. Opus, Vorbis)</li>
+<li>more FEC codecs (notably convolutional codecs)</li>
+<li>automatically adjust latency</li>
+<li>synchronized playback (multiroom)</li>
+</ul>
+<p>If you would like to take part in development of these or other features, you&rsquo;re more than welcome! Feel free to reach us on GitHub, mailing list, or chat.</p>
+<p>Also I&rsquo;m open to paid work on the project.</p>
+<h2 id="updates">Updates</h2>
+<p>You can follow updates on the <a href="https://roc-streaming.org/toolkit/docs/about_project/contacts.html">mailing list</a> or on my <a href="https://twitter.com/gavv42">twitter</a> and <a href="https://fosstodon.org/@gavv">mastodon</a>.</p>
+<p>Have fun!</p>
+
+      </section>
+    </article>
+  </section>
+  
+    
+  <footer id="footer">
+    <script>
+      $('h2, h3, h4').each(function() {
+        var id = $(this).attr('id');
+        $(this).prepend(
+          '<a class="anchor" href="#' + id +'"><i class="fa fa-paragraph"></i></a>'
+        );
+      })
+    </script>
+
+    <div id="disqus_thread" class="no-print"></div>
+    <script>
+      (function() {
+        var d = document, s = d.createElement('script');
+        s.src = '//gavv.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+    </script>
+    <noscript>Enable JavaScript to view the
+        <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+    </noscript>
+  </footer>
+
+
+  
+
+      </div>
+    </body>
+  </html>
+

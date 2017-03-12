@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+
+  <html lang="en-US">
+    <head>
+      <meta charset="UTF-8"/>
+
+      <meta name="description" content="Table of contents
+Introduction Advisory locking Common features Differing features File descriptors and i-nodes BSD locks (flock) POSIX record locks (fcntl) lockf function Open file description locks (fcntl) Emulating Open file description locks Test program Command-line tools Mandatory locking Example usage Introduction File locking is a mutual-exclusion mechanism for files. Linux supports two major kinds of file locks:
+advisory locks mandatory locks Below we discuss all lock types available in POSIX and Linux and provide usage examples."/>
+      <meta name="author" content="Victor Gaydov"/>
+
+      <meta property="og:url" content="http://gavv.net/articles/file-locks/"/>
+      <meta property="og:title" content="
+  
+    File locking in Linux
+  
+"/>
+      <meta property="og:description" content="Table of contents
+Introduction Advisory locking Common features Differing features File descriptors and i-nodes BSD locks (flock) POSIX record locks (fcntl) lockf function Open file description locks (fcntl) Emulating Open file description locks Test program Command-line tools Mandatory locking Example usage Introduction File locking is a mutual-exclusion mechanism for files. Linux supports two major kinds of file locks:
+advisory locks mandatory locks Below we discuss all lock types available in POSIX and Linux and provide usage examples."/>
+      <meta property="og:site_name" content="Victor Gaydov"/>
+
+      <link rel="canonical" href="http://gavv.net/articles/file-locks/"/>
+
+      <title>
+  
+    File locking in Linux
+  
+</title>
+
+      <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+<link rel="stylesheet" href="/css/main.css"/>
+<link rel="stylesheet" href="/css/prism.css"/>
+<link rel="stylesheet" href="/css/lightbox.min.css"/>
+
+<link rel="shortcut icon" href="/images/favicon.ico">
+
+<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+
+<link rel="stylesheet"
+      href="//fonts.googleapis.com/css?family=Open+Sans|Lustria|Roboto+Mono">
+
+<script src="/js/lightbox-plus-jquery.min.js">
+</script>
+
+<script>
+    lightbox.option({
+      'wrapAround': true,
+      'resizeDuration': 0,
+      'fadeDuration': 0,
+      'imageFadeDuration': 0,
+    })
+</script>
+
+<script src="/js/prism.js">
+</script>
+
+<script>
+var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+if (width < 480) {
+  document.write('<script src="/js/hyphenator-loader.js"><\/script>');
+}
+</script>
+
+<script src="/js/analytics.js">
+</script>
+
+    </head>
+    <body>
+      <div id="toplevel">
+        <header id="header" class="no-print">
+  <div id="caption">
+    Victor Gaydov
+  </div>
+  <div id="menu">
+    <div>
+      <div>
+        
+          <a href="/about/" class="menu-item">
+        
+            About
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/software/" class="menu-item">
+        
+            Software
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/articles/" class="menu-item menu-selected">
+        
+            Articles
+          </a>
+      </div>
+    </div>
+    <div id="header-buttons">
+      <div>
+        <a href="https://fosstodon.org/@gavv" class="image-button">
+          <i class="fa-brands fa-mastodon"></i>
+        </a>
+        <a href="/index.xml" class="image-button">
+          <i class="rss-button fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+        
+  <section role="main">
+    <article>
+      
+        
+  <header class="post-header">
+    <h1 class="post-title">
+      
+        File locking in Linux
+      
+    </h1>
+    <div class="post-time">
+      <time datetime="2016-07-29">
+        29 Jul 2016
+      </time>
+    </div>
+    <div class="post-tags">
+      
+      <div class="post-tag">
+        <a href="/tags/linux">linux</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/posix">posix</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/ipc">ipc</a>
+      </div>
+      
+    </div>
+  </header>
+
+
+      
+      <section>
+        <p><strong>Table of contents</strong></p>
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#advisory-locking">Advisory locking</a></li>
+<li><a href="#common-features">Common features</a></li>
+<li><a href="#differing-features">Differing features</a></li>
+<li><a href="#file-descriptors-and-i-nodes">File descriptors and i-nodes</a></li>
+<li><a href="#bsd-locks-flock">BSD locks (flock)</a></li>
+<li><a href="#posix-record-locks-fcntl">POSIX record locks (fcntl)</a></li>
+<li><a href="#lockf-function">lockf function</a></li>
+<li><a href="#open-file-description-locks-fcntl">Open file description locks (fcntl)</a></li>
+<li><a href="#emulating-open-file-description-locks">Emulating Open file description locks</a></li>
+<li><a href="#test-program">Test program</a></li>
+<li><a href="#command-line-tools">Command-line tools</a></li>
+<li><a href="#mandatory-locking">Mandatory locking</a></li>
+<li><a href="#example-usage">Example usage</a></li>
+</ul>
+<hr>
+<h2 id="introduction">Introduction</h2>
+<p><a href="https://en.wikipedia.org/wiki/File_locking">File locking</a> is a mutual-exclusion mechanism for files. Linux supports two major kinds of file locks:</p>
+<ul>
+<li>advisory locks</li>
+<li>mandatory locks</li>
+</ul>
+<p>Below we discuss all lock types available in POSIX and Linux and provide usage examples.</p>
+<hr>
+<h2 id="advisory-locking">Advisory locking</h2>
+<p>Traditionally, locks are <a href="http://unix.stackexchange.com/questions/147392/what-is-advisory-locking-on-files-that-unix-systems-typically-employs">advisory</a> in Unix. They work only when a process explicitly acquires and releases locks, and are ignored if a process is not aware of locks.</p>
+<p>There are several types of advisory locks available in Linux:</p>
+<ul>
+<li>BSD locks (flock)</li>
+<li>POSIX record locks (fcntl, lockf)</li>
+<li>Open file description locks (fcntl)</li>
+</ul>
+<p>All locks except the <code>lockf</code> function are <a href="https://en.wikipedia.org/wiki/Readers%E2%80%93writer_lock">reader-writer locks</a>, i.e. support exclusive and shared modes.</p>
+<p>Note that <a href="http://man7.org/linux/man-pages/man3/flockfile.3.html"><code>flockfile</code></a> and friends have nothing to do with the file locks. They manage internal mutex of the <code>FILE</code> object from stdio.</p>
+<p>Reference:</p>
+<ul>
+<li><a href="https://www.gnu.org/software/libc/manual/html_node/File-Locks.html">File Locks</a>, GNU libc manual</li>
+<li><a href="https://www.gnu.org/software/libc/manual/html_node/Open-File-Description-Locks.html">Open File Description Locks</a>, GNU libc manual</li>
+<li><a href="https://lwn.net/Articles/586904/">File-private POSIX locks</a>, an LWN article about the predecessor of open file description locks</li>
+</ul>
+<h3 id="common-features">Common features</h3>
+<p>The following features are common for locks of all types:</p>
+<ul>
+<li>All locks support blocking and non-blocking operations.</li>
+<li>Locks are allowed only on files, but not directories.</li>
+<li>Locks are automatically removed when the process exits or terminates. It&rsquo;s guaranteed that if a lock is acquired, the process acquiring the lock is still alive.</li>
+</ul>
+<h3 id="differing-features">Differing features</h3>
+<p>This table summarizes the difference between the lock types. A more detailed description and usage examples are provided below.</p>
+<table>
+ <tr>
+  <th></th>
+  <th>BSD locks</th>
+  <th>lockf function</th>
+  <th>POSIX record locks</th>
+  <th>Open file description locks</th>
+ </tr>
+ <tr>
+  <th>Portability</th>
+  <td>widely available</td>
+  <td>POSIX (XSI)</td>
+  <td>POSIX (base standard)</td>
+  <td>Linux 3.15+</td>
+ </tr>
+ <tr>
+  <th>Associated with</th>
+  <td>File object</td>
+  <td>[i-node, pid] pair</td>
+  <td>[i-node, pid] pair</td>
+  <td>File object</td>
+ </tr>
+ <tr>
+  <th>Applying to byte range</th>
+  <td>no</td>
+  <td>yes</td>
+  <td>yes</td>
+  <td>yes</td>
+ </tr>
+ <tr>
+  <th>Support exclusive and shared modes</th>
+  <td>yes</td>
+  <td>no</td>
+  <td>yes</td>
+  <td>yes</td>
+ </tr>
+ <tr>
+  <th>Atomic mode switch</th>
+  <td>no</td>
+  <td>-</td>
+  <td>yes</td>
+  <td>yes</td>
+ </tr>
+ <tr>
+  <th>Works on NFS (Linux)</th>
+  <td>Linux 2.6.12+</td>
+  <td>yes</td>
+  <td>yes</td>
+  <td>yes</td>
+ </tr>
+</table>
+<h3 id="file-descriptors-and-i-nodes">File descriptors and i-nodes</h3>
+<p>A <a href="https://en.wikipedia.org/wiki/File_descriptor"><em>file descriptor</em></a> is an index in the per-process file descriptor table (in the left of the picture). Each file descriptor table entry contains a reference to a <em>file object</em>, stored in the file table (in the middle of the picture). Each file object contains a reference to an <a href="https://en.wikipedia.org/wiki/Inode">i-node</a>, stored in the i-node table (in the right of the picture).</p>
+<img src="/articles/file-locks/tables.png" width="500px"/>
+<p>A file descriptor is just a number that is used to refer a file object from the user space. A file object represents an opened file. It contains things likes current read/write offset, non-blocking flag and another non-persistent state. An i-node represents a filesystem object. It contains things like file meta-information (e.g. owner and permissions) and references to data blocks.</p>
+<p>File descriptors created by several <code>open()</code> calls for the same file path point to different file objects, but these file objects point to the same i-node. Duplicated file descriptors created by <code>dup2()</code> or <code>fork()</code> point to the same file object.</p>
+<p>A BSD lock and an Open file description lock is associated with a file object, while a POSIX record lock is associated with an <code>[i-node, pid]</code> pair. We&rsquo;ll discuss it below.</p>
+<h3 id="bsd-locks-flock">BSD locks (flock)</h3>
+<p>The simplest and most common file locks are provided by <a href="http://man7.org/linux/man-pages/man2/flock.2.html"><code>flock(2)</code></a>.</p>
+<p>Features:</p>
+<ul>
+<li>not specified in POSIX, but widely available on various Unix systems</li>
+<li>always lock the entire file</li>
+<li>associated with a file object</li>
+<li>do not guarantee atomic switch between the locking modes (exclusive and shared)</li>
+<li>up to Linux 2.6.11, didn&rsquo;t work on NFS; since Linux 2.6.12, flock() locks on NFS are emulated using fcntl() POSIX record byte-range locks on the entire file (unless the emulation is disabled in the NFS mount options)</li>
+</ul>
+<p>The lock acquisition is associated with a file object, i.e.:</p>
+<ul>
+<li>duplicated file descriptors, e.g. created using <code>dup2</code> or <code>fork</code>, share the lock acquisition;</li>
+<li>independent file descriptors, e.g. created using two <code>open</code> calls (even for the same file), don&rsquo;t share the lock acquisition;</li>
+</ul>
+<p>This means that with BSD locks, threads or processes can&rsquo;t be synchronized on the same or duplicated file descriptor, but nevertheless, both can be synchronized on independent file descriptors.</p>
+<p><code>flock()</code> doesn&rsquo;t guarantee atomic mode switch. From the man page:</p>
+<blockquote>
+<p>Converting a lock (shared to exclusive, or vice versa) is not
+guaranteed to be atomic: the existing lock is first removed, and then
+a new lock is established.  Between these two steps, a pending lock
+request by another process may be granted, with the result that the
+conversion either blocks, or fails if LOCK_NB was specified.  (This
+is the original BSD behaviour, and occurs on many other
+implementations.)</p>
+</blockquote>
+<p>This problem is solved by POSIX record locks and Open file description locks.</p>
+<p>Usage example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;sys/file.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// acquire shared lock
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">flock</span>(fd, LOCK_SH) <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">exit</span>(<span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// non-atomically upgrade to exclusive lock
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// do it in non-blocking mode, i.e. fail if can&#39;t upgrade immediately
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">flock</span>(fd, LOCK_EX <span style="color:#f92672">|</span> LOCK_NB) <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">exit</span>(<span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// release lock
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// lock is also released automatically when close() is called or process exits
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">flock</span>(fd, LOCK_UN) <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">exit</span>(<span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="posix-record-locks-fcntl">POSIX record locks (fcntl)</h3>
+<p>POSIX record locks, also known as process-associated locks, are provided by <a href="http://man7.org/linux/man-pages/man2/fcntl.2.html"><code>fcntl(2)</code></a>, see &ldquo;Advisory record locking&rdquo; section in the man page.</p>
+<p>Features:</p>
+<ul>
+<li><a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/fcntl.html">specified</a> in POSIX (base standard)</li>
+<li>can be applied to a byte range</li>
+<li>associated with an <code>[i-node, pid]</code> pair instead of a file object</li>
+<li>guarantee atomic switch between the locking modes (exclusive and shared)</li>
+<li>work on NFS (on Linux)</li>
+</ul>
+<p>The lock acquisition is associated with an <code>[i-node, pid]</code> pair, i.e.:</p>
+<ul>
+<li>file descriptors opened by the same process for the same file share the lock acquisition (even independent file descriptors, e.g. created using two <code>open</code> calls);</li>
+<li>file descriptors opened by different processes don&rsquo;t share the lock acquisition;</li>
+</ul>
+<p>This means that with POSIX record locks, it is possible to synchronize processes, but not threads. All threads belonging to the same process always share the lock acquisition of a file, which means that:</p>
+<ul>
+<li>the lock acquired through some file descriptor by some thread may be released through another file descriptor by another thread;</li>
+<li>when any thread calls <code>close</code> on any descriptor referring to given file, the lock is released for the whole process, even if there are other opened descriptors referring to this file.</li>
+</ul>
+<p>This problem is solved by Open file description locks.</p>
+<p>Usage example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;fcntl.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> flock fl;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">memset</span>(<span style="color:#f92672">&amp;</span>fl, <span style="color:#ae81ff">0</span>, <span style="color:#66d9ef">sizeof</span>(fl));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// lock in shared mode
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>fl.l_type <span style="color:#f92672">=</span> F_RDLCK;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// lock entire file
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>fl.l_whence <span style="color:#f92672">=</span> SEEK_SET; <span style="color:#75715e">// offset base is start of the file
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>fl.l_start <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;         <span style="color:#75715e">// starting offset is zero
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>fl.l_len <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;           <span style="color:#75715e">// len is zero, which is a special value representing end
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                        <span style="color:#75715e">// of file (no matter how large the file grows in future)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>fl.l_pid <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#75715e">// F_SETLK(W) ignores it; F_OFD_SETLK(W) requires it to be zero
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// F_SETLKW specifies blocking mode
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">fcntl</span>(fd, F_SETLKW, <span style="color:#f92672">&amp;</span>fl) <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">exit</span>(<span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// atomically upgrade shared lock to exclusive lock, but only
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// for bytes in range [10; 15)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// after this call, the process will hold three lock regions:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//  [0; 10)        - shared lock
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//  [10; 15)       - exclusive lock
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//  [15; SEEK_END) - shared lock
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>fl.l_type <span style="color:#f92672">=</span> F_WRLCK;
+</span></span><span style="display:flex;"><span>fl.l_start <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>;
+</span></span><span style="display:flex;"><span>fl.l_len <span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// F_SETLKW specifies non-blocking mode
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">fcntl</span>(fd, F_SETLK, <span style="color:#f92672">&amp;</span>fl) <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">exit</span>(<span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// release lock for bytes in range [10; 15)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>fl.l_type <span style="color:#f92672">=</span> F_UNLCK;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">fcntl</span>(fd, F_SETLK, <span style="color:#f92672">&amp;</span>fl) <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">exit</span>(<span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// close file and release locks for all regions
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// remember that locks are released when process calls close()
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// on any descriptor for a lock file
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">close</span>(fd);
+</span></span></code></pre></div><h3 id="lockf-function">lockf function</h3>
+<p><a href="http://man7.org/linux/man-pages/man3/lockf.3.html"><code>lockf(3)</code></a> function is a simplified version of POSIX record locks.</p>
+<p>Features:</p>
+<ul>
+<li><a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/lockf.html">specified</a> in POSIX (XSI)</li>
+<li>can be applied to a byte range (optionally automatically expanding when data is appended in future)</li>
+<li>associated with an <code>[i-node, pid]</code> pair instead of a file object</li>
+<li>supports only exclusive locks</li>
+<li>works on NFS (on Linux)</li>
+</ul>
+<p>Since <code>lockf</code> locks are associated with an <code>[i-node, pid]</code> pair, they have the same problems as POSIX record locks described above.</p>
+<p>The interaction between <code>lockf</code> and other types of locks is not specified by POSIX. On Linux, <code>lockf</code> is <a href="https://github.com/lattera/glibc/blob/master/io/lockf.c">just a wrapper</a> for POSIX record locks.</p>
+<p>Usage example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;unistd.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// set current position to byte 10
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">lseek</span>(fd, <span style="color:#ae81ff">10</span>, SEEK_SET) <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">exit</span>(<span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// acquire exclusive lock for bytes in range [10; 15)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// F_LOCK specifies blocking mode
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">lockf</span>(fd, F_LOCK, <span style="color:#ae81ff">5</span>) <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">exit</span>(<span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// release lock for bytes in range [10; 15)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">lockf</span>(fd, F_ULOCK, <span style="color:#ae81ff">5</span>) <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">exit</span>(<span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="open-file-description-locks-fcntl">Open file description locks (fcntl)</h3>
+<p>Open file description locks are Linux-specific and combine advantages of the BSD locks and POSIX record locks. They are provided by <a href="http://man7.org/linux/man-pages/man2/fcntl.2.html"><code>fcntl(2)</code></a>, see &ldquo;Open file description locks (non-POSIX)&rdquo; section in the man page.</p>
+<p>Features:</p>
+<ul>
+<li>Linux-specific, not specified in POSIX</li>
+<li>can be applied to a byte range</li>
+<li>associated with a file object</li>
+<li>guarantee atomic switch between the locking modes (exclusive and shared)</li>
+<li>work on NFS (on Linux)</li>
+</ul>
+<p>Thus, Open file description locks combine advantages of BSD locks and POSIX record locks: they provide both atomic switch between the locking modes, and the ability to synchronize both threads and processes.</p>
+<p>These locks are available since the 3.15 kernel.</p>
+<p>The API is the same as for POSIX record locks (see above). It uses <code>struct flock</code> too. The only difference is in <code>fcntl</code> command names:</p>
+<ul>
+<li><code>F_OFD_SETLK</code> instead of <code>F_SETLK</code></li>
+<li><code>F_OFD_SETLKW</code> instead of <code>F_SETLKW</code></li>
+<li><code>F_OFD_GETLK</code> instead of <code>F_GETLK</code></li>
+</ul>
+<h3 id="emulating-open-file-description-locks">Emulating Open file description locks</h3>
+<p>What do we have for multithreading and atomicity so far?</p>
+<ul>
+<li>BSD locks allow thread synchronization but don&rsquo;t allow atomic mode switch.</li>
+<li>POSIX record locks don&rsquo;t allow thread synchronization but allow atomic mode switch.</li>
+<li>Open file description locks allow both but are available only on recent Linux kernels.</li>
+</ul>
+<p>If you need both features but can&rsquo;t use Open file description locks (e.g. you&rsquo;re using some embedded system with an outdated Linux kernel), you can <em>emulate</em> them on top of the POSIX record locks.</p>
+<p>Here is one possible approach:</p>
+<ul>
+<li>
+<p>Implement your own API for file locks. Ensure that all threads always use this API instead of using <code>fcntl()</code> directly. Ensure that threads never open and close lock-files directly.</p>
+</li>
+<li>
+<p>In the API, implement a process-wide singleton (shared by all threads) holding all currently acquired locks.</p>
+</li>
+<li>
+<p>Associate two additional objects with every acquired lock:</p>
+</li>
+<li>
+<p>a counter</p>
+</li>
+<li>
+<p>an RW-mutex, e.g. <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/pthread_rwlock_destroy.html"><code>pthread_rwlock</code></a></p>
+</li>
+</ul>
+<p>Now, you can implement lock operations as follows:</p>
+<ul>
+<li>
+<p>Acquiring lock</p>
+</li>
+<li>
+<p>First, acquire the RW-mutex. If the user requested the shared mode, acquire a read lock. If the user requested the exclusive mode, acquire a write lock.</p>
+</li>
+<li>
+<p>Check the counter. If it&rsquo;s zero, also acquire the file lock using <code>fcntl()</code>.</p>
+</li>
+<li>
+<p>Increment the counter.</p>
+</li>
+<li>
+<p>Releasing lock</p>
+</li>
+<li>
+<p>Decrement the counter.</p>
+</li>
+<li>
+<p>If the counter becomes zero, release the file lock using <code>fcntl()</code>.</p>
+</li>
+<li>
+<p>Release the RW-mutex.</p>
+</li>
+</ul>
+<p>This approach makes possible both thread and process synchronization.</p>
+<h3 id="test-program">Test program</h3>
+<p>I&rsquo;ve prepared a <a href="https://github.com/gavv/snippets/blob/master/fs/locks.c">small program</a> that helps to learn the behavior of different lock types.</p>
+<p>The program starts two threads or processes, both of which wait to acquire the lock, then sleep for one second, and then release the lock. It has three parameters:</p>
+<ul>
+<li>
+<p>lock mode: <code>flock</code> (BSD locks), <code>lockf</code>, <code>fcntl_posix</code> (POSIX record locks), <code>fcntl_linux</code> (Open file description locks)</p>
+</li>
+<li>
+<p>access mode: <code>same_fd</code> (access lock via the same descriptor), <code>dup_fd</code> (access lock via duplicated descriptors), <code>two_fds</code> (access lock via two descriptors opened independently for the same path)</p>
+</li>
+<li>
+<p>concurrency mode: <code>threads</code> (access lock from two threads), <code>processes</code> (access lock from two processes)</p>
+</li>
+</ul>
+<p>Below you can find some examples.</p>
+<p>Threads are not serialized if they use BSD locks on duplicated descriptors:</p>
+<pre tabindex="0"><code>$ ./a.out flock dup_fd threads
+13:00:58 pid=5790 tid=5790 lock
+13:00:58 pid=5790 tid=5791 lock
+13:00:58 pid=5790 tid=5790 sleep
+13:00:58 pid=5790 tid=5791 sleep
+13:00:59 pid=5790 tid=5791 unlock
+13:00:59 pid=5790 tid=5790 unlock
+</code></pre><p>But they are serialized if they are used on two independent descriptors:</p>
+<pre tabindex="0"><code>$ ./a.out flock two_fds threads
+13:01:03 pid=5792 tid=5792 lock
+13:01:03 pid=5792 tid=5794 lock
+13:01:03 pid=5792 tid=5792 sleep
+13:01:04 pid=5792 tid=5792 unlock
+13:01:04 pid=5792 tid=5794 sleep
+13:01:05 pid=5792 tid=5794 unlock
+</code></pre><p>Threads are not serialized if they use POSIX record locks on two independent descriptors:</p>
+<pre tabindex="0"><code>$ ./a.out fcntl_posix two_fds threads
+13:01:08 pid=5795 tid=5795 lock
+13:01:08 pid=5795 tid=5796 lock
+13:01:08 pid=5795 tid=5795 sleep
+13:01:08 pid=5795 tid=5796 sleep
+13:01:09 pid=5795 tid=5795 unlock
+13:01:09 pid=5795 tid=5796 unlock
+</code></pre><p>But processes are serialized:</p>
+<pre tabindex="0"><code>$ ./a.out fcntl_posix two_fds processes
+13:01:13 pid=5797 tid=5797 lock
+13:01:13 pid=5798 tid=5798 lock
+13:01:13 pid=5797 tid=5797 sleep
+13:01:14 pid=5797 tid=5797 unlock
+13:01:14 pid=5798 tid=5798 sleep
+13:01:15 pid=5798 tid=5798 unlock
+</code></pre><h3 id="command-line-tools">Command-line tools</h3>
+<p>The following tools may be used to acquire and release file locks from the command line:</p>
+<ul>
+<li>
+<p><a href="http://man7.org/linux/man-pages/man1/flock.1.html"><strong><code>flock</code></strong></a></p>
+<p>Provided by <code>util-linux</code> package. Uses <code>flock()</code> function.</p>
+<p>There are two ways to use this tool:</p>
+<ul>
+<li>
+<p>run a command while holding a lock:</p>
+<pre tabindex="0"><code>flock my.lock sleep 10
+</code></pre><p><code>flock</code> will acquire the lock, run the command, and release the lock.</p>
+</li>
+<li>
+<p>open a file descriptor in bash and use <code>flock</code> to acquire and release the lock manually:</p>
+<pre tabindex="0"><code>set -e            # die on errors
+exec 100&gt;my.lock  # open file &#39;my.lock&#39; and link file descriptor 100 to it
+flock -n 100      # acquire a lock
+echo hello
+sleep 10
+echo goodbye
+flock -u -n 100   # release the lock
+</code></pre></li>
+</ul>
+<p>You can try to run these two snippets in parallel in different terminals and see that while one is sleeping while holding the lock, another is blocked in flock.</p>
+</li>
+<li>
+<p><a href="https://linux.die.net/man/1/lockfile"><strong><code>lockfile</code></strong></a></p>
+<p>Provided by <code>procmail</code> package.</p>
+<p>Runs the given command while holding a lock. Can use either <code>flock()</code>, <code>lockf()</code>, or <code>fcntl()</code> function, depending on what&rsquo;s available on the system.</p>
+</li>
+</ul>
+<p>There are also two ways to inspect the currently acquired locks:</p>
+<ul>
+<li>
+<p><a href="http://man7.org/linux/man-pages/man8/lslocks.8.html"><strong><code>lslocks</code></strong></a></p>
+<p>Provided by <code>util-linux</code> package.</p>
+<p>Lists all the currently held file locks in the entire system. Allows to perform filtering by PID and to configure the output format.</p>
+<p>Example output:</p>
+<pre tabindex="0"><code>COMMAND           PID   TYPE   SIZE MODE  M      START        END PATH
+containerd       4498  FLOCK   256K WRITE 0          0          0 /var/lib/docker/containerd/...
+dockerd          4289  FLOCK   256K WRITE 0          0          0 /var/lib/docker/volumes/...
+(undefined)        -1 OFDLCK        READ  0          0          0 /dev...
+dockerd          4289  FLOCK    16K WRITE 0          0          0 /var/lib/docker/builder/...
+dockerd          4289  FLOCK    16K WRITE 0          0          0 /var/lib/docker/buildkit/...
+dockerd          4289  FLOCK    16K WRITE 0          0          0 /var/lib/docker/buildkit/...
+dockerd          4289  FLOCK    32K WRITE 0          0          0 /var/lib/docker/buildkit/...
+(unknown)        4417  FLOCK        WRITE 0          0          0 /run...
+</code></pre></li>
+<li>
+<p><a href="http://man7.org/linux/man-pages/man5/proc.5.html"><strong><code>/proc/locks</code></strong></a></p>
+<p>A file in <code>procfs</code> virtual file system that shows current file locks of all types. The <code>lslocks</code> tools relies on this file.</p>
+<p>Example content:</p>
+<pre tabindex="0"><code>16: FLOCK  ADVISORY  WRITE 4417 00:17:23319 0 EOF
+27: FLOCK  ADVISORY  WRITE 4289 08:03:9441686 0 EOF
+28: FLOCK  ADVISORY  WRITE 4289 08:03:9441684 0 EOF
+29: FLOCK  ADVISORY  WRITE 4289 08:03:9441681 0 EOF
+30: FLOCK  ADVISORY  WRITE 4289 08:03:8528339 0 EOF
+31: OFDLCK ADVISORY  READ  -1 00:06:9218 0 EOF
+43: FLOCK  ADVISORY  WRITE 4289 08:03:8536567 0 EOF
+52: FLOCK  ADVISORY  WRITE 4498 08:03:8520185 0 EOF
+</code></pre></li>
+</ul>
+<hr>
+<h2 id="mandatory-locking">Mandatory locking</h2>
+<p>Linux has limited support for <a href="https://www.kernel.org/doc/Documentation/filesystems/mandatory-locking.txt">mandatory file locking</a>. See the &ldquo;Mandatory locking&rdquo; section in the <a href="http://man7.org/linux/man-pages/man2/fcntl.2.html"><code>fcntl(2)</code></a> man page.</p>
+<p>A mandatory lock is activated for a file when all of these conditions are met:</p>
+<ul>
+<li>The partition was mounted with the <code>mand</code> option.</li>
+<li>The set-group-ID bit is on and group-execute bit is off for the file.</li>
+<li>A POSIX record lock is acquired.</li>
+</ul>
+<p>Note that the <a href="https://en.wikipedia.org/wiki/Setuid">set-group-ID</a> bit has its regular meaning of elevating privileges when the group-execute bit is on and a special meaning of enabling mandatory locking when the group-execute bit is off.</p>
+<p>When a mandatory lock is activated, it affects regular system calls on the file:</p>
+<ul>
+<li>
+<p>When an exclusive or shared lock is acquired, all system calls that <em>modify</em> the file (e.g. <code>open()</code> and <code>truncate()</code>) are blocked until the lock is released.</p>
+</li>
+<li>
+<p>When an exclusive lock is acquired, all system calls that <em>read</em> from the file (e.g. <code>read()</code>) are blocked until the lock is released.</p>
+</li>
+</ul>
+<p>However, the documentation mentions that current implementation is not reliable, in particular:</p>
+<ul>
+<li>races are possible when locks are acquired concurrently with <code>read()</code> or <code>write()</code></li>
+<li>races are possible when using <code>mmap()</code></li>
+</ul>
+<p>Since mandatory locks are not allowed for directories and are ignored by <code>unlink()</code> and <code>rename()</code> calls, you can&rsquo;t prevent file deletion or renaming using these locks.</p>
+<h3 id="example-usage">Example usage</h3>
+<p>Below you can find a usage example of mandatory locking.</p>
+<p><code>fcntl_lock.c</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;sys/fcntl.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;unistd.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">int</span> argc, <span style="color:#66d9ef">char</span> <span style="color:#f92672">**</span>argv) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (argc <span style="color:#f92672">!=</span> <span style="color:#ae81ff">2</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fprintf</span>(stderr, <span style="color:#e6db74">&#34;usage: %s file</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, argv[<span style="color:#ae81ff">0</span>]);
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">exit</span>(<span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> fd <span style="color:#f92672">=</span> <span style="color:#a6e22e">open</span>(argv[<span style="color:#ae81ff">1</span>], O_RDWR);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (fd <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">perror</span>(<span style="color:#e6db74">&#34;open&#34;</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">exit</span>(<span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">struct</span> flock fl <span style="color:#f92672">=</span> {};
+</span></span><span style="display:flex;"><span>    fl.l_type <span style="color:#f92672">=</span> F_WRLCK;
+</span></span><span style="display:flex;"><span>    fl.l_whence <span style="color:#f92672">=</span> SEEK_SET;
+</span></span><span style="display:flex;"><span>    fl.l_start <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    fl.l_len <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">fcntl</span>(fd, F_SETLKW, <span style="color:#f92672">&amp;</span>fl) <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">perror</span>(<span style="color:#e6db74">&#34;fcntl&#34;</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">exit</span>(<span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pause</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">exit</span>(<span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Build <code>fcntl_lock</code>:</p>
+<pre tabindex="0"><code>$ gcc -o fcntl_lock fcntl_lock.c
+</code></pre><p>Mount the partition and create a file with the mandatory locking enabled:</p>
+<pre tabindex="0"><code>$ mkdir dir
+$ mount -t tmpfs -o mand,size=1m tmpfs ./dir
+$ echo hello &gt; dir/lockfile
+$ chmod g+s,g-x dir/lockfile
+</code></pre><p>Acquire a lock in the first terminal:</p>
+<pre tabindex="0"><code>$ ./fcntl_lock dir/lockfile
+(wait for a while)
+^C
+</code></pre><p>Try to read the file in the second terminal:</p>
+<pre tabindex="0"><code>$ cat dir/lockfile
+(hangs until ^C is pressed in the first terminal)
+hello
+</code></pre>
+      </section>
+    </article>
+  </section>
+  
+    
+  <footer id="footer">
+    <script>
+      $('h2, h3, h4').each(function() {
+        var id = $(this).attr('id');
+        $(this).prepend(
+          '<a class="anchor" href="#' + id +'"><i class="fa fa-paragraph"></i></a>'
+        );
+      })
+    </script>
+
+    <div id="disqus_thread" class="no-print"></div>
+    <script>
+      (function() {
+        var d = document, s = d.createElement('script');
+        s.src = '//gavv.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+    </script>
+    <noscript>Enable JavaScript to view the
+        <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+    </noscript>
+  </footer>
+
+
+  
+
+      </div>
+    </body>
+  </html>
+

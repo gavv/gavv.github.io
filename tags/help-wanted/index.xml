@@ -1,0 +1,23 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>help-wanted on Victor Gaydov</title>
+    <link>http://gavv.net/tags/help-wanted/</link>
+    <description>Recent content in help-wanted on Victor Gaydov</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 20 Sep 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://gavv.net/tags/help-wanted/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Two beginner-friendly C&#43;&#43;17 projects are looking for contributors</title>
+      <link>http://gavv.net/articles/cpp-help-wanted/</link>
+      <pubDate>Wed, 20 Sep 2023 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.net/articles/cpp-help-wanted/</guid>
+      <description>Signal Estimator project issues This one implements a tool (both CLI and GUI) for measuring audio latency and glitches.
+The idea behind the tool is simple: you have an audio loopback that connects audio output to audio input; the tool writes impulses to the output, waits until the same impulses are received from the input, and measures the delay or other properties.
+I&amp;rsquo;m using this tool at work for measuring latency of various audio software.</description>
+    </item>
+    
+  </channel>
+</rss>

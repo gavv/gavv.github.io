@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+
+  <html lang="en-US">
+    <head>
+      <meta charset="UTF-8"/>
+
+      <meta name="description" content="This is a small report and how-to on running Debian on Dell XPS 15 9520.
+TL;DR:
+on the whole, it works well use Debian Bookworm or later be aware of sound quality issues of built-in speakers on Linux be aware of possible issues with dock station after hibernation Table of contents
+Installing Debian Video 3.5K OLED display WORKS Touch display WORKS Integrated Intel video card WORKS Discrete NVIDIA video card REPORTED TO WORK Audio Speakers WORKS WITH ISSUES 3."/>
+      <meta name="author" content="Victor Gaydov"/>
+
+      <meta property="og:url" content="http://gavv.net/articles/dell-xps15/"/>
+      <meta property="og:title" content="
+  
+    Debian Linux on Dell XPS 15
+  
+"/>
+      <meta property="og:description" content="This is a small report and how-to on running Debian on Dell XPS 15 9520.
+TL;DR:
+on the whole, it works well use Debian Bookworm or later be aware of sound quality issues of built-in speakers on Linux be aware of possible issues with dock station after hibernation Table of contents
+Installing Debian Video 3.5K OLED display WORKS Touch display WORKS Integrated Intel video card WORKS Discrete NVIDIA video card REPORTED TO WORK Audio Speakers WORKS WITH ISSUES 3."/>
+      <meta property="og:site_name" content="Victor Gaydov"/>
+
+      <link rel="canonical" href="http://gavv.net/articles/dell-xps15/"/>
+
+      <title>
+  
+    Debian Linux on Dell XPS 15
+  
+</title>
+
+      <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+<link rel="stylesheet" href="/css/main.css"/>
+<link rel="stylesheet" href="/css/prism.css"/>
+<link rel="stylesheet" href="/css/lightbox.min.css"/>
+
+<link rel="shortcut icon" href="/images/favicon.ico">
+
+<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+
+<link rel="stylesheet"
+      href="//fonts.googleapis.com/css?family=Open+Sans|Lustria|Roboto+Mono">
+
+<script src="/js/lightbox-plus-jquery.min.js">
+</script>
+
+<script>
+    lightbox.option({
+      'wrapAround': true,
+      'resizeDuration': 0,
+      'fadeDuration': 0,
+      'imageFadeDuration': 0,
+    })
+</script>
+
+<script src="/js/prism.js">
+</script>
+
+<script>
+var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+if (width < 480) {
+  document.write('<script src="/js/hyphenator-loader.js"><\/script>');
+}
+</script>
+
+<script src="/js/analytics.js">
+</script>
+
+    </head>
+    <body>
+      <div id="toplevel">
+        <header id="header" class="no-print">
+  <div id="caption">
+    Victor Gaydov
+  </div>
+  <div id="menu">
+    <div>
+      <div>
+        
+          <a href="/about/" class="menu-item">
+        
+            About
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/software/" class="menu-item">
+        
+            Software
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/articles/" class="menu-item menu-selected">
+        
+            Articles
+          </a>
+      </div>
+    </div>
+    <div id="header-buttons">
+      <div>
+        <a href="https://fosstodon.org/@gavv" class="image-button">
+          <i class="fa-brands fa-mastodon"></i>
+        </a>
+        <a href="/index.xml" class="image-button">
+          <i class="rss-button fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+        
+  <section role="main">
+    <article>
+      
+        
+  <header class="post-header">
+    <h1 class="post-title">
+      
+        Debian Linux on Dell XPS 15
+      
+    </h1>
+    <div class="post-time">
+      <time datetime="2023-03-15">
+        15 Mar 2023
+      </time>
+    </div>
+    <div class="post-tags">
+      
+      <div class="post-tag">
+        <a href="/tags/linux">linux</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/hardware">hardware</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/debian">debian</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/dell">dell</a>
+      </div>
+      
+    </div>
+  </header>
+
+
+      
+      <section>
+        <a data-lightbox="roc_devicec" href="/articles/dell-xps15/dell.jpg">
+  <img src="/articles/dell-xps15/dell.jpg" width="430px"/>
+</a>
+<p>This is a small report and how-to on running Debian on <a href="https://www.dell.com/en-us/shop/dell-laptops/xps-15-laptop/spd/xps-15-9520-laptop">Dell XPS 15 9520</a>.</p>
+<p>TL;DR:</p>
+<ul>
+<li>on the whole, it works well</li>
+<li>use Debian Bookworm or later</li>
+<li>be aware of sound quality issues of built-in speakers on Linux</li>
+<li>be aware of possible issues with dock station after hibernation</li>
+</ul>
+<p><strong>Table of contents</strong></p>
+<ul>
+<li><a href="#installing-debian">Installing Debian</a></li>
+<li><a href="#video">Video</a>
+<ul>
+<li><a href="#35k-oled-display">3.5K OLED display</a> <div class="small-label">WORKS</div></li>
+<li><a href="#touch-display">Touch display</a> <div class="small-label">WORKS</div></li>
+<li><a href="#integrated-intel-video-card">Integrated Intel video card</a> <div class="small-label">WORKS</div></li>
+<li><a href="#discrete-nvidia-video-card">Discrete NVIDIA video card</a> <div class="small-label">REPORTED TO WORK</div></li>
+</ul>
+</li>
+<li><a href="#audio">Audio</a>
+<ul>
+<li><a href="#speakers">Speakers</a> <div class="small-label">WORKS WITH ISSUES</div></li>
+<li><a href="#35mm-jack">3.5mm jack</a> <div class="small-label">WORKS</div></li>
+</ul>
+</li>
+<li><a href="#connectivity">Connectivity</a>
+<ul>
+<li><a href="#wi-fi">Wi-Fi</a> <div class="small-label">WORKS</div></li>
+<li><a href="#bluetooth">Bluetooth</a> <div class="small-label">WORKS</div></li>
+</ul>
+</li>
+<li><a href="#inputs">Inputs</a>
+<ul>
+<li><a href="#keyboard">Keyboard</a> <div class="small-label">WORKS</div></li>
+<li><a href="#touch-pad">Touch pad</a> <div class="small-label">WORKS</div></li>
+<li><a href="#fingerprint-scanner">Fingerprint scanner</a> <div class="small-label">NOT TESTED</div></li>
+<li><a href="#camera">Camera</a> <div class="small-label">WORKS</div></li>
+<li><a href="#microphone">Microphone</a> <div class="small-label">WORKS</div></li>
+</ul>
+</li>
+<li><a href="#suspend">Suspend</a>
+<ul>
+<li><a href="#suspend-to-disk">Suspend to disk</a> <div class="small-label">WORKS</div></li>
+<li><a href="#suspend-to-ram">Suspend to ram</a> <div class="small-label">WORKS</div></li>
+</ul>
+</li>
+<li><a href="#dock-station">Dock station</a> <div class="small-label">WORKS WITH ISSUES</div></li>
+<li><a href="#info">Info</a></li>
+</ul>
+<hr>
+<h2 id="installing-debian">Installing Debian</h2>
+<p>First of all, open BIOS (press F12 after turning on) and adjust a few settings:</p>
+<ul>
+<li>set SATA mode to AHCI</li>
+<li>disable &ldquo;Secure Boot&rdquo;</li>
+</ul>
+<p>Then you can boot from live USB and install Debian.</p>
+<p>I was installing Debian Bullseye, and it did not ship drivers for Wi-Fi adapter (they are in non-free section), so I installed via Ethernet connected to dock station.</p>
+<p>Source: <a href="https://wiki.debian.org/InstallingDebianOn/Dell/Dell%20XPS%2015%209560">[1]</a>.</p>
+<hr>
+<h2 id="video">Video</h2>
+<h3 id="35k-oled-display">3.5K OLED display</h3>
+<div class="flex_table">
+  <div class="flex_th">WORKS</div>
+</div>
+<p>I&rsquo;m using Xfce + i3 on Debian, and I needed several tweeks to adjust apps for high resolution. I don&rsquo;t know whether these tweeks are needed on GNOME and KDE or on other distros.</p>
+<p><em>Note: all these changes will fully apply only after restart.</em></p>
+<p>Configure Gtk3:</p>
+<ul>
+<li>Xfce Settings &gt; Appearance &gt; Fonts &gt; set &ldquo;Custom DPI setting&rdquo; to 96 (i.e. force default DPI)</li>
+<li>Xfce Settings &gt; Appearance &gt; Settings &gt; set &ldquo;Window Scaling&rdquo; to 2x</li>
+</ul>
+<p>Configure cursor:</p>
+<ul>
+<li>Xfce Settings &gt; Mouse and Touchpad &gt; Theme &gt; set &ldquo;Cursor size&rdquo; to 48</li>
+</ul>
+<p>Configure Qt:</p>
+<ul>
+<li>
+<p>open <code>/etc/environment</code> and add:</p>
+<pre tabindex="0"><code>QT_SCALE_FACTOR=2
+</code></pre></li>
+</ul>
+<p>Configure X11:</p>
+<ul>
+<li>
+<p>open <code>.Xresources</code> and add:</p>
+<pre tabindex="0"><code>Xft.dpi: 192
+</code></pre></li>
+<li>
+<p>run:</p>
+<pre tabindex="0"><code>xrdb .Xresources
+</code></pre><p>This will affect some Gtk apps that do not respect &ldquo;Custom DPI setting&rdquo; and &ldquo;Window Scaling&rdquo; settings above. In my case, Xfce &ldquo;Log out&rdquo; popup for some reason ignores Xfce settings, but honors Xft.dpi.</p>
+</li>
+</ul>
+<p>Configure i3:</p>
+<ul>
+<li>just use large font size for i3, i3status, and rofi (or whatever you use)</li>
+</ul>
+<p>Configure LightDM <a href="https://evren-yurtesen.blogspot.com/2017/10/lightdm-and-4k-displays.html">[source]</a>:</p>
+<ul>
+<li>
+<p>create <code>/usr/local/bin/setup-lightdm</code>, make it executable, and add the following:</p>
+<pre tabindex="0"><code>#!/bin/sh
+if [ ! -z &#34;$DISPLAY&#34; ]; then
+  /usr/bin/xrandr --output eDP-1 --scale 0.65x0.65
+fi
+</code></pre></li>
+<li>
+<p>open <code>/etc/lightdm/lightdm.conf</code>, find section <code>[Seat:*]</code> and add:</p>
+<pre tabindex="0"><code>greeter-setup-script=/usr/local/bin/setup-lightdm
+session-setup-script=/usr/local/bin/setup-lightdm
+</code></pre><p>I did not find a working solution to scale login widgets properly, so I applied this workaround to scale the whole screen. It looks a bit blury, but at least it&rsquo;s readable.</p>
+</li>
+</ul>
+<p>Configure TTY <a href="https://askubuntu.com/a/1227821/566753">[source]</a>:</p>
+<ul>
+<li>
+<p>install Terminus font:</p>
+<pre tabindex="0"><code>sudo apt install xfonts-terminus
+</code></pre></li>
+<li>
+<p>configure font:</p>
+<pre tabindex="0"><code>sudo dpkg-reconfigure console-setup
+</code></pre><p>Choose &ldquo;UTF-8&rdquo;, &ldquo;Latin1&rdquo;, &ldquo;Terminus&rdquo;, &ldquo;16x32&rdquo;.</p>
+</li>
+</ul>
+<p>Configure GRUB:</p>
+<ul>
+<li>
+<p>open <code>/etc/default/grub</code> and add:</p>
+<pre tabindex="0"><code>GRUB_TERMINAL=gfxterm
+GRUB_GFXMODE=1280x1024
+GRUB_GFXPAYLOAD_LINUX=keep
+</code></pre></li>
+<li>
+<p>run:</p>
+<pre tabindex="0"><code>sudo update-grub
+</code></pre></li>
+</ul>
+<h3 id="touch-display">Touch display</h3>
+<div class="flex_table">
+  <div class="flex_th">WORKS</div>
+</div>
+<p>Works out of the box.</p>
+<p>Didn&rsquo;t try to use it with dual display.</p>
+<h3 id="integrated-intel-video-card">Integrated Intel video card</h3>
+<div class="flex_table">
+  <div class="flex_th">WORKS</div>
+</div>
+<p>At first I tried Debian Bullseye (currently stable), and graphics was lagging with i915 driver. Then I upgraded to Debian Bookworm (currently testing) and all issues were magically fixed.</p>
+<p>I&rsquo;m using X11.</p>
+<h3 id="discrete-nvidia-video-card">Discrete NVIDIA video card</h3>
+<div class="flex_table">
+  <div class="flex_th">REPORTED TO WORK</div>
+</div>
+<p>I tried to install <code>nvidia-driver</code> on Debian Bullseye, but got black screen after reboot.</p>
+<p>I didn&rsquo;t try to dig into it further, however people on Reddit told me that it works without issues on newer kernel and video drivers.</p>
+<hr>
+<h2 id="audio">Audio</h2>
+<h3 id="speakers">Speakers</h3>
+<div class="flex_table">
+  <div class="flex_th">WORKS WITH ISSUES</div>
+</div>
+<p>In reviews, this laptop was claimed to have excellent sound quality, thanks to it&rsquo;s two pairs of speakers. However, in my experience on Linux, the sound quality was not so good.</p>
+<p>Here are the known issues:</p>
+<ul>
+<li>
+<p>In kernel versions below 5.15.46, the low frequency pair of speakers is not properly activated.</p>
+<p>Links: <a href="https://bugzilla.kernel.org/show_bug.cgi?id=216035">[1]</a>, <a href="https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1981364">[2]</a></p>
+</li>
+<li>
+<p>In kernel versions starting from 5.15.46 and below 6.2, both pairs of speakers are employed, but for some reason the sound feels &ldquo;flat&rdquo;.</p>
+<p>Links: <a href="https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/2162">[1]</a>, <a href="https://github.com/thesofproject/linux/issues/3729">[2]</a>, <a href="https://bugzilla.kernel.org/show_bug.cgi?id=215233">[3]</a>, <a href="https://bbs.archlinux.org/viewtopic.php?id=279883">[4]</a></p>
+</li>
+<li>
+<p>In kernel versions starting from 6.2, the sound feels way better, but for my taste, I&rsquo;d rate it average. I expected more, based on reviews.</p>
+</li>
+</ul>
+<p>As far as I know, the problems below 6.2 were specific to Linux and were not reproducing on Windows when using Dell driver. However, I don&rsquo;t know whether on 6.2 it sounds the same as on Windows, or still has Linux-specific issues.</p>
+<p>In Debian Bullseye, the kernel version is 5.10. In Bookworm, it is 6.1. You can install 6.2 by yourself, but it&rsquo;s not stable yet. On my laptop, 6.2 causes freeze on reboot.</p>
+<h3 id="35mm-jack">3.5mm jack</h3>
+<div class="flex_table">
+  <div class="flex_th">WORKS</div>
+</div>
+<p>Nothing to say here, it just works.</p>
+<hr>
+<h2 id="connectivity">Connectivity</h2>
+<h3 id="wi-fi">Wi-Fi</h3>
+<div class="flex_table">
+  <div class="flex_th">WORKS</div>
+</div>
+<p>Add <code>non-free</code> (in case of Debian Bullseye) or <code>non-free-firmware</code> (in case of Debian Bookworm) to <code>/etc/apt/sources.list</code> and run <code>sudo apt update</code>.</p>
+<p>Then install the following packages:</p>
+<pre tabindex="0"><code>sudo apt install firmware-iwlwifi intel-microcode firmware-misc-nonfree
+</code></pre><h3 id="bluetooth">Bluetooth</h3>
+<div class="flex_table">
+  <div class="flex_th">WORKS</div>
+</div>
+<p>If you&rsquo;re running Debian Bookworm with PipeWire, install this package:</p>
+<pre tabindex="0"><code>sudo apt install libspa-0.2-bluetooth
+</code></pre><p>And restart BlueZ and PipeWire:</p>
+<pre tabindex="0"><code>sudo systemctl restart bluetooth.service
+systemctl --user restart pipewire.service
+</code></pre><hr>
+<h2 id="inputs">Inputs</h2>
+<h3 id="keyboard">Keyboard</h3>
+<div class="flex_table">
+  <div class="flex_th">WORKS</div>
+</div>
+<p>Works out of the box including backlight and Fn hotkeys.</p>
+<h3 id="touch-pad">Touch pad</h3>
+<div class="flex_table">
+  <div class="flex_th">WORKS</div>
+</div>
+<p>Works out of the box.</p>
+<h3 id="fingerprint-scanner">Fingerprint scanner</h3>
+<div class="flex_table">
+  <div class="flex_th">NOT TESTED</div>
+</div>
+<p>Never tried it.</p>
+<h3 id="camera">Camera</h3>
+<div class="flex_table">
+  <div class="flex_th">WORKS</div>
+</div>
+<p>Works out of the box.</p>
+<h3 id="microphone">Microphone</h3>
+<div class="flex_table">
+  <div class="flex_th">WORKS</div>
+</div>
+<p>Works out of the box.</p>
+<p>Medium sound quality, good for calls.</p>
+<hr>
+<h2 id="suspend">Suspend</h2>
+<h3 id="suspend-to-disk">Suspend to disk</h3>
+<div class="flex_table">
+  <div class="flex_th">WORKS</div>
+</div>
+<p>Works out of the box. See also &ldquo;Dock station&rdquo; section.</p>
+<h3 id="suspend-to-ram">Suspend to ram</h3>
+<div class="flex_table">
+  <div class="flex_th">WORKS</div>
+</div>
+<p>Works out of the box.</p>
+<hr>
+<h2 id="dock-station">Dock station</h2>
+<div class="flex_table">
+  <div class="flex_th">WORKS WITH ISSUES</div>
+</div>
+<p>I&rsquo;m using Dell Thunderbolt Dock WD19TBS 130W.</p>
+<p>(I chose this one because I heard that Dell modifiction of thunderbolt with 130 Watts is needed to properly power Dell laptops with OLED displays; probably that&rsquo;s not fully true).</p>
+<p>I&rsquo;ve tried connecting dock station via USB and Thunderbolt ports. Both worked for me, but in case of USB I got a warning from BIOS (at boot time) that Thunderbolt port is recommended.</p>
+<p>I&rsquo;ve tested Ethernet, USB, and HDMI ports of the dock station. Everything worked out of the box.</p>
+<p>One problem I experienced is that dock station HDMI sometimes stops working after resuming from hibernation or after reboot. It is fixed by rebooting dock station (power off and on) and then reconnecting HDMI.</p>
+<hr>
+<h2 id="info">Info</h2>
+<pre tabindex="0"><code>$ nproc
+20
+</code></pre><p>Comment: there are 20 threads and 14 cores (6 x 2-thread &ldquo;performance&rdquo; cores + 8 &ldquo;efficient&rdquo; cores).</p>
+<pre tabindex="0"><code>$ cat /proc/cpuinfo | gh gist create
+</code></pre><p><a href="https://gist.github.com/gavv/efbf569f1180672149c981f3dfdfaf3a">https://gist.github.com/gavv/efbf569f1180672149c981f3dfdfaf3a</a></p>
+<pre tabindex="0"><code>$ lspci -k | gh gist create
+</code></pre><p><a href="https://gist.github.com/gavv/3ff8b3d52b02613994a533702918ca9a">https://gist.github.com/gavv/3ff8b3d52b02613994a533702918ca9a</a></p>
+<pre tabindex="0"><code>$ lshw | gh gist create
+</code></pre><p><a href="https://gist.github.com/gavv/4ca7b7499ace338590fdaba94e387cb0">https://gist.github.com/gavv/4ca7b7499ace338590fdaba94e387cb0</a></p>
+
+      </section>
+    </article>
+  </section>
+  
+    
+  <footer id="footer">
+    <script>
+      $('h2, h3, h4').each(function() {
+        var id = $(this).attr('id');
+        $(this).prepend(
+          '<a class="anchor" href="#' + id +'"><i class="fa fa-paragraph"></i></a>'
+        );
+      })
+    </script>
+
+    <div id="disqus_thread" class="no-print"></div>
+    <script>
+      (function() {
+        var d = document, s = d.createElement('script');
+        s.src = '//gavv.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+    </script>
+    <noscript>Enable JavaScript to view the
+        <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+    </noscript>
+  </footer>
+
+
+  
+
+      </div>
+    </body>
+  </html>
+

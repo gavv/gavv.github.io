@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+  <html lang="en-US">
+    <head>
+      <meta charset="UTF-8"/>
+
+      <meta name="description" content="Problem In a large project that uses SCons, VariantDir, and source code generation, happens one of the following:
+generated source files are rebuilt every time when scons is launched if .sconsign.dblite is removed manually, scons crashes with the following trace: OSError: [Errno 2] No such file or directory: &#39;.sconsign.dblite&#39;: File &#34;/usr/lib64/python2.7/site-packages/SCons/Script/Main.py&#34;, line 1372: _exec_main(parser, values) File &#34;/usr/lib64/python2.7/site-packages/SCons/Script/Main.py&#34;, line 1335: _main(parser) File &#34;/usr/lib64/python2.7/site-packages/SCons/Script/Main.py&#34;, line 1099: nodes = _build_targets(fs, options, targets, target_top) File &#34;/usr/lib64/python2."/>
+      <meta name="author" content="Victor Gaydov"/>
+
+      <meta property="og:url" content="http://gavv.net/articles/sconsign-bug/"/>
+      <meta property="og:title" content="
+  
+    SCons rebuilds generated source files every launch
+  
+"/>
+      <meta property="og:description" content="Problem In a large project that uses SCons, VariantDir, and source code generation, happens one of the following:
+generated source files are rebuilt every time when scons is launched if .sconsign.dblite is removed manually, scons crashes with the following trace: OSError: [Errno 2] No such file or directory: &#39;.sconsign.dblite&#39;: File &#34;/usr/lib64/python2.7/site-packages/SCons/Script/Main.py&#34;, line 1372: _exec_main(parser, values) File &#34;/usr/lib64/python2.7/site-packages/SCons/Script/Main.py&#34;, line 1335: _main(parser) File &#34;/usr/lib64/python2.7/site-packages/SCons/Script/Main.py&#34;, line 1099: nodes = _build_targets(fs, options, targets, target_top) File &#34;/usr/lib64/python2."/>
+      <meta property="og:site_name" content="Victor Gaydov"/>
+
+      <link rel="canonical" href="http://gavv.net/articles/sconsign-bug/"/>
+
+      <title>
+  
+    SCons rebuilds generated source files every launch
+  
+</title>
+
+      <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+<link rel="stylesheet" href="/css/main.css"/>
+<link rel="stylesheet" href="/css/prism.css"/>
+<link rel="stylesheet" href="/css/lightbox.min.css"/>
+
+<link rel="shortcut icon" href="/images/favicon.ico">
+
+<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+
+<link rel="stylesheet"
+      href="//fonts.googleapis.com/css?family=Open+Sans|Lustria|Roboto+Mono">
+
+<script src="/js/lightbox-plus-jquery.min.js">
+</script>
+
+<script>
+    lightbox.option({
+      'wrapAround': true,
+      'resizeDuration': 0,
+      'fadeDuration': 0,
+      'imageFadeDuration': 0,
+    })
+</script>
+
+<script src="/js/prism.js">
+</script>
+
+<script>
+var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+if (width < 480) {
+  document.write('<script src="/js/hyphenator-loader.js"><\/script>');
+}
+</script>
+
+<script src="/js/analytics.js">
+</script>
+
+    </head>
+    <body>
+      <div id="toplevel">
+        <header id="header" class="no-print">
+  <div id="caption">
+    Victor Gaydov
+  </div>
+  <div id="menu">
+    <div>
+      <div>
+        
+          <a href="/about/" class="menu-item">
+        
+            About
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/software/" class="menu-item">
+        
+            Software
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/articles/" class="menu-item menu-selected">
+        
+            Articles
+          </a>
+      </div>
+    </div>
+    <div id="header-buttons">
+      <div>
+        <a href="https://fosstodon.org/@gavv" class="image-button">
+          <i class="fa-brands fa-mastodon"></i>
+        </a>
+        <a href="/index.xml" class="image-button">
+          <i class="rss-button fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+        
+  <section role="main">
+    <article>
+      
+        
+  <header class="post-header">
+    <h1 class="post-title">
+      
+        SCons rebuilds generated source files every launch
+      
+    </h1>
+    <div class="post-time">
+      <time datetime="2016-07-06">
+        06 Jul 2016
+      </time>
+    </div>
+    <div class="post-tags">
+      
+      <div class="post-tag">
+        <a href="/tags/scons">scons</a>
+      </div>
+      
+    </div>
+  </header>
+
+
+      
+      <section>
+        <h3 id="problem">Problem</h3>
+<p>In a large project that uses SCons, <a href="https://bitbucket.org/scons/scons/wiki/VariantDir%28%29">VariantDir</a>, and source code generation, happens one of the following:</p>
+<ul>
+<li>generated source files are rebuilt every time when <code>scons</code> is launched</li>
+<li>if <code>.sconsign.dblite</code> is removed manually, <code>scons</code> crashes with the following trace:</li>
+</ul>
+<pre tabindex="0"><code class="language-none" data-lang="none">OSError: [Errno 2] No such file or directory: &#39;.sconsign.dblite&#39;:
+  File &#34;/usr/lib64/python2.7/site-packages/SCons/Script/Main.py&#34;, line 1372:
+    _exec_main(parser, values)
+  File &#34;/usr/lib64/python2.7/site-packages/SCons/Script/Main.py&#34;, line 1335:
+    _main(parser)
+  File &#34;/usr/lib64/python2.7/site-packages/SCons/Script/Main.py&#34;, line 1099:
+    nodes = _build_targets(fs, options, targets, target_top)
+  File &#34;/usr/lib64/python2.7/site-packages/SCons/Script/Main.py&#34;, line 1297:
+    jobs.run(postfunc = jobs_postfunc)
+  File &#34;/usr/lib64/python2.7/site-packages/SCons/Job.py&#34;, line 113:
+    postfunc()
+  File &#34;/usr/lib64/python2.7/site-packages/SCons/Script/Main.py&#34;, line 1294:
+    SCons.SConsign.write()
+  File &#34;/usr/lib64/python2.7/site-packages/SCons/SConsign.py&#34;, line 109:
+    syncmethod()
+  File &#34;/usr/lib64/python2.7/site-packages/SCons/dblite.py&#34;, line 127:
+    self._os_unlink(self._file_name)
+Exception OSError: OSError(2, &#39;No such file or directory&#39;) in
+  &lt;bound method dblite.__del__ of &lt;SCons.dblite.dblite object at 0x7fa287435c10&gt;&gt; ignored
+</code></pre><p>Unfortunately, I was unable to reproduce this outside of my project.</p>
+<h3 id="reason">Reason</h3>
+<p>The problem occurs because:</p>
+<ul>
+<li>SCons creates individual <code>.sconsign</code> files for the source directory and build directory (VariantDir)</li>
+<li>for some reason, SCons writes build metainfo for generated sources to the <code>.sconsign</code> under the build directory but searches for it in the <code>.sconsign</code> under the source directory</li>
+<li>since SCons can&rsquo;t find build metainfo for generated sources, it assumes that they should be (re)built, and this happens every time</li>
+</ul>
+<p>You can check if this is your case with the following command:</p>
+<pre tabindex="0"><code>$ scons --debug=explain
+...
+scons: Cannot explain why `&lt;FILENAME&gt;&#39; is being rebuilt: No previous build information found
+</code></pre><h3 id="solution">Solution</h3>
+<p>The workaround is to use single global <code>.sconsign</code> for the whole project. This feature is enabled by setting the <code>SConsignFile</code> to an absolute path:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> os.path
+</span></span><span style="display:flex;"><span>env<span style="color:#f92672">.</span>SConsignFile(os<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>join(env<span style="color:#f92672">.</span>Dir(<span style="color:#e6db74">&#39;#&#39;</span>)<span style="color:#f92672">.</span>abspath, <span style="color:#e6db74">&#39;.sconsign.dblite&#39;</span>))
+</span></span></code></pre></div>
+      </section>
+    </article>
+  </section>
+  
+    
+  <footer id="footer">
+    <script>
+      $('h2, h3, h4').each(function() {
+        var id = $(this).attr('id');
+        $(this).prepend(
+          '<a class="anchor" href="#' + id +'"><i class="fa fa-paragraph"></i></a>'
+        );
+      })
+    </script>
+
+    <div id="disqus_thread" class="no-print"></div>
+    <script>
+      (function() {
+        var d = document, s = d.createElement('script');
+        s.src = '//gavv.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+    </script>
+    <noscript>Enable JavaScript to view the
+        <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+    </noscript>
+  </footer>
+
+
+  
+
+      </div>
+    </body>
+  </html>
+

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+  <html lang="en-US">
+    <head>
+      <meta charset="UTF-8"/>
+
+      <meta name="description" content="Unix domain sockets are a networkless version of Internet sockets.
+They have several advantages:
+Unix domain sockets are files, so file-system permissions may be used for them when one end is closed (e.g. process exits), SIGPIPE is delivered to another end performance may be up to 2x better See details here.
+Lack of SO_REUSEADDR A socket file is created by bind(2) call. If the file already exists, EADDRINUSE is returned."/>
+      <meta name="author" content="Victor Gaydov"/>
+
+      <meta property="og:url" content="http://gavv.net/articles/unix-socket-reuse/"/>
+      <meta property="og:title" content="
+  
+    Reusing UNIX domain socket (SO_REUSEADDR for AF_UNIX)
+  
+"/>
+      <meta property="og:description" content="Unix domain sockets are a networkless version of Internet sockets.
+They have several advantages:
+Unix domain sockets are files, so file-system permissions may be used for them when one end is closed (e.g. process exits), SIGPIPE is delivered to another end performance may be up to 2x better See details here.
+Lack of SO_REUSEADDR A socket file is created by bind(2) call. If the file already exists, EADDRINUSE is returned."/>
+      <meta property="og:site_name" content="Victor Gaydov"/>
+
+      <link rel="canonical" href="http://gavv.net/articles/unix-socket-reuse/"/>
+
+      <title>
+  
+    Reusing UNIX domain socket (SO_REUSEADDR for AF_UNIX)
+  
+</title>
+
+      <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+<link rel="stylesheet" href="/css/main.css"/>
+<link rel="stylesheet" href="/css/prism.css"/>
+<link rel="stylesheet" href="/css/lightbox.min.css"/>
+
+<link rel="shortcut icon" href="/images/favicon.ico">
+
+<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+
+<link rel="stylesheet"
+      href="//fonts.googleapis.com/css?family=Open+Sans|Lustria|Roboto+Mono">
+
+<script src="/js/lightbox-plus-jquery.min.js">
+</script>
+
+<script>
+    lightbox.option({
+      'wrapAround': true,
+      'resizeDuration': 0,
+      'fadeDuration': 0,
+      'imageFadeDuration': 0,
+    })
+</script>
+
+<script src="/js/prism.js">
+</script>
+
+<script>
+var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+if (width < 480) {
+  document.write('<script src="/js/hyphenator-loader.js"><\/script>');
+}
+</script>
+
+<script src="/js/analytics.js">
+</script>
+
+    </head>
+    <body>
+      <div id="toplevel">
+        <header id="header" class="no-print">
+  <div id="caption">
+    Victor Gaydov
+  </div>
+  <div id="menu">
+    <div>
+      <div>
+        
+          <a href="/about/" class="menu-item">
+        
+            About
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/software/" class="menu-item">
+        
+            Software
+          </a>
+      </div>
+    </div>
+    <div>
+      <div>
+        
+          <a href="/articles/" class="menu-item menu-selected">
+        
+            Articles
+          </a>
+      </div>
+    </div>
+    <div id="header-buttons">
+      <div>
+        <a href="https://fosstodon.org/@gavv" class="image-button">
+          <i class="fa-brands fa-mastodon"></i>
+        </a>
+        <a href="/index.xml" class="image-button">
+          <i class="rss-button fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+        
+  <section role="main">
+    <article>
+      
+        
+  <header class="post-header">
+    <h1 class="post-title">
+      
+        Reusing UNIX domain socket (SO_REUSEADDR for AF_UNIX)
+      
+    </h1>
+    <div class="post-time">
+      <time datetime="2016-07-07">
+        07 Jul 2016
+      </time>
+    </div>
+    <div class="post-tags">
+      
+      <div class="post-tag">
+        <a href="/tags/linux">linux</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/posix">posix</a>
+      </div>
+      
+      <div class="post-tag">
+        <a href="/tags/networking">networking</a>
+      </div>
+      
+    </div>
+  </header>
+
+
+      
+      <section>
+        <p><a href="https://en.wikipedia.org/wiki/Unix_domain_socket">Unix domain sockets</a> are a networkless version of Internet sockets.</p>
+<p>They have several advantages:</p>
+<ul>
+<li>Unix domain sockets are files, so file-system permissions may be used for them</li>
+<li>when one end is closed (e.g. process exits), <code>SIGPIPE</code> is delivered to another end</li>
+<li>performance may be up to 2x better</li>
+</ul>
+<p>See details <a href="http://lists.freebsd.org/pipermail/freebsd-performance/2005-February/001143.html">here</a>.</p>
+<h3 id="lack-of-so_reuseaddr">Lack of SO_REUSEADDR</h3>
+<p>A socket file is created by <code>bind(2)</code> call. If the file already exists, <code>EADDRINUSE</code> is returned.</p>
+<p>Unlike Internet sockets (<code>AF_INET</code>), Unix domain sockets (<code>AF_UNIX</code>) doesn&rsquo;t have <code>SO_REUSEADDR</code>, at least on Linux and BSD. The only way to reuse a socket file is to remove it with <code>unlink()</code>.</p>
+<p>There are two bad approaches to deal with this problem:</p>
+<ul>
+<li>
+<p>We could call <code>unlink()</code> just before <code>bind()</code>.</p>
+<p>The problem is that if we run two instances of our process, the second one will silently remove socket used by the first one, instead of reporting a failure.</p>
+<p>Also, there is a race here since the socket can be created by another process between <code>unlink()</code> and <code>bind()</code>.</p>
+</li>
+<li>
+<p>We could call <code>unlink()</code> when the process exits instead.</p>
+<p>The problem is that if our process crashes, <code>unlink()</code> will not be called and we&rsquo;ll have a dangling socket.</p>
+</li>
+</ul>
+<h3 id="using-a-lock-file">Using a lock file</h3>
+<p>One option is to use a lock file in addition to the socket file.</p>
+<p>We&rsquo;ll use a separate lock file and never call <code>unlink()</code> on it. When a process is going to bind a socket, it first tries to acquire a lock:</p>
+<ul>
+<li>
+<p>If the lock can&rsquo;t be acquired, it means that another process is holding the lock <em>now</em>, because kernel guarantees that the lock is released if owner process exits or crashes.</p>
+</li>
+<li>
+<p>If the lock is successfully acquired, we can safely <code>unlink()</code> the socket, because we&rsquo;re the only owner and no race may occur.</p>
+</li>
+</ul>
+<p>Example implementation:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#define SOCK_PATH &#34;/tmp/socket&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#define LOCK_PATH &#34;/tmp/socket.lock&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> server <span style="color:#f92672">=</span> <span style="color:#a6e22e">socket</span>(AF_UNIX, SOCK_STREAM, <span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (server <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">exit</span>(<span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> sockaddr_un server_addr;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">memset</span>(<span style="color:#f92672">&amp;</span>server_addr, <span style="color:#ae81ff">0</span>, <span style="color:#66d9ef">sizeof</span>(server_addr));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>server_addr.sun_family <span style="color:#f92672">=</span> AF_UNIX;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">strncpy</span>(server_addr.sun_path, SOCK_PATH, <span style="color:#66d9ef">sizeof</span>(server_addr.sun_path));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// open lock file
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> lock_fd <span style="color:#f92672">=</span> <span style="color:#a6e22e">open</span>(LOCK_PATH, O_RDONLY <span style="color:#f92672">|</span> O_CREAT, <span style="color:#ae81ff">0600</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (lock_fd <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">exit</span>(<span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// try to acquire lock
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> ret <span style="color:#f92672">=</span> <span style="color:#a6e22e">flock</span>(lock_fd, LOCK_EX <span style="color:#f92672">|</span> LOCK_NB);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (ret <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">exit</span>(<span style="color:#ae81ff">1</span>);   <span style="color:#75715e">// the lock is held by another process
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// remove socket file
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">unlink</span>(SOCK_PATH);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// create new socket file
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>ret <span style="color:#f92672">=</span> <span style="color:#a6e22e">bind</span>(server, (<span style="color:#66d9ef">struct</span> sockaddr <span style="color:#f92672">*</span>)<span style="color:#f92672">&amp;</span>server_addr, <span style="color:#66d9ef">sizeof</span>(server_addr));
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (ret <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">exit</span>(<span style="color:#ae81ff">1</span>);
+</span></span></code></pre></div><h3 id="using-abstract-namespace-sockets">Using abstract namespace sockets</h3>
+<p>Another option is to use Linux-specific abstract namespace sockets.</p>
+<p>To create an abstract namespace socket, set the first byte in the <code>sun_path</code> field of the <code>sockaddr_un</code> to <code>\0</code>. See <a href="http://man7.org/linux/man-pages/man7/unix.7.html"><code>unix(7)</code></a>. This socket will not be mapped to the filesystem, so it&rsquo;s not possible to use filesystem permissions or remove it with <code>unlink()</code>.</p>
+<p>The advantage is that such a socket is automatically removed when the process exits, so there is no problem with socket reusing.</p>
+
+      </section>
+    </article>
+  </section>
+  
+    
+  <footer id="footer">
+    <script>
+      $('h2, h3, h4').each(function() {
+        var id = $(this).attr('id');
+        $(this).prepend(
+          '<a class="anchor" href="#' + id +'"><i class="fa fa-paragraph"></i></a>'
+        );
+      })
+    </script>
+
+    <div id="disqus_thread" class="no-print"></div>
+    <script>
+      (function() {
+        var d = document, s = d.createElement('script');
+        s.src = '//gavv.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+    </script>
+    <noscript>Enable JavaScript to view the
+        <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+    </noscript>
+  </footer>
+
+
+  
+
+      </div>
+    </body>
+  </html>
+

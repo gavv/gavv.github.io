@@ -1,0 +1,26 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>x11 on Victor Gaydov</title>
+    <link>http://gavv.net/tags/x11/</link>
+    <description>Recent content in x11 on Victor Gaydov</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 05 Jul 2016 00:00:01 +0000</lastBuildDate>
+    <atom:link href="http://gavv.net/tags/x11/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Xlib usage examples</title>
+      <link>http://gavv.net/articles/xlib-usage-examples/</link>
+      <pubDate>Tue, 05 Jul 2016 00:00:01 +0000</pubDate>
+      
+      <guid>http://gavv.net/articles/xlib-usage-examples/</guid>
+      <description>Table of contents
+What is Xlib? Printing pressed keys Embedding window What is Xlib? Xlib (also known as libX11) is an X11 client library. It contains functions for interacting with an X server.
+This page provides several code snippets implementing complete X11 programs.
+Printing pressed keys The source code is available on GitHub: xlib_hello.c.
+The snippet creates a new window and handles X11 events:
+prints all received events to stdout prints pressed keys into a graphical window quits when the close button is pressed Some documentation that was useful for me:</description>
+    </item>
+    
+  </channel>
+</rss>

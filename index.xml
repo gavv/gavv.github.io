@@ -1,0 +1,21 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Victor Gaydov</title>
+    <link>http://gavv.net/</link>
+    <description>Recent content on Victor Gaydov</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 22 Nov 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://gavv.net/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Articles</title>
+      <link>http://gavv.net/articles/</link>
+      <pubDate>Wed, 22 Nov 2023 00:00:00 +0000</pubDate>
+      
+      <guid>http://gavv.net/articles/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
