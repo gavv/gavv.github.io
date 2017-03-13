@@ -2,7 +2,8 @@
 {{ if .IsHome }}
   <html>
     <head>
-      <meta http-equiv="refresh" content="0; url=/about"/>
+      <meta http-equiv="refresh" content="0; url=/about/"/>
+      <link rel="canonical" href="{{ .Site.BaseURL }}about/"/>
     </head>
   </html>
 {{ else }}
@@ -18,12 +19,14 @@
       <meta property="og:description" content="{{ .Summary }}"/>
       <meta property="og:site_name" content="{{ .Site.Params.Author }}"/>
 
+      <link rel="canonical" href="{{ .Permalink }}"/>
+
       <title>{{ block "title" . }}{{ end }}</title>
 
       {{ partial "meta.html" . }}
     </head>
     <body>
-      <div>
+      <div id="toplevel">
         {{ partial "site-header.html" . }}
         {{ block "main" . }}{{ end }}
       </div>
