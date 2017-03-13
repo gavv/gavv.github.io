@@ -246,19 +246,19 @@ We also enable three stream flags:
 
 * `PA_STREAM_AUTO_TIMING_UPDATE`
 
-   Automatically update current latency (stream buffer size) from the server. We just print current latency to stderr.
+    Automatically update current latency (stream buffer size) from the server. We just print current latency to stderr.
 
 * `PA_STREAM_INTERPOLATE_TIMING`
 
-   Interpolate reported latency values between timing updates. We want the latency values printed to stderr to change smoothly.
+    Interpolate reported latency values between timing updates. We want the latency values printed to stderr to change smoothly.
 
 * `PA_STREAM_ADJUST_LATENCY`
 
-   With this flag, `tlength` becomes the target size for the stream buffer plus device buffer, instead of just stream buffer. PulseAudio will do two things:
+    With this flag, `tlength` becomes the target size for the stream buffer plus device buffer, instead of just stream buffer. PulseAudio will do two things:
 
-   * adjust the device buffer size (ALSA ring buffer size) to be the minimum *tlength* value among of the all connected streams
+    * adjust the device buffer size (ALSA ring buffer size) to be the minimum *tlength* value among of the all connected streams
 
-   * request samples from the client in such way that there is always about *tlength - dlength* bytes remaining in the stream buffer, where *dlength* is the device buffer size
+    * request samples from the client in such way that there is always about *tlength - dlength* bytes remaining in the stream buffer, where *dlength* is the device buffer size
 
 When PulseAudio server wants more samples, it invokes our callback which does the following:
 
