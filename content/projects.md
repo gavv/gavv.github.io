@@ -12,8 +12,6 @@ title = "Projects"
 
     End-to-end HTTP and REST API testing for Go.
 
-#### Tools
-
 * [MiniSAPListener](https://github.com/gavv/MiniSAPListener)
 
     Listen SAP/SDP announcements.
@@ -25,8 +23,6 @@ title = "Projects"
 * [rdoc-generator-singlepage](https://github.com/rbdoc/rdoc-generator-singlepage)
 
     Single page HTML5 generator for Ruby RDoc.
-
-#### Other
 
 * [snippets](https://github.com/gavv/snippets)
 
