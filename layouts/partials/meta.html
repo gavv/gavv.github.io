@@ -27,7 +27,10 @@
 <script src="/js/prism.js">
 </script>
 
-<script src="/js/hyphenator-loader.js">
+<script>
+if (screen && screen.width < 480) {
+  document.write('<script src="/js/hyphenator-loader.js"><\/script>');
+}
 </script>
 
 <script>
