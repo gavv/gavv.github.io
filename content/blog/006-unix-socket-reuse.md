@@ -1,7 +1,7 @@
 +++
 slug = "unix-socket-reuse"
 date = "2016-07-07 00:00:01"
-tags = ["linux", "unix", "networking"]
+tags = ["linux", "posix", "networking"]
 title = "Reusing UNIX domain socket (SO_REUSEADDR for AF_INET)"
 +++
 

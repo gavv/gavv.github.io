@@ -1,7 +1,7 @@
 +++
 slug = "httpexpect-v1"
 date = "2016-07-04"
-tags = ["go", "testing", "http"]
+tags = ["go", "http", "testing"]
 title = "httpexpect.v1: end-to-end HTTP API testing for Go"
 +++
 

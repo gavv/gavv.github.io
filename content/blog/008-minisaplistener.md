@@ -1,7 +1,7 @@
 +++
 slug = "minisaplistener"
 date = "2016-12-09"
-tags = ["linux", "unix", "networking"]
+tags = ["linux", "networking"]
 title = "Using MiniSAPServer and MiniSAPListener for SAP/SDP"
 +++
 

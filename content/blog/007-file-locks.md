@@ -1,7 +1,7 @@
 +++
 slug = "file-locks"
 date = "2016-07-29"
-tags = ["linux", "unix", "ipc"]
+tags = ["linux", "posix", "ipc"]
 title = "File locking in Linux"
 +++
 
