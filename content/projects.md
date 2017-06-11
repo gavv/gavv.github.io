@@ -20,7 +20,7 @@ title = "Projects"
 
     Measuring time intervals correctly in Go (monotonic clock).
 
-* [rdoc-generator-singlepage](https://github.com/rbdoc/rdoc-generator-singlepage)
+* [rdoc-generator-solarfish](https://github.com/rbdoc/rdoc-generator-solarfish)
 
     Single page HTML5 generator for Ruby RDoc.
 
