@@ -41,9 +41,9 @@ title = "PulseAudio under the hood"
 
 I'm working on the [Roc](https://github.com/roc-project/roc) open-source project, a development kit for realtime streaming over an unreliable network. (The project is not ready for use yet, but in case you're interested, you can follow updates on [my twitter](https://twitter.com/gavv42)).
 
-We decided to implement a set of PulseAudio modules that will allow PulseAudio to use Roc as a network transport. Many Linux distros employ PulseAudio, and their users will be able to improve network service quality without changing the workflow. This led me to dig into PulseAudio internals and eventually to this post.
+We decided to implement a set of PulseAudio modules that will allow PulseAudio to use Roc as a network transport. Many Linux distros employ PulseAudio, and their users will be able to improve network service quality without changing the workflow. This led me to dig into PulseAudio internals and eventually to this document.
 
-### Why this post?
+### Motivation
 
 PulseAudio has [Documentation](https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/) page covering many specific problems that may be encountered by user and developer. [Modules](https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/User/Modules/) page contains a complete list of existing modules with parameters. [D-Bus API](https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/Developer/Clients/DBus/) and [C API](https://freedesktop.org/software/pulseaudio/doxygen/index.html) are also documented well.
 
@@ -51,23 +51,32 @@ Unfortunately, the available documentation doesn't give a bird-eye view and an e
 
 In result, the overall picture remains unclear. Advanced configuration looks mysterious because one need to understand what happens under the hood first. The learning curve for the module writer is high too.
 
-This post tries to fill the gap and has three goals:
+This document tries to fill the gap and has three goals:
 
 * overview available features
 * explain the underlying design and important implementation details
 * provide a starting point for writing clients and server modules
 
-This post does *not* provide a detailed reference or tutorial for PulseAudio configuration and APIs. Further details can be obtained from the official documentation (for configuration and client APIs) and from the source code (for internal interfaces).
+It does *not* provide a detailed reference or tutorial for PulseAudio configuration and APIs. Further details can be obtained from the official documentation (for configuration and client APIs) and from the source code (for internal interfaces).
 
 ### Disclaimer
 
-I'm not a PulseAudio developer. This post reflects my personal understanding of PulseAudio, obtained from the source code, experiments, official wiki, mailing lists, and blog articles. It may be inaccurate. Please let me know about any issues.
+I'm not a PulseAudio developer. This document reflects my personal understanding of PulseAudio, obtained from the source code, experiments, official wiki, mailing lists, and blog articles. It may be inaccurate. Please let me know about any issues.
 
-PulseAudio tends to trigger flame wars, which I believe are non-constructive. This post tries to be neutral and provide an unbiased overview of the implemented features and design.
+PulseAudio tends to trigger flame wars, which I believe are non-constructive. This document tries to be neutral and provide an unbiased overview of the implemented features and design.
 
 ### Thanks
 
-I'd like to thank my friends and colleagues [Mikhail Baranov](https://tarabah.me/) and [Dmitriy Shilin](https://github.com/dshil) who read drafts of this post and provided a valuable feedback. They definitely made it better!
+I'd like to thank my friends and colleagues [Mikhail Baranov](https://tarabah.me/) and [Dmitriy Shilin](https://github.com/dshil) who read early drafts of the document and provided a valuable feedback. Also big thanks to [Tanu Kaskinen](https://www.patreon.com/tanuk), a PulseAudio maintainer, who found and helped to fix dozens of errors. They all definitely made it better!
+
+### Meta
+
+This document was last updated for PulseAudio 11.1.
+
+Revisions (full log on [GitHub](https://github.com/gavv/gavv.github.io/commits/hugo/content/blog/009-pulseaudio-under-the-hood.md)):
+
+* 21 Sep 2017
+* 06 Oct 2017
 
 ---
 
@@ -87,7 +96,7 @@ PulseAudio is designed to meet a number of goals.
 
 * **Programmable behavior**
 
-    A rich API provides methods for inspecting and controlling all available objects and their run-time and persistent properties. This makes it possible to replace configuration files with GUI tools. Many desktop environments provide such tools.
+    A rich API provides methods for inspecting and controlling all available objects and their both perssitent and run-time properties. This makes it possible to replace configuration files with GUI tools. Many desktop environments provide such tools.
 
 * **Automatic setup**
 
@@ -99,7 +108,7 @@ PulseAudio is designed to meet a number of goals.
 
 * **Extensibility**
 
-    PulseAudio provides a framework for server extensions. Many built-in features are implemented as modules. Third-party modules exist as well, including advanced policy-based routing and AirPlay2 support.
+    PulseAudio provides a framework for server extensions, and many built-in features are implemented as modules. Non-official third-party modules exist as well, however, the upstream doesn't provide a guarantee of a stable API for out-of-tree modules.
 
 ### Feature overview
 
@@ -382,7 +391,9 @@ The diagram below shows the hierarchy of the server-side objects.
   <div>module-dbus-protocol</div>
 </div>
 
-PulseAudio server may be inspected and controlled via D-Bus API. Note that it can't be used for playback and recording. These features are available only through the C API.
+PulseAudio server-side objects may be inspected and controlled via an experimental D-Bus API. Note that it can't be used for playback and recording. These features are available only through the C API.
+
+Unfortunately, the D-Bus API has never left the experimental stage, and it has no stability guarantees and is not actively maintained. Applications are generally advised to use the C API instead.
 
 ### Buses and services
 
@@ -677,9 +688,9 @@ When a client connects to the server via the "native" protocol, the server perfo
 
     If the `auth-cookie` option is set, and the client provided a correct authentication cookie, then the client is accepted.
 
-    On start, the server checks the `"~/.pulse-cookie"` file. If the file isn't writable, the server reads a cookie from it. Otherwise, it generates a new random cookie and writes it to the file. Optionally, the server also stores the cookie into the X11 root window properties.
+    On start, the server checks a cookie file, usually located at `"~/.config/pulse/cookie"`. If the file isn't writable, the server reads a cookie from it. Otherwise, it generates a new random cookie and writes it to the file. Optionally, the server also stores the cookie into the X11 root window properties.
 
-    Client searches for a cookie in an environment variable, in the X11 root window properties, in parameters provided by the application, and in the `"~/.pulse-cookie"` file (in this order).
+    Client searches for a cookie in an environment variable, in the X11 root window properties, in parameters provided by the application, and in the cookie file (in this order).
 
 5. **auth-ip-acl**
 
@@ -1000,7 +1011,7 @@ For every ALSA device, there are several user space interfaces. The most importa
 
     Applications usually don't use it directly. Instead, they use the [mixer](http://www.alsa-project.org/alsa-doc/alsa-lib/mixer.html) interface, which is implemented on top of the [HCTL](http://www.alsa-project.org/alsa-doc/alsa-lib/hcontrol.html) interface, which in turn is implemented on top of the CTL interface.
 
-    The mixer interface provides access to a per-device mixer, containing multiple mixer elements. Each mixer element (a.k.a. jack control) is associated with a kernel-side  [kcontrol](https://01.org/linuxgraphics/gfx-docs/drm/sound/designs/jack-controls.html), which represents a volume meter or a toggleable switch or enumeration for some device option.
+    The mixer interface provides access to a per-device mixer, containing multiple mixer elements. Each mixer element (a.k.a. jack control) is associated with a kernel-side  [kcontrol](https://01.org/linuxgraphics/gfx-docs/drm/sound/designs/jack-controls.html), which represents a volume control or a toggleable switch or enumeration for some device option.
 
 * **UCM**
 
@@ -1020,7 +1031,7 @@ ALSA backend in PulseAudio automatically creates PulseAudio cards, card profiles
 
 The concrete meaning of PulseAudio card profile and device ports depends on whether the UCM is available for an ALSA card or not (see below).
 
-PulseAudio sources and sinks for ALSA devices implement a timer-based scheduler that manages latency and clocking. It is discussed later in this post.
+PulseAudio sources and sinks for ALSA devices implement a timer-based scheduler that manages latency and clocking. It is discussed later in a separate section.
 
 ### ALSA jacks
 
@@ -1118,17 +1129,17 @@ Configuration files define the following objects:
 
     Represents a configuration set for an ALSA card. Contains a list of mappings.
 
-    Every mapping defines a pair of playback and capture ALSA devices that are available when this profile is active, and the configuration sets available for each device.
+    Every mapping defines a playback or capture ALSA device that is available when this profile is active, and the configuration sets available for each device.
 
     Physically it is a `[Profile]` section in the profile file.
 
 * **mapping**
 
-    Represents a pair of playback and capture ALSA devices. Contains:
+    Represents a playback or capture ALSA device. Contains:
 
-    * **device mask(s)**
+    * **device strings**
 
-        Device masks are used to match a concrete pair of playback and capture ALSA devices belonging to the ALSA card. First matched devices are used.
+        Device string is a pattern used to match an concrete ALSA device belonging to the ALSA card. First matched device is used.
 
     * **channel map**
 
@@ -1334,9 +1345,9 @@ There are three alternative options to use PulseAudio and JACK on the same syste
 * Suspend PulseAudio when JACK is running using [pasuspender](http://manpages.ubuntu.com/manpages/en/man1/pasuspender.1.html) tool.
 * Configure PulseAudio to use JACK backend instead of ALSA.
 
-JACK backend for PulseAudio monitors JACK ports published on D-Bus. For every detected port, PulseAudio automatically creates a virtual source or sink, associated with this port.
+JACK backend for PulseAudio monitors when JACK is started using the JACK D-Bus API, and then creates one virtual source and one virtual sink that read and write samples to JACK.
 
-PulseAudio uses two threads for every JACK source and sink: one realtime thread for the JACK event loop, and another for the PulseAudio one. The reason for an extra thread is that it's not possible to add custom event sources to the JACK event loop, hence PulseAudio event loop can't be embedded into it. The extra thread costs extra latency, especially if PulseAudio is not configured to make its threads realtime using rtkit.
+PulseAudio uses two threads for a JACK source or sink: one realtime thread for the JACK event loop, and another for the PulseAudio one. The reason for an extra thread is that it's not possible to add custom event sources to the JACK event loop, hence PulseAudio event loop can't be embedded into it. The extra thread costs extra latency, especially if PulseAudio is not configured to make its threads realtime using rtkit.
 
 ### Other backends
 
@@ -1529,7 +1540,7 @@ The following methods are supported:
 
 When multiple sink inputs are connected to one sink, sink automatically mixes them, taking into account per-channel volume settings. See [Volumes](https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/Developer/Volumes/) and [Writing Volume Control UIs](https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/Developer/Clients/WritingVolumeControlUIs/) pages.
 
-Every source, sink, and sink input (but not source output) has its own per-channel volume level that may be controlled via both C API and D-Bus API.
+Every source, sink, sink input, and source output has its own per-channel volume level that may be controlled via both C API and D-Bus API.
 
 A way how the sink and sink input volumes are combined is determined by the *flat volumes* mode (inspired by Windows Vista):
 
@@ -1537,7 +1548,7 @@ A way how the sink and sink input volumes are combined is determined by the *fla
 
 * When flat volumes are disabled, each sink input has its own volume, considered to be relative to the volume of the sink to which it is connected.
 
-This mode may be enabled per-sink or globally (default in many distros). An application can also disable flat volumes per stream using the *relative volume* flag.
+This mode may be enabled per-sink or globally (default in many distros).
 
 There are two kinds of volumes:
 
@@ -1546,7 +1557,7 @@ There are two kinds of volumes:
 
 Volumes span from 0% to 100%, which are respectively the silence and the maximum volume that the sound hardware is capable of.
 
-Software volumes use the logarithmic scale. Hardware volumes generally use an unspecified scale. However, volumes of hardware sources and sinks that have the *decibel volume* flag and volumes of all sink inputs may be converted to and from the decibel scale using dedicated API functions.
+Software volumes use the cubic scale. Hardware volumes generally use an unspecified scale. However, volumes of hardware sources and sinks that have the *decibel volume* flag and volumes of all sink inputs may be converted to and from the decibel scale using dedicated API functions.
 
 Finally, virtual source and sinks that are attached to a master source or sink usually use *volume sharing* mode. When it is enabled, the source or sink always uses the same volume as its master.
 
@@ -1585,13 +1596,13 @@ The points on the boundaries are the following:
 
     For cards with an amplifier, volumes below this point employ hardware amplification, and volumes above this point employ digital (software) amplification.
 
-    For cards without an amplifier, digital amplification is always used, and volumes above the "norm" make no sense and are equal to the "norm" volume.
+    For cards without an amplifier, digital amplification is always used, both for volumes below and above this point.
 
 * **"norm * n"**
 
     Maximum volume that a GUI allows to set, e.g. "norm * 2".
 
-    A GUI uses a maximum volume above the "norm" to let the user to employ additional digital amplification, which may useful on some cards that have an amplifier.
+    A GUI uses a maximum volume above the "norm" to let the user to employ additional digital amplification, which may be useful if the audio content has been mastered with too low volume.
 
 ### Passthrough
 
@@ -1763,9 +1774,7 @@ Several regular filters are available:
 
     The source code of the virtual source and sink may be used as a reference when writing a new filter source or sink.
 
-    Virtual source reads the data written to the master sink. It may be used as a sink-input-to-source-output adapter, just like the null sink with its sink monitor.
-
-    Virtual sink simply forwards all data to the master sink. Its primary purpose is to demonstrate the implementation of a filter sink.
+    Virtual source reads data from the master source and writes it to the connected source outputs. Virtual sink reads data from the connected sink inputs and writes it to the master sink.
 
 ### Echo cancellation filter
 
@@ -1864,7 +1873,7 @@ The combinations not listed in the table aren't possible. It's not possible to r
 
 The sample cache is an in-memory storage for short named batches of samples that may be uploaded to the server once and then played multiple times.
 
-The sample cache is useful for event sounds. It's also a simple way to overcome the network latency issues because the samples are played after they are uploaded to the server.
+The sample cache is useful for event sounds. It's also could be an unsophisticated way to overcome the latency issues because the samples are played after they're already fully uploaded to the server, and the application or network latency will not cause glitches.
 
 Clients may create, remove, and play the sample cache entries using several protocols:
 
@@ -1949,7 +1958,7 @@ The client may send the following stream commands to the server:
 
 * **stream state**
 
-    The client gets current stream state. A stream may be playing, suspended (to save power when the sink is idle), or corked (paused).
+    The client gets current stream state. A stream may be playing (uncorked) or paused (corked).
 
 * **pause and resume**
 
@@ -1985,7 +1994,7 @@ The client may register callbacks for the following stream commands from server:
 
 * **stream suspended**
 
-    The server acknowledges the client that the stream was automatically suspended. When all streams connected to a source or sink remain paused for some period of time, the source or sink and all streams connected to it are suspended to save power.
+    The server acknowledges the client that the device the stream is connected to was suspended. When all streams connected to a source or sink remain paused for some period of time, the source or sink is suspended to save power.
 
 * **stream moved**
 
@@ -2910,13 +2919,13 @@ Several modules implement various housekeeping actions that are performed automa
       <div>module-switch-on-port-available</div>
     </div>
 
-    When a new device port appears, automatically set it as the active port of the appropriate source or sink.
+    When the availability of device ports changes, automatically switch the active device port and card profile.
 
-    When the active device port is switched, the active card profile may be switched as well. To avoid unwanted switches, the module tracks manual port and profile changes made by the user and uses some heuristics to determine what profile is preferred for every port, and what port is preferred for every profile.
+    The device port is switched when the currently active device port becomes unavailable, or a higher priority device port becomes available. The active card profile may be also if necessary. The priorities of ports and profiles are defined by their backend.
 
-    When multiple ports or profiles are available, the one with the highest priority is selected. The priority of a port or profile is defined by its backend.
+    To avoid unwanted switches, the module tracks manual port and profile changes made by the user and uses some heuristics to determine what profile is preferred for every port, and what port is preferred for every profile.
 
-    Note that ALSA and Bluetooth backends never add new device ports to a card after its initialization. For these cards, the functionality of this module is limited to selecting the highest priority device port when a card is initialized.
+    In practice, this module is only relevant for ALSA cards. When the user plugs in something using the analog jack on a sound card, that typically makes some port available and may also make another port unavailable. Similarly, when the user unplugs something from an analog jack, that typically makes some port unavailable and may also make another port available.
 
 * **switch on connect**
 
@@ -3028,7 +3037,7 @@ PulseAudio provides two features that automate the setup of Bluetooth devices th
 
     Automatically switch between A2DP and HSP profiles (if both are available for a device), depending on the roles of the currently active streams.
 
-    When a new stream is connected to a source of a Bluetooth card and its "media.role" property is set to "phone" or unset (depending on the "auto_switch" module parameter), automatically switch the card profile to HSP. When all such source outputs are disconnected from the source, switch the card profile to A2DP.
+    When a new stream is created and its "media.role" property is set to "phone" or unset (depending on the "auto_switch" module parameter), switch the card profile to HSP, to make the bluetooth source available when the regular stream routing logic is executed. When all such source outputs disappear, switch the card profile to A2DP.
 
 * **automatic playback**
 
@@ -3480,7 +3489,7 @@ The core provides two global registries accessible in modules:
     * sink
     * sample cache entry
 
-    These objects are always added to the name registry when they're created, and modules can access them by name. The name registry also manages default source and sink.
+    These objects are always added to the name registry when they're created, and modules can access them by name.
 
 * **shared properties**
 
@@ -3894,11 +3903,11 @@ The tables below provide a brief summary of modules available out of the box, gr
  <tr>
   <td>module-alsa-card</td>
   <td>loaded by another module</td>
-  <td>Creates a card for an ALSA card, and automatically loads module-alsa-{source,sink} for inner ALSA devices.</td>
+  <td>Creates a card for an ALSA card, and automatically creates sources and sinks for inner ALSA devices.</td>
  </tr>
  <tr>
   <td>module-alsa-{source,sink}</td>
-  <td>loaded by another module</td>
+  <td></td>
   <td>Creates a hardware source or sink for an ALSA device.</td>
  </tr>
  <tr>
@@ -3924,12 +3933,12 @@ The tables below provide a brief summary of modules available out of the box, gr
  <tr>
   <td>module-jackdbus-detect</td>
   <td></td>
-  <td>Listens to JACK events on D-Bus and automatically loads module-jack-{source,sink} for every JACK port.</td>
+  <td>Listens to JACK events on D-Bus and automatically loads module-jack-{source,sink} when JACK is started.</td>
  </tr>
  <tr>
   <td>module-jack-{source,sink}</td>
   <td>loaded by another module</td>
-  <td>Creates a virtual source or sink for a JACK port.</td>
+  <td>Creates a virtual source or sink that read and write samples to JACK.</td>
  </tr>
  <tr>
   <td>module-oss</td>
@@ -3987,7 +3996,12 @@ The tables below provide a brief summary of modules available out of the box, gr
   <td>Creates a pair of virtual source output and sink input connected with a queue, may be used as a source-to-sink adapter.</td>
  </tr>
  <tr>
-  <td>module-null-{source,sink}</td>
+  <td>module-null-source</td>
+  <td></td>
+  <td>Creates a virtual source that always produces silence.</td>
+ </tr>
+ <tr>
+  <td>module-null-sink</td>
   <td></td>
   <td>Creates a virtual sink that silently drops all data. Together with its monitor, may be used as a source-output-to-sink-input adapter.</td>
  </tr>
@@ -4019,12 +4033,12 @@ The tables below provide a brief summary of modules available out of the box, gr
  <tr>
   <td>module-equalizer-sink</td>
   <td>autoloadable filter</td>
-  <td>Creates a filter source or sink that implements a digital equalizer on top of the master source or sink. The equalizer may be controlled via D-Bus.</td>
+  <td>Creates a filter sink that implements a digital equalizer on top of the master source or sink. The equalizer may be controlled via D-Bus.</td>
  </tr>
  <tr>
   <td>module-virtual-surround-sink</td>
   <td>autoloadable filter</td>
-  <td>Creates a filter source or sink that performs a convolution with a HRIR WAV file on top of the master source or sink.</td>
+  <td>Creates a filter sink that performs a convolution with a HRIR WAV file on top of the master source or sink.</td>
  </tr>
  <tr>
   <td>module-virtual-{source,sink}</td>
@@ -4039,7 +4053,7 @@ The tables below provide a brief summary of modules available out of the box, gr
  <tr>
   <td>module-ladspa-sink</td>
   <td>autoloadable filter</td>
-  <td>Creates a filter source or sink that applies an audio filter from an external LADSPA plugin on top of the master source or sink. The plugin may be controlled via D-Bus.</td>
+  <td>Creates a filter sink that applies an audio filter from an external LADSPA plugin on top of the master source or sink. The plugin may be controlled via D-Bus.</td>
  </tr>
 </table>
 
@@ -4119,7 +4133,7 @@ The tables below provide a brief summary of modules available out of the box, gr
  <tr>
   <td>module-switch-on-port-available</td>
   <td>enabled by default</td>
-  <td>When a new device port appears, automatically sets it as the active port of the appropriate device.</td>
+  <td>When the availability of device ports changes, automatically switch the active device port and card profile.</td>
  </tr>
  <tr>
   <td>module-switch-on-connect</td>
@@ -4313,11 +4327,13 @@ PulseAudio package comes with several command line tools.
 
     It connects to the server via the [CLI](http://manpages.ubuntu.com/manpages/en/man5/pulse-cli-syntax.5.html) protocol over a Unix domain socket. This text protocol provides a variety of commands to inspect and configure the server. The tool redirects its stdin and stdout to the socket so that the user directly communicates with the server.
 
+    The pacmd tool doesn't work over the network or when the server is running in system mode and doesn't support autospawn. Users are encouraged to use the pactl tool instead.
+
 * **pactl**
 
     [pactl](http://manpages.ubuntu.com/manpages/man1/pactl.1.html) tool implements non-interactive commands for server configuration.
 
-    It communicates with the server via the C API, which uses the "native" protocol internally. The tool understands a number of commands which should be specified via the command line arguments. It supports only a subset of the features available in the CLI protocol.
+    It communicates with the server via the C API, which uses the "native" protocol internally. The tool understands a number of commands which should be specified via the command line arguments. It supports most of the features available in the CLI protocol.
 
 * **pacat**
 
@@ -4454,7 +4470,7 @@ PulseAudio uses the following per-user directories (belonging to the "pulse" use
     * a cookie file (for the "native" protocol authentication)
     * usually, contains configuration files, if the config directory is the same as the home directory
     * usually, contains persistent state, if the state directory is the same as the home directory
-    * usually, contains a symlink to the runtime directory
+    * may contain a symlink to the runtime directory
 
 * **config directory**
 
@@ -4480,9 +4496,9 @@ PulseAudio uses the following per-user directories (belonging to the "pulse" use
 
     Holds per-user runtime state that should be cleared when the server restarts.
 
-    Usually, the home directory contains a symlink to the runtime directory, which is located in `/tmp`. The symlink name includes the [machine id](http://man7.org/linux/man-pages/man5/machine-id.5.html).
+    If the `$PULSE_RUNTIME_PATH` environment variable is set, it specifies the path of the runtime directory. Otherwise, if the `$XDG_RUNTIME_DIR` environment variable is set, the runtime directory path is set to `"$XDG_RUNTIME_DIR/pulse"` instead (typically somewhere in `"/run"`).
 
-    However, another path may be specified via the `$PULSE_RUNTIME_PATH` environment variable. If it's not set, but the `$XDG_RUNTIME_DIR` environment variable is set, the runtime directory path is set to `"$XDG_RUNTIME_DIR/pulse"` instead (typically somewhere in `"/run"`).
+    If non of these environment variables are set, the runtime directory is created in `"/tmp"`, and a symlink to it is created in the home directory. The symlink name includes the [machine id](http://man7.org/linux/man-pages/man5/machine-id.5.html).
 
     Contains:
     * sockets files
@@ -4502,6 +4518,8 @@ Four files are used by default:
 * `client.conf` - client options
 * `default.pa` - server initialization for the per-user mode
 * `system.pa` - server initialization for the system-wide mode
+
+If the user config directory contains `.conf` files, the system `.conf` files are ignored.
 
 ### Sockets
 
@@ -5000,7 +5018,7 @@ See also:
 
 ## Critique
 
-Finally, I'd like to discuss some problems in the PulseAudio design and implementation that I've gathered while writing this post.
+Finally, I'd like to discuss some problems in the PulseAudio design and implementation that I've gathered while writing this document.
 
 We'll discuss only problems that are essential but yet solvable and could be avoided while still providing the same functionality to the user.
 
@@ -5068,7 +5086,7 @@ Here are some candidates of the high-level abstractions that are currently missi
 
     Every filter module is implemented from scratch. It should parse the module arguments, start an IO thread, run the rtpoll loop, implement clocking, handle asynchronous events, etc. It's not possible to reuse this code for a new filter.
 
-    Although it's possible to implement filters as LADSPA plugins, all filters available out of the box don't use this possibility. And even though this approach reduces the overhead in the source code, it doesn't reduce the overhead at runtime. Every plugin still gets its own source or sink, so we have an extra thread and latency.
+    Although it's possible to implement filters as LADSPA plugins, all filters available out of the box don't use this possibility.
 
 * **priority list**
 
