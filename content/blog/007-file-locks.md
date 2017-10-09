@@ -47,6 +47,12 @@ All locks except the `lockf` function are [reader-writer locks](https://en.wikip
 
 Note that [`flockfile`](http://man7.org/linux/man-pages/man3/flockfile.3.html) and friends have nothing to do with the file locks. They manage internal mutex of the `FILE` object from stdio.
 
+Reference:
+
+* [File Locks](https://www.gnu.org/software/libc/manual/html_node/File-Locks.html), GNU libc manual
+* [Open File Description Locks](https://www.gnu.org/software/libc/manual/html_node/Open-File-Description-Locks.html), GNU libc manual
+* [File-private POSIX locks](https://lwn.net/Articles/586904/), an LWN article about the predecessor of open file description locks
+
 ### Common features
 
 The following features are common for locks of all types:
