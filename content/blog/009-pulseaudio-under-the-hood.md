@@ -77,6 +77,7 @@ Revisions (full log on [GitHub](https://github.com/gavv/gavv.github.io/commits/h
 
 * 21 Sep 2017
 * 06 Oct 2017
+* 09 Oct 2017
 
 ---
 
@@ -341,13 +342,15 @@ The diagram below shows the hierarchy of the server-side objects.
 
     * **Hardware device**
 
-        Hardware source or sink is associated with a card. It contains a subset of device ports provided by the card and has a single active device port, from which it will read or write samples. The user can switch the active device port of a source or sink at any time.
+        Hardware source or sink is associated with an audio device. Usually, it is explicitly associated with a card object, except those limited backends that don't create card objects.
+
+        Such sources and sink contain a subset of device ports provided by the device and have a single active device port, from which they will read or write samples. The user can switch the active device port of a source or sink at any time.
 
         PulseAudio automatically creates one or several pairs of a hardware source and sink for every detected card, depending on the currently active card profile.
 
     * **Virtual device**
 
-        Virtual source or sink is not associated with a card. It may represent a remote network device or anything else, depending on the implementation.
+        Virtual source or sink is not associated with an audio device. It may represent a remote network device, a sound processing filter, or anything else, depending on the implementation.
 
         PulseAudio may automatically create a pair of virtual source and sink for every remote sound card exported by every PulseAudio server in the local network.
 
@@ -377,9 +380,7 @@ The diagram below shows the hierarchy of the server-side objects.
 
 * **Sample cache**
 
-    The sample cache is an in-memory storage for short named batches of samples that may be uploaded to the server once and then played multiple times.
-
-    The sample cache is useful for event sounds. It’s also a simple way to overcome the network latency issues because the samples are played after they are uploaded to the server.
+    The sample cache is an in-memory storage for short named batches of samples that may be uploaded to the server once and then played multiple times. It is usually used for event sounds.
 
 ---
 
@@ -448,9 +449,9 @@ The diagram below shows the most important D-Bus interfaces.
 
 * **Device** - The parent interface for Source and Sink.
 
-* **Source** - An input device. Hardware source is associated with a card and device port.
+* **Source** - An input device. May be associated with a card and device port.
 
-* **Sink** - An output device. Hardware sink is associated with a card and device port.
+* **Sink** - An output device. May be associated with a card and device port.
 
 * **Stream** - May be either a recording stream (soruce output) or playback stream (sink input). Application stream is associated with a client.
 
@@ -533,7 +534,7 @@ The diagram below demonstrates the workflow.
 
 * **Sample Cache**
 
-    In addition to regular streams, the user can also use [Sample Cache](https://freedesktop.org/software/pulseaudio/doxygen/scache.html) to upload named batches of samples to the server without playing them and start playback later. This is a simple way to overcome problems with latency.
+    In addition to regular streams, the user can also use [Sample Cache](https://freedesktop.org/software/pulseaudio/doxygen/scache.html) to upload named batches of samples to the server without playing them and start playback later.
 
 * **Introspection**
 
@@ -953,9 +954,7 @@ PulseAudio has several backends that implement audio I/O and device management. 
 
 * **device**
 
-    A device (source or sink) represents an active sample producer or consumer. A hardware device is associated with a card and a set of device ports. It has a single active device port. Multiple devices may belong to a card.
-
-### Sources and sinks
+    A device (source or sink) represents an active sample producer or consumer. A device is usually associated with a card and a set of device ports. It has a single active device port. Multiple devices may belong to a card.
 
 Every backend should implement the following features of a source or sink:
 
@@ -963,13 +962,7 @@ Every backend should implement the following features of a source or sink:
 * maintaining latency
 * providing clocking in the device time domain
 
-There are two types sources and sinks:
-
-* Hardware source or sink has an associated card object and is connected to one of its device ports. The user can dynamically switch active device port of hardware source or sink.
-
-* Virtual source or sink doesn't have an associated card object and device ports. However, backend still may internally associate it with a platform-specific device or port or whatever else.
-
-Currently, the only full-featured backends are ALSA and Bluetooth, which implement all five object types and provide hardware sources and sinks. Other backends don't implement all object types and provide only virtual sources and sinks.
+Currently, the only full-featured backends are ALSA and Bluetooth, which implement all object types listed above. Other backends provide only sources and sinks.
 
 ### ALSA backend
 
@@ -1305,7 +1298,7 @@ PulseAudio card profile is associated with a Bluetooth profile and role. The fol
 
 * Headset Audio Gateway (HSP/HFP) - the PulseAudio card will provide a pair PulseAudio source and sink which together act as an AG device
 
-Bluetooth backend listens to BlueZ and oFono events on D-Bus and automatically creates PulseAudio cards and hardware sources and sinks for all discovered Bluetooth devices.
+Bluetooth backend listens to BlueZ and oFono events on D-Bus and automatically creates PulseAudio cards, sources, and sinks for all discovered Bluetooth devices.
 
 The mapping of the PulseAudio object hierarchy to the Bluetooth object hierarchy is the following:
 
@@ -1345,7 +1338,7 @@ There are three alternative options to use PulseAudio and JACK on the same syste
 * Suspend PulseAudio when JACK is running using [pasuspender](http://manpages.ubuntu.com/manpages/en/man1/pasuspender.1.html) tool.
 * Configure PulseAudio to use JACK backend instead of ALSA.
 
-JACK backend for PulseAudio monitors when JACK is started using the JACK D-Bus API, and then creates one virtual source and one virtual sink that read and write samples to JACK.
+JACK backend for PulseAudio monitors when JACK is started using the JACK D-Bus API, and then creates one source and sink that read and write samples to JACK.
 
 PulseAudio uses two threads for a JACK source or sink: one realtime thread for the JACK event loop, and another for the PulseAudio one. The reason for an extra thread is that it's not possible to add custom event sources to the JACK event loop, hence PulseAudio event loop can't be embedded into it. The extra thread costs extra latency, especially if PulseAudio is not configured to make its threads realtime using rtkit.
 
@@ -1363,7 +1356,7 @@ The following backends are available but have limited functionality:
 
     [OSS](https://en.wikipedia.org/wiki/Open_Sound_System) (Open Sound System) is an older interface for making and capturing sound in Unix and Unix-like operating systems. Nowadays it is superseded by ALSA on Linux but is used on some other Unix systems. Many systems, including Linux and various *BSD variants, provide a compatibility layer for OSS applications.
 
-    OSS backend implements virtual source and sink for OSS devices. Each one is connected to a single device, usually `/dev/dspN`. At startup, PulseAudio can automatically create a sink and source for every available OSS device.
+    OSS backend implements source and sink for OSS devices. Each one is connected to a single device, usually `/dev/dspN`. At startup, PulseAudio can automatically create a sink and source for every available OSS device.
 
 * **Solaris**
 
@@ -1373,7 +1366,7 @@ The following backends are available but have limited functionality:
       <div>module-solaris</div>
     </div>
 
-    Solaris backend implements virtual source and sink for `/dev/audio` device available in Solaris and some *BSD variants, also known as "Sun audio" or "Sunau" and originally appeared in SunOS. This device supports the [Au file format](https://en.wikipedia.org/wiki/Au_file_format).
+    Solaris backend implements source and sink for `/dev/audio` device available in Solaris and some *BSD variants, also known as "Sun audio" or "Sunau" and originally appeared in SunOS. This device supports the [Au file format](https://en.wikipedia.org/wiki/Au_file_format).
 
     At startup, PulseAudio can automatically create one sink and one source for `/dev/audio` device if it is present.
 
@@ -1396,7 +1389,7 @@ The following backends are available but have limited functionality:
       <div>module-waveout</div>
     </div>
 
-    WaveOut backend implements virtual source and sink for the legacy Win32 WaveIn/WaveOut interfaces. They are part of [MultiMedia Extensions](https://en.wikipedia.org/wiki/Windows_legacy_audio_components) introduced in Windows 95 and still supported in recent Windows versions (with some issues).
+    WaveOut backend implements source and sink for the legacy Win32 WaveIn/WaveOut interfaces. They are part of [MultiMedia Extensions](https://en.wikipedia.org/wiki/Windows_legacy_audio_components) introduced in Windows 95 and still supported in recent Windows versions (with some issues).
 
     Each source or sink is connected to a single device. At startup, PulseAudio can automatically create one sink and one source for the first available device if it is running on Windows.
 
@@ -1407,7 +1400,7 @@ The following backends are available but have limited functionality:
       <div>module-esound-sink</div>
     </div>
 
-    ESound backend implements virtual sink acting as a client for [Enlightened Sound Daemon](https://en.wikipedia.org/wiki/ESound). It doesn't implement source. The documentation recommends avoiding using this sink because of latency issues.
+    ESound backend implements a sink acting as a client for [Enlightened Sound Daemon](https://en.wikipedia.org/wiki/ESound). It doesn't implement source. The documentation recommends avoiding using this sink because of latency issues.
 
     Note that PulseAudio server is also able to emulate ESound server.
 
@@ -1598,11 +1591,15 @@ The points on the boundaries are the following:
 
     For cards without an amplifier, digital amplification is always used, both for volumes below and above this point.
 
+    For cards without the decibel volume flag, volumes above this point are internally truncated the "norm" volume.
+
 * **"norm * n"**
 
     Maximum volume that a GUI allows to set, e.g. "norm * 2".
 
-    A GUI uses a maximum volume above the "norm" to let the user to employ additional digital amplification, which may be useful if the audio content has been mastered with too low volume.
+    A GUI uses a maximum volume above the "norm" to let the user to employ additional digital amplification.
+
+    This may be useful, for example, if the device is under-powered or the audio content has been mastered with too low volume. However it may cause distortion.
 
 ### Passthrough
 
@@ -1871,9 +1868,7 @@ The combinations not listed in the table aren't possible. It's not possible to r
   <div>libpulsecore</div>
 </div>
 
-The sample cache is an in-memory storage for short named batches of samples that may be uploaded to the server once and then played multiple times.
-
-The sample cache is useful for event sounds. It's also could be an unsophisticated way to overcome the latency issues because the samples are played after they're already fully uploaded to the server, and the application or network latency will not cause glitches.
+The sample cache is an in-memory storage for short named batches of samples that may be uploaded to the server once and then played multiple times. It is usually used for event sounds.
 
 Clients may create, remove, and play the sample cache entries using several protocols:
 
@@ -2374,7 +2369,7 @@ Non-ALSA backends generally don't support adjusting device buffer size. An appli
 
 Some backends, including Bluetooth devices, don't provide accurate information about the actual latency. This information is important for some applications, notably for the [lip sync](https://en.wikipedia.org/wiki/Lip_sync) in video players.
 
-To workaround problems with such backends, the user can manually set the *latency offset* for a device port, which is zero by default. When a hardware source or sink is connected to a device port, the latency offset of the device port is added to the latency (device buffer size) reported by the source or sink.
+To workaround problems with such backends, the user can manually set the *latency offset* for a device port, which is zero by default. When a source or sink is connected to a device port, the latency offset of the device port is added to the latency (device buffer size) reported by the source or sink.
 
 ### ALSA challenges
 
@@ -2921,7 +2916,7 @@ Several modules implement various housekeeping actions that are performed automa
 
     When the availability of device ports changes, automatically switch the active device port and card profile.
 
-    The device port is switched when the currently active device port becomes unavailable, or a higher priority device port becomes available. The active card profile may be also if necessary. The priorities of ports and profiles are defined by their backend.
+    The device port is switched when the currently active device port becomes unavailable, or a higher priority device port becomes available. The active card profile may be also changed if necessary. The priorities of ports and profiles are defined by their backend.
 
     To avoid unwanted switches, the module tracks manual port and profile changes made by the user and uses some heuristics to determine what profile is preferred for every port, and what port is preferred for every profile.
 
@@ -3041,14 +3036,25 @@ PulseAudio provides two features that automate the setup of Bluetooth devices th
 
 * **automatic playback**
 
-    Automatically route and play audio from A2DP sources.
+    Automatically route and play audio from A2DP and HSP/HFP AG sources.
 
-    When the currently active card profile of a Bluetooth card is "A2DP source", and a new PulseAudio source is created for the card, do the following:
+    When a new A2DP or HSP/HFP AG source is created for a BLuetooth card, do the following:
 
     * create a loopback, i.e. a pair of a source output and sink input connected with a queue
     * connect the loopback source output to the source
-    * set the "media.role" property of the loopback sink input to "music", which may be used for routing
+    * set the "media.role" property of the loopback sink input to "music" (for A2DP) or "phone" (for HSP/HFP), which may be used for routing
     * let PulseAudio route the loopback sink input to some sink
+
+* **automatic capture**
+
+    Automatically route and record audio from HSP/HFP AG sinks.
+
+    When a new HSP/HFP AG sink is created for a Bluetooth card, do the following:
+
+    * create a loopback, i.e. a pair of a source output and sink input connected with a queue
+    * connect the loopback sink input to the sink
+    * set the "media.role" property of the loopback source output to "phone", which may be used for routing
+    * let PulseAudio route the loopback source output to some source
 
 ---
 
@@ -3306,7 +3312,7 @@ For seamless migration, PulseAudio server provides two features:
 
 * Two modules that implement ESound autospawn conventions. An application may start PulseAudio server as if it were an ESound server, and PulseAudio will notify the application that it was successfully started with a signal of via a file descriptor.
 
-### Emulate PulseAudio
+### Partially or completely disable PulseAudio
 
 There are several methods of running applications that need PulseAudio on systems where PulseAudio is not the primary sound system or even is not installed.
 
@@ -3334,7 +3340,7 @@ There are several methods of running applications that need PulseAudio on system
 
     The [BlueALSA](https://github.com/Arkq/bluez-alsa) (bluez-alsa) project implements virtual ALSA device that uses Bluez5 as a backend. This allows to play and record audio from Bluetooth devices with any software that supports ALSA.
 
-### Suspend PulseAudio
+### Temporary suspend PulseAudio
 
 [pasuspender](http://manpages.ubuntu.com/manpages/en/man1/pasuspender.1.html) is a wrapper tool for applications that need exclusive access to ALSA devices.
 
@@ -3823,12 +3829,12 @@ The tables below provide a brief summary of modules available out of the box, gr
  <tr>
   <td>module-tunnel-{source,sink}</td>
   <td>loaded by another module</td>
-  <td>Creates a virtual source or sink connected to a remote source or sink via the "native" protocol (implements client from scratch).</td>
+  <td>Creates a source or sink connected to a remote source or sink via the "native" protocol (implements client from scratch).</td>
  </tr>
  <tr>
   <td>module-tunnel-{source,sink}-new</td>
   <td>work in progress</td>
-  <td>Creates a virtual source or sink connected to a remote source or sink via the "native" protocol (reuses client from libpulse).</td>
+  <td>Creates a source or sink connected to a remote source or sink via the "native" protocol (reuses client from libpulse).</td>
  </tr>
  <tr>
   <td>module-zeroconf-discover</td>
@@ -3848,7 +3854,7 @@ The tables below provide a brief summary of modules available out of the box, gr
  <tr>
   <td>module-raop-sink</td>
   <td>loaded by another module</td>
-  <td>Creates a virtual sink that forwards audio to a remote AirPlay1 device.</td>
+  <td>Creates a sink that forwards audio to a remote AirPlay1 device.</td>
  </tr>
  <tr>
   <td>module-raop-discover</td>
@@ -3908,7 +3914,7 @@ The tables below provide a brief summary of modules available out of the box, gr
  <tr>
   <td>module-alsa-{source,sink}</td>
   <td></td>
-  <td>Creates a hardware source or sink for an ALSA device.</td>
+  <td>Creates a source or sink for an ALSA device.</td>
  </tr>
  <tr>
   <td>module-bluetooth-discover</td>
@@ -3938,17 +3944,17 @@ The tables below provide a brief summary of modules available out of the box, gr
  <tr>
   <td>module-jack-{source,sink}</td>
   <td>loaded by another module</td>
-  <td>Creates a virtual source or sink that read and write samples to JACK.</td>
+  <td>Creates a source or sink that read and write samples to JACK.</td>
  </tr>
  <tr>
   <td>module-oss</td>
   <td>for systems with OSS</td>
-  <td>Creates a virtual source and sink for an OSS device (/dev/dspN).</td>
+  <td>Creates a source and sink for an OSS device (/dev/dspN).</td>
  </tr>
  <tr>
   <td>module-solaris</td>
   <td>for Solaris and some *BSD</td>
-  <td>Creates a virtual source and sink for a Sun audio device (/dev/audio).</td>
+  <td>Creates a source and sink for a Sun audio device (/dev/audio).</td>
  </tr>
  <tr>
   <td>module-coreaudio-detect</td>
@@ -3958,17 +3964,17 @@ The tables below provide a brief summary of modules available out of the box, gr
  <tr>
   <td>module-coreaudio-device</td>
   <td>for MacOS</td>
-  <td>Creates a virtual source and sink for a CoreAudio device.</td>
+  <td>Creates a source and sink for a CoreAudio device.</td>
  </tr>
  <tr>
   <td>module-waveout</td>
   <td>for Windows</td>
-  <td>Creates a virtual source and sink for Win32 WaveIn/WaveOut devices.</td>
+  <td>Creates a source and sink for Win32 WaveIn/WaveOut devices.</td>
  </tr>
  <tr>
   <td>module-esound-sink</td>
   <td>has latency issues</td>
-  <td>Creates a virtual sink connected to the ESound daemon.</td>
+  <td>Creates a sink connected to the ESound daemon.</td>
  </tr>
  <tr>
   <td>module-lirc</td>
@@ -4519,7 +4525,7 @@ Four files are used by default:
 * `default.pa` - server initialization for the per-user mode
 * `system.pa` - server initialization for the system-wide mode
 
-If the user config directory contains `.conf` files, the system `.conf` files are ignored.
+If the user config directory contains `.conf` files, the system `.conf` files with the same name are ignored.
 
 ### Sockets
 
