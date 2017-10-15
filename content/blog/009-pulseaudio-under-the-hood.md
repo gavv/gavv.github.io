@@ -349,7 +349,7 @@ The diagram below shows the hierarchy of the server-side objects.
 
         Hardware source or sink is associated with an audio device. Usually, it is explicitly associated with a card object, except those limited backends that don't create card objects.
 
-        Such sources and sink contain a subset of device ports provided by the device and have a single active device port, from which they will read or write samples. The user can switch the active device port of a source or sink at any time.
+        Such sources and sinks contain a subset of device ports provided by the device and have a single active device port, from which they will read or write samples. The user can switch the active device port of a source or sink at any time.
 
         PulseAudio automatically creates one or several pairs of a hardware source and sink for every detected card, depending on the currently active card profile.
 
