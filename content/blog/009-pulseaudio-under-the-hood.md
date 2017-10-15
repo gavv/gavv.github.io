@@ -257,7 +257,7 @@ PulseAudio is built around devices (sources and sinks) connected to streams (sou
 
     A source is an input device. It is an active unit that produces samples.
 
-    Source runs a thread with its own event loop, generates sample chunks, and posts them to all connected source outputs. It also implements clocking and maintains latency. The rest of the world usually communicates with a source using messages.
+    Source usually runs a thread with its own event loop, generates sample chunks, and posts them to all connected source outputs. It also implements clocking and maintains latency. The rest of the world usually communicates with a source using messages.
 
     The typical source represents an input sound device, e.g. a microphone connected to a sound card line input or on a Bluetooth headset. PulseAudio automatically creates a source for every detected input device.
 
@@ -273,7 +273,7 @@ PulseAudio is built around devices (sources and sinks) connected to streams (sou
 
     A sink is an output device. It is an active unit that consumes samples.
 
-    Sink runs a thread with its own event loop, peeks sample chunks from connected sink inputs, and mixes them. It also implements clocking and maintains latency. The rest of the world usually communicates with a sink using messages.
+    Sink usually runs a thread with its own event loop, peeks sample chunks from connected sink inputs, and mixes them. It also implements clocking and maintains latency. The rest of the world usually communicates with a sink using messages.
 
     The typical sink represents an output sound device, e.g. headphones connected to a sound card line output or on a Bluetooth headset. PulseAudio automatically creates a sink for every detected output device.
 
@@ -1799,6 +1799,10 @@ There are two kinds of filters:
     Such filter creates a pair of connected virtual source and sink and a pair of virtual source output and sink input, connected to a pair of master source and sink.
 
 PulseAudio treats filter devices specially in several cases:
+
+* **thread sharing**
+
+    Unlike regular sources and sinks, filter sources and sinks don't have a dedicated thread. They are running inside the thread of the master source or sink.
 
 * **volume sharing**
 
@@ -3731,15 +3735,17 @@ PulseAudio server creates the following threads:
 
 * **device IO threads**
 
-    Every source and sink have its own IO thread which reads or writes samples, implements clocking, and maintains latency.
+    Every source and sink, except filter sources and sinks, have its own IO thread which reads or writes samples, implements clocking and maintains latency.
 
 The communication between threads is done via messages. Each thread installs a thread message queue (`pa_thead_mq` which uses `pa_asyncmsgq`) to handle asynchronous messages for message objects (`pa_msgobject`).
 
-There are two types of message objects:
+There are three types of message objects:
 
-* Sources and sinks are message objects with a dedicated IO thread, which handles both IO and asynchronous messages.
+* Sources and sinks, except filter sources and sinks, are message objects with a dedicated IO thread, which handles both IO and asynchronous messages.
 
-* Other message objects, including source outputs and sink inputs, don't have a dedicated thread. They all share the core event loop thread which handles asynchronous messages sent to them.
+* Filter sources and sinks don't have a dedicated thread. They are running inside the IO thread of the master source or sink.
+
+* Other message objects, including source outputs and sink inputs, don't have a dedicated thread as well. They all share the core event loop thread which handles asynchronous messages sent to them.
 
 ### Memory
 
