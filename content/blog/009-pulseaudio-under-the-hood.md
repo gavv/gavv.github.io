@@ -67,7 +67,11 @@ PulseAudio tends to trigger flame wars, which I believe are non-constructive. Th
 
 ### Thanks
 
-I'd like to thank my friends and colleagues [Mikhail Baranov](https://tarabah.me/) and [Dmitriy Shilin](https://github.com/dshil) who read early drafts of the document and provided a valuable feedback. Also big thanks to [Tanu Kaskinen](https://www.patreon.com/tanuk), a PulseAudio maintainer, who found and helped to fix dozens of errors. They all definitely made it better!
+I'd like to thank my friends and colleagues [Mikhail Baranov](https://tarabah.me/) and [Dmitriy Shilin](https://github.com/dshil) who read early drafts of the document and provided a valuable feedback.
+
+Also big thanks to [Tanu Kaskinen](https://www.patreon.com/tanuk), a PulseAudio maintainer, who have found and helped to fix dozens of errors.
+
+They all definitely made it better!
 
 ### Meta
 
@@ -78,6 +82,7 @@ Revisions (full log on [GitHub](https://github.com/gavv/gavv.github.io/commits/h
 * 21 Sep 2017
 * 06 Oct 2017
 * 09 Oct 2017
+* 15 Oct 2017
 
 ---
 
@@ -974,44 +979,6 @@ Currently, the only full-featured backends are ALSA and Bluetooth, which impleme
 
 [ALSA](https://en.wikipedia.org/wiki/Advanced_Linux_Sound_Architecture) (Advanced Linux Sound Architecture) is a Linux kernel component providing device drivers for sound cards, and a user space library interacting with the kernel drivers. It provides a [rich high-level API](http://www.alsa-project.org/alsa-doc/alsa-lib/) and hides hardware-specific stuff.
 
-ALSA uses a device hierarchy that is different from the PulseAudio hierarchy. See [this post](http://delogics.blogspot.ru/2014/11/understanding-alsa-device-subdevice-and.html) for an overview. Here it is:
-
-* **card**
-
-    ALSA card represents a hardware or virtual sound card. Hardware cards are backed by kernel drivers, while virtual cards are implemented completely in user space plugins.
-
-* **device**
-
-    ALSA card contains at least one playback or capture device. A device is something that is capable of processing single playback or recording stream. All devices or a card may be used independently and in parallel. Typically, every card has one playback device and one capture device.
-
-* **subdevice**
-
-    ALSA device contains at least one subdevice. All subdevices of the same device share the same playback or recording stream. For playback devices, subdevices are used to represent available slots for hardware mixing. Typically, there is no hardware mixing, and every device has a single subdevice.
-
-ALSA device is identified by a card number and device number. PulseAudio by default interacts only with hardware ALSA devices. PulseAudio currently doesn't use hardware mixing and so don't employ multiple subdevices even if they're available.
-
-For every ALSA device, there are several user space interfaces. The most important are:
-
-* **PCM**
-
-    [PCM](http://www.alsa-project.org/alsa-doc/alsa-lib/pcm.html) interface provides methods for playback and recording.
-
-    Applications can setup the per-device kernel-side ring buffer parameters, write or read samples to the buffer, and issue flow control operations.
-
-* **CTL**
-
-    [CTL](http://www.alsa-project.org/alsa-doc/alsa-lib/control.html) interface provides methods for configuring device volume and options.
-
-    Applications usually don't use it directly. Instead, they use the [mixer](http://www.alsa-project.org/alsa-doc/alsa-lib/mixer.html) interface, which is implemented on top of the [HCTL](http://www.alsa-project.org/alsa-doc/alsa-lib/hcontrol.html) interface, which in turn is implemented on top of the CTL interface.
-
-    The mixer interface provides access to a per-device mixer, containing multiple mixer elements. Each mixer element (a.k.a. jack control) is associated with a kernel-side  [kcontrol](https://01.org/linuxgraphics/gfx-docs/drm/sound/designs/jack-controls.html), which represents a volume control or a toggleable switch or enumeration for some device option.
-
-* **UCM**
-
-    [UCM](http://www.alsa-project.org/alsa-doc/alsa-lib/group__ucm.html) (Use Case Manager) provides high-level configuration presets that may be used instead of configuring mixer elements manually.
-
-    Applications can describe their use-cases by selecting one of available presets. The UCM then performs all necessary configuration automatically, hiding machine-specific details and complexity of the mixer interface.
-
 ALSA backend in PulseAudio automatically creates PulseAudio cards, card profiles, device ports, sources, and sinks:
 
 * PulseAudio card is associated with an ALSA card.
@@ -1022,15 +989,129 @@ ALSA backend in PulseAudio automatically creates PulseAudio cards, card profiles
 
 * PulseAudio source and sink are associated with an ALSA device. When a source or sink is connected to a specific device port, they together define an ALSA device and its configuration.
 
-The concrete meaning of PulseAudio card profile and device ports depends on whether the UCM is available for an ALSA card or not (see below).
+The concrete meaning of PulseAudio card profile and device ports depends on whether the ALSA UCM is available for an ALSA card or not (see below).
 
 PulseAudio sources and sinks for ALSA devices implement a timer-based scheduler that manages latency and clocking. It is discussed later in a separate section.
 
-### ALSA jacks
+### ALSA device hierarchy
 
-ALSA device often has multiple ports, or jacks, for example, one for a line-out, and another for internal speaker. All such jacks are represented with a single ALSA device, and the active jack is selected via a toggleable mixer element.
+ALSA uses a device hierarchy that is different from the PulseAudio hierarchy. See [this post](http://delogics.blogspot.ru/2014/11/understanding-alsa-device-subdevice-and.html) for an overview.
 
-UCM abstracts jacks into logical mutually exclusive UCM devices, like "Speaker" or "Headset". Note that UCM device doesn't represent ALSA device or subdevice. It represents a value of a mixer element of an ALSA device.
+The ALSA hierarchy has three levels:
+
+* **card**
+
+    ALSA card represents a hardware or virtual sound card. Hardware cards are backed by kernel drivers, while virtual cards are implemented completely in user space plugins.
+
+* **device**
+
+    ALSA card contains at least one playback or capture device. A device is something that is capable of processing single playback or recording stream. All devices or a card may be used independently and in parallel. Typically, every card has at least one playback device and one capture device.
+
+* **subdevice**
+
+    ALSA device contains at least one subdevice. All subdevices of the same device share the same playback or recording stream. For playback devices, subdevices are used to represent available slots for hardware mixing. Typically, there is no hardware mixing, and every device has a single subdevice.
+
+ALSA device is identified by a card number and device number. PulseAudio by default interacts only with hardware ALSA devices. PulseAudio currently doesn't use hardware mixing and so don't employ multiple subdevices even if they're available.
+
+### ALSA kernel interfaces
+
+Each ALSA device has a corresponding device entry in the `"/dev/snd"` directory. Their meta-information may be discovered through the `"/proc/asound"` directory. See details in [this post](http://www.sabi.co.uk/Notes/linuxSoundALSA.html).
+
+Five device entry types exist:
+
+* **pcm** - for recording or playing samples
+
+* **control** - for manipulating the internal mixer and routing of the card
+
+* **midi** - for controlling the MIDI port of the card, if any
+
+* **sequencer** - for controlling the built-in sound synthesizer of the card, if any
+
+* **timer** - to be used in pair with the sequencer
+
+PulseAudio interacts only with the pcm and control device entries.
+
+Every ALSA card and device may have a set of kcontrols (kenrnel control elements) associated with it. The kernel provides generic operations for manipulating registered kcontrols using ioctl on the corresponding device entry.
+
+A kcontrol has the following properties:
+
+* **name** - a string identifier of the kcontrol
+
+* **index** - a numerical identifier of the kcontrol
+
+* **interface** - determines what entity this kcontrol is associated with, e.g. "card" (for card kcontrols), "pcm" (for pcm device kcontrols) or "mixer" (for control device kcontrols)
+
+* **type** - determines the type of the kcontrol members, e.g. "boolean", "integer", "enumerated", etc.
+
+* **members** - contain the kcontrol values; a kcontrol can have multiple members, but all of the same type
+
+* **access attributes** - determines various kcontrol access parameters
+
+A kcontrol typically represent a thing like a volume control (allows to adjust the sound card internal mixer volume), a mute switch (allows to mute or unmute device or channel), a jack control (allows to determine whether something is plugged in, e.g. into an HDMI or a 3.5mm analog connector), or some device-specific option.
+
+The concrete set of the available kcontrols are defined by the sound card driver, though drivers try to provide similar kcontrols. The sound card driver usually just exposes all available hardware controls, and it's up to the user space to provide a unified hardware-independent layer on top of them. This responsibility rests on the ALSA UCM and PulseAudio.
+
+### ALSA user space interfaces
+
+ALSA provides numerous user space interfaces to interact with ALSA cards and devices and their properties. See libasound documentation: [1](http://www.alsa-project.org/alsa-doc/alsa-lib/index.html), [2](http://www.alsa-project.org/alsa-doc/alsa-lib/modules.html).
+
+The diagram below provides an overview of the components involved when PulseAudio is running.
+
+<img src="/blog/pulseaudio-under-the-hood/diagrams/alsa_layers.png" width="608px"/>
+
+Here is the list of involved ALSA interfaces:
+
+* **PCM**
+
+    [PCM](http://www.alsa-project.org/alsa-doc/alsa-lib/pcm.html) interface implements methods for playback and recording on top of the pcm device entry.
+
+    Applications can setup the per-device kernel-side ring buffer parameters, write or read samples to the buffer, and issue flow control operations.
+
+    This interface is used in most ALSA applications.
+
+* **CTL**
+
+    [CTL](http://www.alsa-project.org/alsa-doc/alsa-lib/control.html) interface implements low-level methods for accessing kcontrols on top of the kernel ioctl API.
+
+    Applications can inspect, read, and write CTL elements, which are mapped one-to-one to the kernel-side kcontrols.
+
+    This interface is usually not used directly.
+
+* **HCTL**
+
+    [HCTL](http://www.alsa-project.org/alsa-doc/alsa-lib/hcontrol.html) interface implements a caching layer on top of the CTL interface.
+
+    Applications can inspect, read, and write HCTL elements, mapped one-to-one to the CTL elements, and in addition, can set per-element callbacks for various events.
+
+    This interface is usually not used directly.
+
+* **Mixer**
+
+    [Mixer](http://www.alsa-project.org/alsa-doc/alsa-lib/mixer.html) interface implements a higher-level management layer above the HCTL interface.
+
+    It provides a framework for managing abstract mixer elements. A mixer element is, generally speaking, a set of logically grouped HCTL elements. Applications register custom mixer element classes and implement a custom mapping of the HCTL elements to the mixer elements.
+
+    This interface provides a generic and rather complex asynchronous API. In most cases, applications may use the Simple Mixer interface instead.
+
+* **Simple Mixer**
+
+    [Simple Mixer](http://www.alsa-project.org/alsa-doc/alsa-lib/group___simple_mixer.html) interface implements a mixer element class for the Mixer and provides a simple and less abstract synchronous API on top of it.
+
+    A Simple Mixer element represents a logical group of the related kcontrols. An element may have the following attributes, mapped internally to the corresponding HCTL elements: a volume control, a mute switch, or an enumeration value (e.g. jack controls). Each attribute may be playback, capture, or global. Each attribute may be also per-channel or apply to all channels.
+
+    This interface is supposed to be used by applications that want to control the mixer and do not need the complex and generic Mixer API.
+
+* **UCM**
+
+    [UCM](http://www.alsa-project.org/alsa-doc/alsa-lib/group__ucm.html) (Use Case Manager) interface implements high-level configuration presets on top of the Mixer interface.
+
+    Applications can describe their use-cases by selecting one of the available presets instead of configuring mixer elements manually. The UCM then performs all necessary configuration automatically, hiding machine-specific details and complexity of the Mixer interface.
+
+### ALSA jack controls
+
+A device often has multiple ports, or jacks, for example, one for a line-out, and another for internal speaker. All such jacks are represented with a single ALSA device, and the active jack is selected via a [jack control](https://01.org/linuxgraphics/gfx-docs/drm/sound/designs/jack-controls.html) kcontrol element or sometimes a pair of separate elements for playback and capture.
+
+UCM abstracts jacks into logical mutually exclusive UCM devices, like "Speaker" or "Headset". Note that UCM device doesn't represent ALSA device or subdevice. It represents a value of a jack control(s) of an ALSA device.
 
 Roughly speaking, PulseAudio probes jacks and creates at least one device port for every available one, regardless of whether UCM is available or not. However, details differ in these two cases.
 
