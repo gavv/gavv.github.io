@@ -77,7 +77,7 @@ They all definitely made it better!
 
 This document was last updated for PulseAudio 11.1.
 
-Revisions (full log on [GitHub](https://github.com/gavv/gavv.github.io/commits/hugo/content/blog/009-pulseaudio-under-the-hood.md)):
+Major revisions (full log on [GitHub](https://github.com/gavv/gavv.github.io/commits/hugo/content/blog/009-pulseaudio-under-the-hood.md)):
 
 * 21 Sep 2017
 * 06 Oct 2017
@@ -1049,7 +1049,7 @@ A kcontrol has the following properties:
 
 A kcontrol typically represent a thing like a volume control (allows to adjust the sound card internal mixer volume), a mute switch (allows to mute or unmute device or channel), a jack control (allows to determine whether something is plugged in, e.g. into an HDMI or a 3.5mm analog connector), or some device-specific option.
 
-The concrete set of the available kcontrols are defined by the sound card driver, though drivers try to provide similar kcontrols. The sound card driver usually just exposes all available hardware controls, and it's up to the user space to provide a unified hardware-independent layer on top of them. This responsibility rests on the ALSA UCM and PulseAudio.
+The concrete set of the available kcontrols are defined by the sound card driver, though drivers try to provide similar kcontrols. The driver usually just exposes all available hardware controls, and it's up to the user space to provide a unified hardware-independent layer on top of them. This responsibility rests on the ALSA UCM and PulseAudio.
 
 ### ALSA user space interfaces
 
