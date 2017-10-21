@@ -77,12 +77,9 @@ They all definitely made it better!
 
 This document was last updated for PulseAudio 11.1.
 
-Major revisions (full log on [GitHub](https://github.com/gavv/gavv.github.io/commits/hugo/content/blog/009-pulseaudio-under-the-hood.md)):
+Last major update: 21 Oct 2017.
 
-* 21 Sep 2017
-* 06 Oct 2017
-* 09 Oct 2017
-* 15 Oct 2017
+Full log is available [on GitHub](https://github.com/gavv/gavv.github.io/commits/hugo/content/blog/009-pulseaudio-under-the-hood.md).
 
 ---
 
@@ -977,7 +974,7 @@ Currently, the only full-featured backends are ALSA and Bluetooth, which impleme
   <div>module-alsa-{card,source,sink}</div>
 </div>
 
-[ALSA](https://en.wikipedia.org/wiki/Advanced_Linux_Sound_Architecture) (Advanced Linux Sound Architecture) is a Linux kernel component providing device drivers for sound cards, and a user space library interacting with the kernel drivers. It provides a [rich high-level API](http://www.alsa-project.org/alsa-doc/alsa-lib/) and hides hardware-specific stuff.
+[ALSA](https://en.wikipedia.org/wiki/Advanced_Linux_Sound_Architecture) (Advanced Linux Sound Architecture) is a Linux kernel component providing device drivers for sound cards, and a user space library (libasound) interacting with the kernel drivers. It provides a [rich high-level API](http://www.alsa-project.org/alsa-doc/alsa-lib/) and hides hardware-specific stuff.
 
 ALSA backend in PulseAudio automatically creates PulseAudio cards, card profiles, device ports, sources, and sinks:
 
@@ -985,7 +982,7 @@ ALSA backend in PulseAudio automatically creates PulseAudio cards, card profiles
 
 * PulseAudio card profile is associated with a configuration set for an ALSA card. It defines a subset of ALSA devices belonging to a card, and so the list of available device ports, sources, and sinks.
 
-* PulseAudio device port is associated with a configuration set for an ALSA device. It defines a list of enabled ALSA jacks and other device options.
+* PulseAudio device port is associated with a configuration set for an ALSA device. It defines a list of active inputs and outputs of the card and other device options.
 
 * PulseAudio source and sink are associated with an ALSA device. When a source or sink is connected to a specific device port, they together define an ALSA device and its configuration.
 
@@ -1015,7 +1012,11 @@ ALSA device is identified by a card number and device number. PulseAudio by defa
 
 ### ALSA kernel interfaces
 
-Each ALSA device has a corresponding device entry in the `"/dev/snd"` directory. Their meta-information may be discovered through the `"/proc/asound"` directory. See details in [this post](http://www.sabi.co.uk/Notes/linuxSoundALSA.html).
+Each ALSA device has a corresponding device entry in the `"/dev/snd"` directory. Their meta-information may be discovered through the `"/proc/asound"` directory. See some details in [this post](http://www.sabi.co.uk/Notes/linuxSoundALSA.html).
+
+The diagram below shows the device entries involved when PulseAudio is running.
+
+<img src="/blog/pulseaudio-under-the-hood/diagrams/alsa_kernel_interfaces.png" width="421px"/>
 
 Five device entry types exist:
 
@@ -1045,7 +1046,7 @@ A kcontrol has the following properties:
 
 * **members** - contain the kcontrol values; a kcontrol can have multiple members, but all of the same type
 
-* **access attributes** - determines various kcontrol access parameters
+* **access attributes** - determine various kcontrol access parameters
 
 A kcontrol typically represent a thing like a volume control (allows to adjust the sound card internal mixer volume), a mute switch (allows to mute or unmute device or channel), a jack control (allows to determine whether something is plugged in, e.g. into an HDMI or a 3.5mm analog connector), or some device-specific option.
 
@@ -1057,7 +1058,7 @@ ALSA provides numerous user space interfaces to interact with ALSA cards and dev
 
 The diagram below provides an overview of the components involved when PulseAudio is running.
 
-<img src="/blog/pulseaudio-under-the-hood/diagrams/alsa_layers.png" width="608px"/>
+<img src="/blog/pulseaudio-under-the-hood/diagrams/alsa_user_space_interfaces.png" width="608px"/>
 
 Here is the list of involved ALSA interfaces:
 
@@ -1097,7 +1098,7 @@ Here is the list of involved ALSA interfaces:
 
     [Simple Mixer](http://www.alsa-project.org/alsa-doc/alsa-lib/group___simple_mixer.html) interface implements a mixer element class for the Mixer and provides a simple and less abstract synchronous API on top of it.
 
-    A Simple Mixer element represents a logical group of the related kcontrols. An element may have the following attributes, mapped internally to the corresponding HCTL elements: a volume control, a mute switch, or an enumeration value (e.g. jack controls). Each attribute may be playback, capture, or global. Each attribute may be also per-channel or apply to all channels.
+    A Simple Mixer element represents a logical group of the related kcontrols. An element may have the following attributes, mapped internally to the corresponding HCTL elements: a volume control, a mute switch, or an enumeration value. Each attribute may be playback, capture, or global. Each attribute may be also per-channel or apply to all channels.
 
     This interface is supposed to be used by applications that want to control the mixer and do not need the complex and generic Mixer API.
 
@@ -1107,19 +1108,43 @@ Here is the list of involved ALSA interfaces:
 
     Applications can describe their use-cases by selecting one of the available presets instead of configuring mixer elements manually. The UCM then performs all necessary configuration automatically, hiding machine-specific details and complexity of the Mixer interface.
 
-### ALSA jack controls
+### ALSA routing
 
-A device often has multiple ports, or jacks, for example, one for a line-out, and another for internal speaker. All such jacks are represented with a single ALSA device, and the active jack is selected via a [jack control](https://01.org/linuxgraphics/gfx-docs/drm/sound/designs/jack-controls.html) kcontrol element or sometimes a pair of separate elements for playback and capture.
+ALSA cards often have multiple inputs and outputs. For example, a card may have an analog output for internal speaker, an analog output for 3.5mm headphone connector, an analog input for internal microphone, an analog input for 3.5mm microphone connector, and an HDMI input and output.
 
-UCM abstracts jacks into logical mutually exclusive UCM devices, like "Speaker" or "Headset". Note that UCM device doesn't represent ALSA device or subdevice. It represents a value of a jack control(s) of an ALSA device.
+ALSA interfaces represent this in the following way:
 
-Roughly speaking, PulseAudio probes jacks and creates at least one device port for every available one, regardless of whether UCM is available or not. However, details differ in these two cases.
+* an ALSA card contains separate ALSA devices for HDMI and analog audio
+
+* an ALSA device has separate pcm device entries in `"/dev/snd"` for playback and capture
+
+* an ALSA card has a control device entry in `"/dev/snd"` with various kcontrols allowing to determine what's plugged in and configure input and output routing
+
+The following kcontrols may be used:
+
+* **jack controls**
+
+    [Jack controls](https://01.org/linuxgraphics/gfx-docs/drm/sound/designs/jack-controls.html) may be used to determine what's plugged in. Drivers usually create jack controls for physical connectors, however, details may vary.
+
+    For example, headphone and microphone connectors may be represented with a single jack control or two separate jack controls. An internal speaker or microphone can be sometimes represented with a jack control as well, despite the fact that there is no corresponding physical connector.
+
+* **mute controls**
+
+    Mute controls may be used to mute and unmute a single input or output. Drivers usually create mute controls for every available input and output of a card.
+
+* **route controls**
+
+    An enumeration control may be sometimes provided to choose the active input or output.
+
+Different drivers provide different sets of kcontrols, and it's up to the user space to build a unified hardware-independent layer on top of them. PulseAudio is able to do it by itself, or alternatively may rely on ALSA UCM.
+
+In both cases, PulseAudio goal is to probe what inputs and outputs are available and map them to device ports somehow. However, details vary depending on whether UCM is in use or not.
 
 ### ALSA cards with UCM
 
 ALSA Use Case Manager aims two goals:
 
-* Abstract the applications which configure ALSA devices from the complexity of the mixer interface.
+* Abstract the applications which configure ALSA devices from the complexity of the Mixer interface.
 
 * Make these applications portable across numerous embedded and mobile devices, by moving the machine-specific part to configuration files.
 
@@ -1139,7 +1164,7 @@ An application provides the UCM with three strings:
 
 * **ucm device**
 
-    Defines active jacks of an ALSA device, e.g. "Speaker" or "Headset". Available UCM devices are defined by currently active UCM verb. Zero or multiple UCM devices may be active at the same time.
+    Defines configuration of active inputs and outputs of an ALSA device, e.g. "Speaker" or "Headset". Available UCM devices are defined by currently active UCM verb. Zero or multiple UCM devices may be active at the same time.
 
 A combination of one UCM verb, zero or multiple UCM modifiers, and one or multiple UCM devices define what ALSA device to use and how to configure its mixer elements.
 
@@ -1183,11 +1208,11 @@ This is how the mapping is used:
 
 * The currently active device port of the source or sink defines what UCM modifier and UCM devices are used. Whether the UCM modifier is enabled depends on the roles of currently connected source outputs or sinks inputs.
 
-* The currently active UCM verb, UCM modifier, and UCM devices define what ALSA device jacks, options, and volume meters are used.
+* The currently active UCM verb, UCM modifier, and UCM devices define what card inputs and outputs are active, what device options are set, and what volume controls are used.
 
 ### ALSA cards w/o UCM
 
-Besides the UCM support, PulseAudio has its own configuration system on top of the ALSA mixer. It was developed before UCM appeared. It is used when the UCM is not available for a card.
+Besides the UCM support, PulseAudio has its own configuration system on top of the ALSA Mixer. It was developed before UCM appeared. It is used when the UCM is not available for a card.
 
 Mixer configuration is described in custom PulseAudio-specific configuration files. See [Profiles](https://www.freedesktop.org/wiki/Software/PulseAudio/Backends/ALSA/Profiles/) page on wiki.
 
@@ -3723,7 +3748,7 @@ PulseAudio server creates the following threads:
 
 * **core event loop**
 
-    The main thread runs the core main loop. Most modules register handlers in the core main loop. For example, the core main loop is used in hotplug and network modules to listen to Udev events (to detect ALSA cards), to listen to D-Bus events (to detect Bluetooth devices and JACK ports), to listen to broadcast announcements (to detect RTP receivers), and to handle client connections.
+    The main thread runs the core main loop. Most modules register handlers in the core main loop. For example, the core main loop is used in hotplug and network modules to listen to Udev events (to detect ALSA cards), to listen to D-Bus events (to detect Bluetooth devices or receive events from JACK), to listen to broadcast announcements (to detect RTP receivers), and to handle client connections.
 
 * **avahi event loop**
 
