@@ -51,13 +51,13 @@ Unfortunately, the available documentation doesn't give a bird-eye view and an e
 
 In result, the overall picture remains unclear. Advanced configuration looks mysterious because one need to understand what happens under the hood first. The learning curve for the module writer is high too.
 
-This document tries to fill the gap and has three goals:
+This document tries to fill the gap and provide an overview of the PulseAudio features, architecture, and internals. More precisely, it has three goals:
 
-* overview available features
-* explain the underlying design and important implementation details
+* describe the available features
+* explain their underlying design and important implementation details
 * provide a starting point for writing clients and server modules
 
-It does *not* provide a detailed reference or tutorial for PulseAudio configuration and APIs. Further details can be obtained from the official documentation (for configuration and client APIs) and from the source code (for internal interfaces).
+It does not provide a detailed reference or tutorial for PulseAudio configuration and APIs. Further details can be obtained from the official documentation (for configuration and client APIs) and from the source code (for internal interfaces).
 
 ### Disclaimer
 
