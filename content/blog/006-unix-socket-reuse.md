@@ -2,7 +2,7 @@
 slug = "unix-socket-reuse"
 date = "2016-07-07 00:00:01"
 tags = ["linux", "posix", "networking"]
-title = "Reusing UNIX domain socket (SO_REUSEADDR for AF_INET)"
+title = "Reusing UNIX domain socket (SO_REUSEADDR for AF_UNIX)"
 +++
 
 [Unix domain sockets](https://en.wikipedia.org/wiki/Unix_domain_socket) are a networkless version of Internet sockets.
