@@ -109,8 +109,8 @@ This table summarizes the difference between the lock types. A more detailed des
   <td>yes</td>
  </tr>
  <tr>
-  <th>Works with NFS (Linux)</th>
-  <td>no</td>
+  <th>Works on NFS (Linux)</th>
+  <td>Linux 2.6.12+</td>
   <td>yes</td>
   <td>yes</td>
   <td>yes</td>
@@ -139,7 +139,7 @@ Features:
 * always lock the entire file
 * associated with a file object
 * do not guarantee atomic switch between the locking modes (exclusive and shared)
-* do not work with NFS (on Linux)
+* up to Linux 2.6.11, didn't work on NFS; since Linux 2.6.12, flock() locks on NFS are emulated using fcntl() POSIX record byte-range locks on the entire file (unless the emulation is disabled in the NFS mount options)
 
 These locks are associated with a file object, i.e.:
 
@@ -193,7 +193,7 @@ Features:
 * can be applied to a byte range
 * associated with an `[i-node, pid]` pair instead of a file object
 * guarantee atomic switch between the locking modes (exclusive and shared)
-* work with NFS (on Linux)
+* work on NFS (on Linux)
 
 These locks are associated with an `[i-node, pid]` pair, which means:
 
@@ -274,6 +274,7 @@ Features:
 * can be applied to a byte range (optionally automatically expanding when data is appended in future)
 * associated with an `[i-node, pid]` pair instead of a file object
 * supports only exclusive locks
+* works on NFS (on Linux)
 
 Since `lockf` locks are associated with an `[i-node, pid]` pair, they have the same problems as POSIX record locks described above.
 
@@ -303,7 +304,7 @@ if (lockf(fd, F_ULOCK, 5) == -1) {
 
 ### Open file description locks (fcntl)
 
-Open file description locks are Linux-specific and combine advantages of the BSD locks and Open file description locks. They are provided by [`fcntl(2)`](http://man7.org/linux/man-pages/man2/fcntl.2.html), see "Open file description locks (non-POSIX)" section in the man page.
+Open file description locks are Linux-specific and combine advantages of the BSD locks and POSIX record locks. They are provided by [`fcntl(2)`](http://man7.org/linux/man-pages/man2/fcntl.2.html), see "Open file description locks (non-POSIX)" section in the man page.
 
 Features:
 
@@ -311,6 +312,7 @@ Features:
 * can be applied to a byte range
 * associated with a file object
 * guarantee atomic switch between the locking modes (exclusive and shared)
+* work on NFS (on Linux)
 
 These locks are available since the 3.15 kernel.
 
