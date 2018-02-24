@@ -99,7 +99,7 @@ PulseAudio is designed to meet a number of goals.
 
 * **Programmable behavior**
 
-    A rich API provides methods for inspecting and controlling all available objects and their both perssitent and run-time properties. This makes it possible to replace configuration files with GUI tools. Many desktop environments provide such tools.
+    A rich API provides methods for inspecting and controlling all available objects and their both persistent and run-time properties. This makes it possible to replace configuration files with GUI tools. Many desktop environments provide such tools.
 
 * **Automatic setup**
 
@@ -455,7 +455,7 @@ The diagram below shows the most important D-Bus interfaces.
 
 * **Sink** - An output device. May be associated with a card and device port.
 
-* **Stream** - May be either a recording stream (soruce output) or playback stream (sink input). Application stream is associated with a client.
+* **Stream** - May be either a recording stream (source output) or playback stream (sink input). Application stream is associated with a client.
 
 * **Sample** - A named batch of samples in the sample cache.
 
