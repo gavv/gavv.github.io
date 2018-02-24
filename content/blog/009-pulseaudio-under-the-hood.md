@@ -99,7 +99,7 @@ PulseAudio is designed to meet a number of goals.
 
 * **Programmable behavior**
 
-    A rich API provides methods for inspecting and controlling all available objects and their both perssitent and run-time properties. This makes it possible to replace configuration files with GUI tools. Many desktop environments provide such tools.
+    A rich API provides methods for inspecting and controlling all available objects and their both persistent and run-time properties. This makes it possible to replace configuration files with GUI tools. Many desktop environments provide such tools.
 
 * **Automatic setup**
 
