@@ -17,6 +17,7 @@ title = "File locking in Linux"
  * [lockf function](#lockf-function)
  * [Open file description locks (fcntl)](#open-file-description-locks-fcntl)
  * [Emulating Open file description locks](#emulating-open-file-description-locks)
+ * [Test program](#test-program)
  * [Command line tools](#command-line-tools)
 * [Mandatory locking](#mandatory-locking)
 
@@ -123,7 +124,7 @@ A [*file descriptor*](https://en.wikipedia.org/wiki/File_descriptor) is an index
 
 <img src="/blog/file-locks/tables.png" width="500px"/>
 
-A file descriptor is just a number that is used to refer a file object from the user space. A file object represents an opened file. It contains things likes current read/write offset, non-blocking flag and other non-persistent state. An i-node represents a filesystem object. It contains things like file meta-information (e.g. owner and permissions) and references to data blocks.
+A file descriptor is just a number that is used to refer a file object from the user space. A file object represents an opened file. It contains things likes current read/write offset, non-blocking flag and another non-persistent state. An i-node represents a filesystem object. It contains things like file meta-information (e.g. owner and permissions) and references to data blocks.
 
 File descriptors created by several `open()` calls for the same file path point to different file objects, but these file objects point to the same i-node. Duplicated file descriptors created by `dup2()` or `fork()` point to the same file object.
 
@@ -141,14 +142,14 @@ Features:
 * do not guarantee atomic switch between the locking modes (exclusive and shared)
 * up to Linux 2.6.11, didn't work on NFS; since Linux 2.6.12, flock() locks on NFS are emulated using fcntl() POSIX record byte-range locks on the entire file (unless the emulation is disabled in the NFS mount options)
 
-These locks are associated with a file object, i.e.:
+The lock acquisition is associated with a file object, i.e.:
 
-* duplicated file descriptors, e.g. created using `dup2` or `fork`, refer to the same lock
-* distinct file descriptors, e.g. created using two `open` calls (even for the same file), refer to different locks
+* duplicated file descriptors, e.g. created using `dup2` or `fork`, share the lock acquisition;
+* independent file descriptors, e.g. created using two `open` calls (even for the same file), don't share the lock acquisition;
 
-This is a big advantage over the POSIX record locks (see next section).
+This means that with BSD locks, threads or processes can't be synchronized on the same or duplicated file descriptor, but nevertheless, both can be synchronized on independent file descriptors.
 
-However, `flock()` doesn't guarantee atomic mode switch. From the man page:
+`flock()` doesn't guarantee atomic mode switch. From the man page:
 
 > Converting a lock (shared to exclusive, or vice versa) is not
 > guaranteed to be atomic: the existing lock is first removed, and then
@@ -158,7 +159,7 @@ However, `flock()` doesn't guarantee atomic mode switch. From the man page:
 > is the original BSD behaviour, and occurs on many other
 > implementations.)
 
-This problem is solved by other types of locks.
+This problem is solved by POSIX record locks and Open file description locks.
 
 Usage example:
 
@@ -195,23 +196,17 @@ Features:
 * guarantee atomic switch between the locking modes (exclusive and shared)
 * work on NFS (on Linux)
 
-These locks are associated with an `[i-node, pid]` pair, which means:
+The lock acquisition is associated with an `[i-node, pid]` pair, i.e.:
 
-* all file descriptors opened by the same process for the same file refer to the same lock (even distinct file descriptors, e.g. created using two `open()` calls)
+* file descriptors opened by the same process for the same file share the lock acquisition (even independent file descriptors, e.g. created using two `open` calls);
+* file descriptors opened by different processes don't share the lock acquisition;
 
-Therefore, all process' threads always share the same lock for the same file. In particular:
+This means that with POSIX record locks, it is possible to synchronize processes, but not threads. All threads belonging to the same process always share the lock acquisition of a file, which means that:
 
 * the lock acquired through some file descriptor by some thread may be released through another file descriptor by another thread;
+* when any thread calls `close` on any descriptor referring to given file, the lock is released for the whole process, even if there are other opened descriptors referring to this file.
 
-* when any thread calls `close()` on any descriptor referring to given file, the lock is released for the whole process, even if there are other opened descriptors referring this file.
-
-This behavior makes it inconvenient to use POSIX record locks in two scenarios:
-
-* when you want to synchronize threads as well as processes because all threads always share the same lock
-
-* when you're writing a library, because you don't control the whole application and can't prevent it from opening and closing independent file descriptors for the file you're locking in the library
-
-These problems are solved by the Open file description locks.
+This problem is solved by Open file description locks.
 
 Usage example:
 
@@ -314,6 +309,8 @@ Features:
 * guarantee atomic switch between the locking modes (exclusive and shared)
 * work on NFS (on Linux)
 
+Thus, Open file description locks combine advantages of BSD locks and POSIX record locks: they provide both atomic switch between the locking modes, and the ability to synchronize both threads and processes.
+
 These locks are available since the 3.15 kernel.
 
 The API is the same as for POSIX record locks (see above). It uses `struct flock` too. The only difference is in `fcntl` command names:
@@ -342,10 +339,10 @@ Here is one possible approach:
  * a counter
  * an RW-mutex, e.g. [`pthread_rwlock`](http://pubs.opengroup.org/onlinepubs/9699919799/functions/pthread_rwlock_destroy.html)
 
-Now, you can implement lock operations as following:
+Now, you can implement lock operations as follows:
 
 * *Acquiring lock*
-
+Open file description locks (fcntl)
  * First, acquire the RW-mutex. If the user requested the shared mode, acquire a read lock. If the user requested the exclusive mode, acquire a write lock.
  * Check the counter. If it's zero, also acquire the file lock using `fcntl()`.
  * Increment the counter.
@@ -357,6 +354,68 @@ Now, you can implement lock operations as following:
  * Release the RW-mutex.
 
 This approach makes possible both thread and process synchronization.
+
+### Test program
+
+I've prepared a [small program](https://github.com/gavv/snippets/blob/master/fs/locks.c) that helps to learn the behavior of different lock types.
+
+The program starts two threads or processes, both of which wait to acquire the lock, then sleep for one second, and then release the lock. It has three parameters:
+
+* lock mode: `flock` (BSD locks), `lockf`, `fcntl_posix` (POSIX record locks), `fcntl_linux` (Open file description locks)
+
+* access mode: `same_fd` (access lock via the same descriptor), `dup_fd` (access lock via duplicated descriptors), `two_fds` (access lock via two descriptors opened independently for the same path)
+
+* concurrency mode: `threads` (access lock from two threads), `processes` (access lock from two processes)
+
+Below you can find some examples.
+
+Threads are not serialized if they use BSD locks on duplicated descriptors:
+
+```
+$ ./a.out flock dup_fd threads
+13:00:58 pid=5790 tid=5790 lock
+13:00:58 pid=5790 tid=5791 lock
+13:00:58 pid=5790 tid=5790 sleep
+13:00:58 pid=5790 tid=5791 sleep
+13:00:59 pid=5790 tid=5791 unlock
+13:00:59 pid=5790 tid=5790 unlock
+```
+
+But they are serialized if they are used on two independent descriptors:
+
+```
+$ ./a.out flock two_fds threads
+13:01:03 pid=5792 tid=5792 lock
+13:01:03 pid=5792 tid=5794 lock
+13:01:03 pid=5792 tid=5792 sleep
+13:01:04 pid=5792 tid=5792 unlock
+13:01:04 pid=5792 tid=5794 sleep
+13:01:05 pid=5792 tid=5794 unlock
+```
+
+Threads are not serialized if they use POSIX record locks on two independent descriptors:
+
+```
+$ ./a.out fcntl_posix two_fds threads
+13:01:08 pid=5795 tid=5795 lock
+13:01:08 pid=5795 tid=5796 lock
+13:01:08 pid=5795 tid=5795 sleep
+13:01:08 pid=5795 tid=5796 sleep
+13:01:09 pid=5795 tid=5795 unlock
+13:01:09 pid=5795 tid=5796 unlock
+```
+
+But processes are serialized:
+
+```
+$ ./a.out fcntl_posix two_fds processes
+13:01:13 pid=5797 tid=5797 lock
+13:01:13 pid=5798 tid=5798 lock
+13:01:13 pid=5797 tid=5797 sleep
+13:01:14 pid=5797 tid=5797 unlock
+13:01:14 pid=5798 tid=5798 sleep
+13:01:15 pid=5798 tid=5798 unlock
+```
 
 ### Command line tools
 
@@ -425,7 +484,7 @@ int main(int argc, char **argv) {
     fl.l_start = 0;
     fl.l_len = 0;
 
-    if (fcntl(fd, F_SETLKW, &fl) == -1) {  
+    if (fcntl(fd, F_SETLKW, &fl) == -1) {
         perror("fcntl");
         exit(1);
     }
