@@ -122,7 +122,7 @@ This table summarizes the difference between the lock types. A more detailed des
 
 A [*file descriptor*](https://en.wikipedia.org/wiki/File_descriptor) is an index in the per-process file descriptor table (in the left of the picture). Each file descriptor table entry contains a reference to a *file object*, stored in the file table (in the middle of the picture). Each file object contains a reference to an [i-node](https://en.wikipedia.org/wiki/Inode), stored in the i-node table (in the right of the picture).
 
-<img src="/blog/file-locks/tables.png" width="500px"/>
+<img src="/articles/file-locks/tables.png" width="500px"/>
 
 A file descriptor is just a number that is used to refer a file object from the user space. A file object represents an opened file. It contains things likes current read/write offset, non-blocking flag and another non-persistent state. An i-node represents a filesystem object. It contains things like file meta-information (e.g. owner and permissions) and references to data blocks.
 

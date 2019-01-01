@@ -5,7 +5,7 @@ tags = ["linux", "audio", "networking"]
 title = "PulseAudio under the hood"
 +++
 
-<img src="/blog/pulseaudio-under-the-hood/diagrams/features.png" width="480px"/>
+<img src="/articles/pulseaudio-under-the-hood/diagrams/features.png" width="480px"/>
 
 **Table of contents**
 
@@ -78,8 +78,6 @@ They all definitely made it better!
 This document was last updated for PulseAudio 11.1.
 
 Last major update: 21 Oct 2017.
-
-Full log is available [on GitHub](https://github.com/gavv/gavv.github.io/commits/hugo/content/blog/009-pulseaudio-under-the-hood.md).
 
 ---
 
@@ -202,7 +200,7 @@ The diagram below demonstrates a simplified view of an example PulseAudio setup.
 
 It shows three clients (employing three different APIs), one local PulseAudio server, two remote PulseAudio servers (connected via "native" and RTP protocols), one remote RTP receiver, ALSA backend, and a set of modules required to serve this setup.
 
-<img src="/blog/pulseaudio-under-the-hood/diagrams/components.png"/>
+<img src="/articles/pulseaudio-under-the-hood/diagrams/components.png"/>
 
 The diagram shows most important PulseAudio components:
 
@@ -248,7 +246,7 @@ This sections discusses the key server-side object types.
 
 PulseAudio is built around devices (sources and sinks) connected to streams (source outputs and sink inputs). The diagram below illustrates these connections.
 
-<img src="/blog/pulseaudio-under-the-hood/diagrams/devices_and_streams.png" width="640px"/>
+<img src="/articles/pulseaudio-under-the-hood/diagrams/devices_and_streams.png" width="640px"/>
 
 * **Source**
 
@@ -286,7 +284,7 @@ PulseAudio is built around devices (sources and sinks) connected to streams (sou
 
 The diagram below shows the hierarchy of the server-side objects.
 
-<img src="/blog/pulseaudio-under-the-hood/diagrams/object_hierarchy.png" width="610px"/>
+<img src="/articles/pulseaudio-under-the-hood/diagrams/object_hierarchy.png" width="610px"/>
 
 * **Core**
 
@@ -435,7 +433,7 @@ Every object in the hierarchy is identified by a unique path. The hierarchy star
 
 The diagram below shows the most important D-Bus interfaces.
 
-<img src="/blog/pulseaudio-under-the-hood/diagrams/dbus.png" width="600px"/>
+<img src="/articles/pulseaudio-under-the-hood/diagrams/dbus.png" width="600px"/>
 
 * **Core** - A top-level interface that provides access to all other interfaces.
 
@@ -514,7 +512,7 @@ The API is divided into two alternative parts:
 
 The diagram below demonstrates the workflow.
 
-<img src="/blog/pulseaudio-under-the-hood/diagrams/async_api.png" width="410px"/>
+<img src="/articles/pulseaudio-under-the-hood/diagrams/async_api.png" width="410px"/>
 
 * **Main Loop**
 
@@ -713,7 +711,7 @@ When a client connects to the server via the "native" protocol, the server perfo
 
 Local applications may be connected with to audio devices using tunnel sources and sinks. The diagram below illustrates an example of such connections.
 
-<img src="/blog/pulseaudio-under-the-hood/diagrams/tunnels.png" width="826px"/>
+<img src="/articles/pulseaudio-under-the-hood/diagrams/tunnels.png" width="826px"/>
 
 Each tunnel connects a single pair of a local device and remote stream:
 
@@ -777,7 +775,7 @@ PulseAudio implements both RTP sender and receiver. They may be used together, o
 
 The diagram below shows an example workflow.
 
-<img src="/blog/pulseaudio-under-the-hood/diagrams/rtp.png" width="541px"/>
+<img src="/articles/pulseaudio-under-the-hood/diagrams/rtp.png" width="541px"/>
 
 * **RTP sender**
 
@@ -940,7 +938,7 @@ The TTY version requires that the server should be started in foreground mode in
 
 PulseAudio has several backends that implement audio I/O and device management. The diagram below illustrates backend-specific components.
 
-<img src="/blog/pulseaudio-under-the-hood/diagrams/device_drivers.png" width="566px"/>
+<img src="/articles/pulseaudio-under-the-hood/diagrams/device_drivers.png" width="566px"/>
 
 * **card**
 
@@ -1016,7 +1014,7 @@ Each ALSA device has a corresponding device entry in the `"/dev/snd"` directory.
 
 The diagram below shows the device entries involved when PulseAudio is running.
 
-<img src="/blog/pulseaudio-under-the-hood/diagrams/alsa_kernel_interfaces.png" width="421px"/>
+<img src="/articles/pulseaudio-under-the-hood/diagrams/alsa_kernel_interfaces.png" width="421px"/>
 
 Five device entry types exist:
 
@@ -1058,7 +1056,7 @@ ALSA provides numerous user space interfaces to interact with ALSA cards and dev
 
 The diagram below provides an overview of the components involved when PulseAudio is running.
 
-<img src="/blog/pulseaudio-under-the-hood/diagrams/alsa_user_space_interfaces.png" width="608px"/>
+<img src="/articles/pulseaudio-under-the-hood/diagrams/alsa_user_space_interfaces.png" width="608px"/>
 
 Here is the list of involved ALSA interfaces:
 
@@ -1173,8 +1171,8 @@ When UCM is available for a card, PulseAudio automatically employs it.
 The diagram below illustrates relations between PulseAudio and ALSA objects when the UCM is active. Some diagrams and details are also available on Linaro Wiki: [1](https://wiki.linaro.org/WorkingGroups/Middleware/Multimedia/Specs/1111/AudioIntegration/UCMPulseAudio/Analyzation), [2](https://wiki.linaro.org/WorkingGroups/Middleware/Multimedia/Specs/1111/AudioIntegration/UCMPulseAudio/PlanMaterials), [3](https://wiki.linaro.org/WorkingGroups/Middleware/Multimedia/Specs/1111/AudioIntegration/UCMPulseAudio).
 
 <div>
-  <a data-lightbox="alsa_ucm" href="/blog/pulseaudio-under-the-hood/diagrams/alsa_ucm.png">
-    <img src="/blog/pulseaudio-under-the-hood/diagrams/alsa_ucm.png"/>
+  <a data-lightbox="alsa_ucm" href="/articles/pulseaudio-under-the-hood/diagrams/alsa_ucm.png">
+    <img src="/articles/pulseaudio-under-the-hood/diagrams/alsa_ucm.png"/>
   </a>
 </div>
 
@@ -1311,8 +1309,8 @@ When UCM is not available for a card, PulseAudio uses [Udev rules](https://www.f
 The diagram below illustrates relations between PulseAudio and ALSA objects when UCM is not used.
 
 <div>
-  <a data-lightbox="alsa_no_ucm" href="/blog/pulseaudio-under-the-hood/diagrams/alsa_no_ucm.png">
-    <img src="/blog/pulseaudio-under-the-hood/diagrams/alsa_no_ucm.png"/>
+  <a data-lightbox="alsa_no_ucm" href="/articles/pulseaudio-under-the-hood/diagrams/alsa_no_ucm.png">
+    <img src="/articles/pulseaudio-under-the-hood/diagrams/alsa_no_ucm.png"/>
   </a>
 </div>
 
@@ -1669,7 +1667,7 @@ Finally, virtual source and sinks that are attached to a master source or sink u
   <div>module-alsa-{source,sink}</div>
 </div>
 
-<img src="/blog/pulseaudio-under-the-hood/diagrams/volumes.png" width="490px"/>
+<img src="/articles/pulseaudio-under-the-hood/diagrams/volumes.png" width="490px"/>
 
 The device volume range is virtually divided into the three subranges:
 
@@ -1898,7 +1896,7 @@ Here is how it works:
 
 * When data is read from the virtual source, it is forwarded from the master source. Additionally, the echo is canceled using the sample frame stored in the virtual sink.
 
-<img src="/blog/pulseaudio-under-the-hood/diagrams/aec.png" width="331px"/>
+<img src="/articles/pulseaudio-under-the-hood/diagrams/aec.png" width="331px"/>
 
 Several AEC engines are implemented:
 
@@ -2028,8 +2026,8 @@ Clients which use the "native" protocol should create playback or recording stre
 The diagram below illustrates the logical data flow from an application to a sound card. Note that it doesn't reflect that the client application, the native protocol module, the sink module, and the sound card are actually separate execution threads connected via queues.
 
 <div>
-  <a data-lightbox="dataflow" href="/blog/pulseaudio-under-the-hood/diagrams/dataflow.png">
-    <img src="/blog/pulseaudio-under-the-hood/diagrams/dataflow.png"/>
+  <a data-lightbox="dataflow" href="/articles/pulseaudio-under-the-hood/diagrams/dataflow.png">
+    <img src="/articles/pulseaudio-under-the-hood/diagrams/dataflow.png"/>
   </a>
 </div>
 
@@ -2113,7 +2111,7 @@ The client may register callbacks for the following stream commands from server:
 
 The diagram below shows what buffers are used to transfer sample chunks from the client to the sound card. See also [this post](http://voices.canonical.com/david.henningsson/2014/11/21/pulseaudio-buffers-and-protocol/) for an overview of buffering in PulseAudio.
 
-<img src="/blog/pulseaudio-under-the-hood/diagrams/buffers.png"/>
+<img src="/articles/pulseaudio-under-the-hood/diagrams/buffers.png"/>
 
 The following buffers are employed:
 
@@ -2173,7 +2171,7 @@ For example, the volume change should be applied immediately even when the playb
 
 Rewinding works by moving read and write pointers of the ring buffers.
 
-<img src="/blog/pulseaudio-under-the-hood/diagrams/rewind_buffers.png" width="660px"/>
+<img src="/articles/pulseaudio-under-the-hood/diagrams/rewind_buffers.png" width="660px"/>
 
 The three buffers are employed:
 
@@ -2204,7 +2202,7 @@ Rewind request may be issued on a sink input or sink. Sink input always propagat
 
 The diagram below illustrates the overall algorithm.
 
-<img src="/blog/pulseaudio-under-the-hood/diagrams/rewind_flow.png" width="660px"/>
+<img src="/articles/pulseaudio-under-the-hood/diagrams/rewind_flow.png" width="660px"/>
 
 The steps are:
 
@@ -2293,8 +2291,8 @@ Playback and recording are driven by a per-device timer-based scheduler that pro
 The diagram below illustrates the process. It shows the path of samples from an application (on the left) to a sound card (on the right) when using the "native" protocol.
 
 <div>
-  <a data-lightbox="sequence" href="/blog/pulseaudio-under-the-hood/diagrams/sequence.png">
-    <img src="/blog/pulseaudio-under-the-hood/diagrams/sequence.png"/>
+  <a data-lightbox="sequence" href="/articles/pulseaudio-under-the-hood/diagrams/sequence.png">
+    <img src="/articles/pulseaudio-under-the-hood/diagrams/sequence.png"/>
   </a>
 </div>
 
@@ -3356,7 +3354,7 @@ Note that plugins are the feature of libasound. They work entirely in user space
 
 PulseAudio ships with an ALSA plugin that implements the "pulse" virtual device. In Linux distros that use PulseAudio, this device is usually configured as the default device for ALSA applications.
 
-<img src="/blog/pulseaudio-under-the-hood/diagrams/alsa_compat.png" width="555px"/>
+<img src="/articles/pulseaudio-under-the-hood/diagrams/alsa_compat.png" width="555px"/>
 
 This is how it works:
 
@@ -3394,7 +3392,7 @@ This is how it works:
 
 Well, quite enough forwarding:
 
-<img src="/blog/pulseaudio-under-the-hood/diagrams/ossp.png" width="241px"/>
+<img src="/articles/pulseaudio-under-the-hood/diagrams/ossp.png" width="241px"/>
 
 In addition, PulseAudio provides the [padsp](http://manpages.ubuntu.com/manpages/en/man1/padsp.1.html) wrapper. It intercepts standard library functions using the `LD_PRELOAD` trick:
 
@@ -4371,20 +4369,20 @@ This section provides a brief summary of the three standard GUI tools for PulseA
 This tool uses the C API to communicate with the server. PulseAudio automatically saves most of these setting to the restoration database, so they are persistent.
 
 <div class="tile">
-  <a data-lightbox="pavucontrol" href="/blog/pulseaudio-under-the-hood/screenshots/pavucontrol_playback_ann.png">
-    <img src="/blog/pulseaudio-under-the-hood/screenshots/pavucontrol_playback_ann.png"/>
+  <a data-lightbox="pavucontrol" href="/articles/pulseaudio-under-the-hood/screenshots/pavucontrol_playback_ann.png">
+    <img src="/articles/pulseaudio-under-the-hood/screenshots/pavucontrol_playback_ann.png"/>
   </a>
-  <a data-lightbox="pavucontrol" href="/blog/pulseaudio-under-the-hood/screenshots/pavucontrol_recording_ann.png">
-    <img src="/blog/pulseaudio-under-the-hood/screenshots/pavucontrol_recording_ann.png"/>
+  <a data-lightbox="pavucontrol" href="/articles/pulseaudio-under-the-hood/screenshots/pavucontrol_recording_ann.png">
+    <img src="/articles/pulseaudio-under-the-hood/screenshots/pavucontrol_recording_ann.png"/>
   </a>
-  <a data-lightbox="pavucontrol" href="/blog/pulseaudio-under-the-hood/screenshots/pavucontrol_output_devices_ann.png">
-    <img src="/blog/pulseaudio-under-the-hood/screenshots/pavucontrol_output_devices_ann.png"/>
+  <a data-lightbox="pavucontrol" href="/articles/pulseaudio-under-the-hood/screenshots/pavucontrol_output_devices_ann.png">
+    <img src="/articles/pulseaudio-under-the-hood/screenshots/pavucontrol_output_devices_ann.png"/>
   </a>
-  <a data-lightbox="pavucontrol" href="/blog/pulseaudio-under-the-hood/screenshots/pavucontrol_input_devices_ann.png">
-    <img src="/blog/pulseaudio-under-the-hood/screenshots/pavucontrol_input_devices_ann.png"/>
+  <a data-lightbox="pavucontrol" href="/articles/pulseaudio-under-the-hood/screenshots/pavucontrol_input_devices_ann.png">
+    <img src="/articles/pulseaudio-under-the-hood/screenshots/pavucontrol_input_devices_ann.png"/>
   </a>
-  <a data-lightbox="pavucontrol" href="/blog/pulseaudio-under-the-hood/screenshots/pavucontrol_configuration_ann.png">
-    <img src="/blog/pulseaudio-under-the-hood/screenshots/pavucontrol_configuration_ann.png"/>
+  <a data-lightbox="pavucontrol" href="/articles/pulseaudio-under-the-hood/screenshots/pavucontrol_configuration_ann.png">
+    <img src="/articles/pulseaudio-under-the-hood/screenshots/pavucontrol_configuration_ann.png"/>
   </a>
 </div>
 
@@ -4395,17 +4393,17 @@ This tool uses the C API to communicate with the server. PulseAudio automaticall
 This tool just writes module names and arguments to the GNOME registry (GConf) and PulseAudio automatically loads the modules. These settings are persistent.
 
 <div class="tile">
-  <a data-lightbox="paprefs" href="/blog/pulseaudio-under-the-hood/screenshots/paprefs_network_access_ann.png">
-    <img src="/blog/pulseaudio-under-the-hood/screenshots/paprefs_network_access_ann.png"/>
+  <a data-lightbox="paprefs" href="/articles/pulseaudio-under-the-hood/screenshots/paprefs_network_access_ann.png">
+    <img src="/articles/pulseaudio-under-the-hood/screenshots/paprefs_network_access_ann.png"/>
   </a>
-  <a data-lightbox="paprefs" href="/blog/pulseaudio-under-the-hood/screenshots/paprefs_network_server_ann.png">
-    <img src="/blog/pulseaudio-under-the-hood/screenshots/paprefs_network_server_ann.png"/>
+  <a data-lightbox="paprefs" href="/articles/pulseaudio-under-the-hood/screenshots/paprefs_network_server_ann.png">
+    <img src="/articles/pulseaudio-under-the-hood/screenshots/paprefs_network_server_ann.png"/>
   </a>
-  <a data-lightbox="paprefs" href="/blog/pulseaudio-under-the-hood/screenshots/paprefs_multicast_rtp_ann.png">
-    <img src="/blog/pulseaudio-under-the-hood/screenshots/paprefs_multicast_rtp_ann.png"/>
+  <a data-lightbox="paprefs" href="/articles/pulseaudio-under-the-hood/screenshots/paprefs_multicast_rtp_ann.png">
+    <img src="/articles/pulseaudio-under-the-hood/screenshots/paprefs_multicast_rtp_ann.png"/>
   </a>
-  <a data-lightbox="paprefs" href="/blog/pulseaudio-under-the-hood/screenshots/paprefs_simultaneous_output_ann.png">
-    <img src="/blog/pulseaudio-under-the-hood/screenshots/paprefs_simultaneous_output_ann.png"/>
+  <a data-lightbox="paprefs" href="/articles/pulseaudio-under-the-hood/screenshots/paprefs_simultaneous_output_ann.png">
+    <img src="/articles/pulseaudio-under-the-hood/screenshots/paprefs_simultaneous_output_ann.png"/>
   </a>
 </div>
 
@@ -4418,8 +4416,8 @@ This tool communicates with the server through the D-Bus API. It first creates a
 The number of sliders depends on the window size, so a larger window gives a higher precision.
 
 <div class="tile">
-  <a data-lightbox="qpaeq" href="/blog/pulseaudio-under-the-hood/screenshots/qpaeq.png">
-    <img src="/blog/pulseaudio-under-the-hood/screenshots/qpaeq.png"/>
+  <a data-lightbox="qpaeq" href="/articles/pulseaudio-under-the-hood/screenshots/qpaeq.png">
+    <img src="/articles/pulseaudio-under-the-hood/screenshots/qpaeq.png"/>
   </a>
 </div>
 
@@ -4750,7 +4748,7 @@ This section demonstrates example PulseAudio configurations for several common a
 
     An application connects to the server via the "native" protocol and creates a recording stream. The server creates a source output for the stream. The source output is connected to a source.
 
-    <img src="/blog/pulseaudio-under-the-hood/examples/pnr_app_to_source.png" width="409px"/>
+    <img src="/articles/pulseaudio-under-the-hood/examples/pnr_app_to_source.png" width="409px"/>
 
     Configuration:
 
@@ -4764,7 +4762,7 @@ This section demonstrates example PulseAudio configurations for several common a
 
     An application connects to the server via the "native" protocol and creates a playback stream. The server creates a sink input for the stream. The sink input is connected to a sink.
 
-    <img src="/blog/pulseaudio-under-the-hood/examples/pnr_app_to_sink.png" width="409px"/>
+    <img src="/articles/pulseaudio-under-the-hood/examples/pnr_app_to_sink.png" width="409px"/>
 
     Configuration:
 
@@ -4778,7 +4776,7 @@ This section demonstrates example PulseAudio configurations for several common a
 
     An application connects to the server via the "native" protocol and creates a playback stream. The server creates a sink input for the stream. The sink input is connected to a filter sink, which in turn is connected to the master sink.
 
-    <img src="/blog/pulseaudio-under-the-hood/examples/pnr_app_to_filter.png" width="681px"/>
+    <img src="/articles/pulseaudio-under-the-hood/examples/pnr_app_to_filter.png" width="681px"/>
 
     Configuration:
 
@@ -4801,7 +4799,7 @@ This section demonstrates example PulseAudio configurations for several common a
 
     The monitor source of a sink is connected to a loopback, which in turn is connected to a pipe sink (because it's not possible to connect a source to a sink directly). The pipe sink writes samples to a file.
 
-    <img src="/blog/pulseaudio-under-the-hood/examples/capture_sink_to_file.png" width="817px"/>
+    <img src="/articles/pulseaudio-under-the-hood/examples/capture_sink_to_file.png" width="817px"/>
 
     Configuration:
 
@@ -4825,7 +4823,7 @@ This section demonstrates example PulseAudio configurations for several common a
 
     An application connects to the server via the "native" protocol and creates a playback stream. The server creates a sink input for the stream. The sink input is connected to a pipe sink. The pipe sink writes samples to a file.
 
-    <img src="/blog/pulseaudio-under-the-hood/examples/capture_app_to_file.png" width="545px"/>
+    <img src="/articles/pulseaudio-under-the-hood/examples/capture_app_to_file.png" width="545px"/>
 
     Configuration:
 
@@ -4847,7 +4845,7 @@ This section demonstrates example PulseAudio configurations for several common a
 
     Two applications connect to the server via the "native" protocol and create playback and recording streams. The server creates sink input and source output for the streams. The sink input is connected to the source output via a null sink (because it's not possible to connect a sink input to a source output directly).
 
-    <img src="/blog/pulseaudio-under-the-hood/examples/capture_app_to_app.png" width="817px"/>
+    <img src="/articles/pulseaudio-under-the-hood/examples/capture_app_to_app.png" width="817px"/>
 
     Configuration:
 
@@ -4873,7 +4871,7 @@ This section demonstrates example PulseAudio configurations for several common a
 
     An application connects to the local server via the "native" protocol and creates a playback stream. The local server creates a sink input for the stream. The local sink input is connected to a tunnel sink. The tunnel sink connects to the remote server via the "native" protocol and creates a playback stream. The remote server creates a sink input for the stream. The remote sink input is connected to a sink.
 
-    <img src="/blog/pulseaudio-under-the-hood/examples/native_app_to_sink.png" width="409px"/>
+    <img src="/articles/pulseaudio-under-the-hood/examples/native_app_to_sink.png" width="409px"/>
 
     Configuration:
 
@@ -4904,7 +4902,7 @@ This section demonstrates example PulseAudio configurations for several common a
 
     The local sink input is connected to a tunnel sink. The tunnel sink connects to the remote server via the "native" protocol and creates a playback stream. The remote server creates a sink input for the stream. The remote sink input is connected to the remote source output via a null sink (because it's not possible to connect a sink input to a source output directly).
 
-    <img src="/blog/pulseaudio-under-the-hood/examples/native_app_to_app.png" width="681px"/>
+    <img src="/articles/pulseaudio-under-the-hood/examples/native_app_to_app.png" width="681px"/>
 
     Configuration:
 
@@ -4943,7 +4941,7 @@ This section demonstrates example PulseAudio configurations for several common a
 
     The monitor source of a sink is connected to a loopback, which in turn is connected to a tunnel sink (because it's not possible to connect a source to a sink directly). The tunnel sink connects to the remote server via the "native" protocol and creates a playback stream. The remote server creates a sink input for the stream. The remote sink input is connected to a sink.
 
-    <img src="/blog/pulseaudio-under-the-hood/examples/native_sink_to_sink.png" width="681px"/>
+    <img src="/articles/pulseaudio-under-the-hood/examples/native_sink_to_sink.png" width="681px"/>
 
     Configuration:
 
@@ -4976,7 +4974,7 @@ This section demonstrates example PulseAudio configurations for several common a
 
     An application connects to the local server via the "native" protocol and creates a playback stream. The local server creates a sink input for the stream. The local sink input is connected to the RTP source output via a null sink (because it's not possible to connect a sink input to a source output directly). The local RTP source output is connected to the remote RTP sink input via RTP. The remote RTP sink input is connected to a sink.
 
-    <img src="/blog/pulseaudio-under-the-hood/examples/rtp_app_to_sink.png" width="681px"/>
+    <img src="/articles/pulseaudio-under-the-hood/examples/rtp_app_to_sink.png" width="681px"/>
 
     Configuration:
 
@@ -5004,7 +5002,7 @@ This section demonstrates example PulseAudio configurations for several common a
 
     The local sink input is connected to the RTP source output via a null sink (because it's not possible to connect a sink input to a source output directly). The local RTP source output is connected to the remote RTP sink input via RTP. The remote RTP sink input is connected to the remote source output via a null sink (because it's not possible to connect a sink input to a source output directly).
 
-    <img src="/blog/pulseaudio-under-the-hood/examples/rtp_app_to_app.png" width="681px"/>
+    <img src="/articles/pulseaudio-under-the-hood/examples/rtp_app_to_app.png" width="681px"/>
 
     Configuration:
 
@@ -5036,7 +5034,7 @@ This section demonstrates example PulseAudio configurations for several common a
 
     The sink monitor of a local sink is connected to the local RTP source output. The local RTP source output is connected to the remote RTP sink input via RTP. The remote RTP sink input is connected to a sink.
 
-    <img src="/blog/pulseaudio-under-the-hood/examples/rtp_sink_to_sink.png" width="409px"/>
+    <img src="/articles/pulseaudio-under-the-hood/examples/rtp_sink_to_sink.png" width="409px"/>
 
     Configuration:
 
@@ -5058,7 +5056,7 @@ This section demonstrates example PulseAudio configurations for several common a
 
 This section provides several examples of client applications and server modules. The source code and usage instructions are available [on GitHub](https://github.com/gavv/snippets/tree/master/pa).
 
-Also, some analysis of the client examples is available in [this post](https://enise.org/gavv/blog/decode-play/).
+Also, some analysis of the client examples is available in [this post](https://gavv.github.io/articles/decode-play/).
 
 ### Documentation
 
@@ -5094,7 +5092,7 @@ This example is quite straightforward, so just look at the code.
 
 ### C API
 
-These examples are described in details in another [blog post](https://gavv.github.io/blog/decode-play/#pulseaudio).
+These examples are described in details in another [article](https://gavv.github.io/articles/decode-play/#pulseaudio).
 
 * [**`pa_play_simple`**](https://github.com/gavv/snippets/blob/master/pa/pa_play_simple.c)
 

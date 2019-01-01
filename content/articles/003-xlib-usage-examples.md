@@ -87,6 +87,6 @@ Here is the result of embedding an `xterm` window:
 $ ./xlib_container xterm -into
 ```
 
-![](/blog/xlib-usage-examples/embedded_xterm.png)
+![](/articles/xlib-usage-examples/embedded_xterm.png)
 
 Note the blue frame around the `xterm` window, which is the container window background.

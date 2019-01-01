@@ -5,17 +5,35 @@
   <div id="menu">
     <div>
       <div>
-        <a href="/about/">About</a>
+        {{ if eq .URL "/about/" }}
+          <a href="/about/" class="menu-item menu-selected">
+        {{ else }}
+          <a href="/about/" class="menu-item">
+        {{ end }}
+            About
+          </a>
       </div>
     </div>
     <div>
       <div>
-        <a href="/projects/">Projects</a>
+        {{ if eq .URL "/software/" }}
+          <a href="/software/" class="menu-item menu-selected">
+        {{ else }}
+          <a href="/software/" class="menu-item">
+        {{ end }}
+            Software
+          </a>
       </div>
     </div>
     <div>
       <div>
-        <a href="/blog/">Blog</a>
+        {{ if eq .Section "articles" }}
+          <a href="/articles/" class="menu-item menu-selected">
+        {{ else }}
+          <a href="/articles/" class="menu-item">
+        {{ end }}
+            Articles
+          </a>
       </div>
     </div>
     <div id="header-buttons">

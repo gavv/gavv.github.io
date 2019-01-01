@@ -1,8 +1,8 @@
 +++
-title = "Projects"
+title = "Software"
 +++
 
-#### Projects
+#### Libraries and tools
 
 * [Roc](https://github.com/roc-project/roc)
 
@@ -10,20 +10,28 @@ title = "Projects"
 
 * [httpexpect](https://github.com/gavv/httpexpect)
 
-    End-to-end HTTP and REST API testing for Go.
+    Go library for end-to-end HTTP and REST API testing.
 
 * [MiniSAPListener](https://github.com/gavv/MiniSAPListener)
 
-    Listen SAP/SDP announcements.
-
-* [monotime](https://github.com/gavv/monotime)
-
-    Measuring time intervals correctly in Go (monotonic clock).
+    Command line tool to listen SAP/SDP announcements.
 
 * [rdoc-generator-solarfish](https://github.com/rbdoc/rdoc-generator-solarfish)
 
     Single page HTML5 generator for Ruby RDoc.
 
+#### Snippets
+
 * [snippets](https://github.com/gavv/snippets)
 
     Random code snippets.
+
+#### Gentoo
+
+* [gv-overlay](https://github.com/gavv/gv-overlay)
+
+    Unofficial Gentoo overlay.
+
+* [distfiles](https://github.com/gavv/distfiles)
+
+    Distfiles for some Gentoo ebuilds.
