@@ -1,7 +1,9 @@
 baseURL = "http://gavv.github.io/"
 languageCode = "en-us"
 title = "Victor Gaydov"
+
 pluralizelisttitles = false
+staticDir = ["site", "media", "redirects"]
 
 [Params]
   author = "Victor Gaydov"
