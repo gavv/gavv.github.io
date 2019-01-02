@@ -5,5 +5,8 @@ title = "Victor Gaydov"
 pluralizelisttitles = false
 staticDir = ["site", "media", "redirects"]
 
+[taxonomies]
+  tag = "tags"
+
 [Params]
   author = "Victor Gaydov"

@@ -12,7 +12,7 @@ In a large project that uses SCons, [VariantDir](https://bitbucket.org/scons/sco
 * generated source files are rebuilt every time when `scons` is launched
 * if `.sconsign.dblite` is removed manually, `scons` crashes with the following trace:
 
-```
+```none
 OSError: [Errno 2] No such file or directory: '.sconsign.dblite':
   File "/usr/lib64/python2.7/site-packages/SCons/Script/Main.py", line 1372:
     _exec_main(parser, values)
