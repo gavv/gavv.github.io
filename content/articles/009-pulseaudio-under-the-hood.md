@@ -67,7 +67,7 @@ PulseAudio tends to trigger flame wars, which I believe are non-constructive. Th
 
 ### Thanks
 
-I'd like to thank my friends and colleagues [Mikhail Baranov](https://tarabah.me/) and [Dmitriy Shilin](https://github.com/dshil) who read early drafts of the document and provided a valuable feedback.
+I'd like to thank my friends and colleagues [Mikhail Baranov](https://medium.com/@baranov.mv) and [Dmitriy Shilin](https://dshil.github.io/) who read early drafts of the document and provided a valuable feedback.
 
 Also big thanks to [Tanu Kaskinen](https://www.patreon.com/tanuk), a PulseAudio maintainer, who have found and helped to fix dozens of errors.
 
