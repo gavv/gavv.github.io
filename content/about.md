@@ -12,7 +12,7 @@ This site is my homepage, containing some technical writings and links to the so
 
 I'm an open-source and Linux enthusiast, enjoying systems programming, networking, and audio.
 
-You can contact me via victor@enise.org.
+You can contact me via <span style="unicode-bidi: bidi-override; direction: rtl;">gro.esine@rotciv</span>.
 
 Me on web:
 
