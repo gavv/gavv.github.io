@@ -39,7 +39,7 @@ title = "PulseAudio under the hood"
 
 ## Preface
 
-I'm working on the [Roc](https://github.com/roc-project/roc) open-source project, a development kit for realtime streaming over an unreliable network. (The project is not ready for use yet, but in case you're interested, you can follow updates on [my twitter](https://twitter.com/gavv42)).
+I'm working on the [Roc](https://roc-project.github.io/) open-source project, a development kit for realtime streaming over the network. You can read more about this in [another article](https://gavv.github.io/articles/new-network-transport/).
 
 We decided to implement a set of PulseAudio modules that will allow PulseAudio to use Roc as a network transport. Many Linux distros employ PulseAudio, and their users will be able to improve network service quality without changing the workflow. This led me to dig into PulseAudio internals and eventually to this document.
 
@@ -5266,7 +5266,7 @@ Two PulseAudio servers can be connected either using the "native" protocol or us
 
 * the implementation of RTP sender and receiver in PulseAudio doesn't employ any RTP extensions for error correction or retransmission, and packet losses cause playback holes
 
-This problem is addressed by the PulseAudio integration for the [Roc](https://github.com/roc-project/roc) project that I'm currently working on.
+This problem is addressed by the [Roc](https://roc-project.github.io/) project that I'm currently [working on](https://gavv.github.io/articles/new-network-transport/).
 
 ### Usability
 
