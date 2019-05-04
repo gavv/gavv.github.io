@@ -5,6 +5,8 @@ title = "Victor Gaydov"
 pluralizelisttitles = false
 staticDir = ["site", "media", "redirects"]
 
+disableKinds = ["taxonomyTerm"]
+
 [taxonomies]
   tag = "tags"
 

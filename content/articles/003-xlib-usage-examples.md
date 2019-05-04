@@ -1,7 +1,7 @@
 +++
 slug = "xlib-usage-examples"
 date = "2016-07-05 00:00:01"
-tags = ["x11", "gui"]
+tags = ["linux", "x11"]
 title = "Xlib usage examples"
 +++
 

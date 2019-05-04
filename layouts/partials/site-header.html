@@ -29,6 +29,8 @@
       <div>
         {{ if eq .Section "articles" }}
           <a href="/articles/" class="menu-item menu-selected">
+        {{ else if eq .Kind "taxonomy" }}
+          <a href="/articles/" class="menu-item menu-selected">
         {{ else }}
           <a href="/articles/" class="menu-item">
         {{ end }}

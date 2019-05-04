@@ -44,6 +44,10 @@ body {
     font-size: 13px;
 }
 
+.tag-header {
+    font-size: 17px;
+}
+
 h1, h2 {
     font-size: 26px;
 }
@@ -85,6 +89,10 @@ table, th, .flex_table {
 
 .menu-selected {
     font-weight: bold;
+}
+
+.tag-title {
+    border-bottom: 1px dotted #000000;
 }
 
 .post-tag a {
@@ -153,6 +161,12 @@ pre, pre code, pre code span {
     display: table-cell;
     vertical-align: middle;
     padding: 0px;
+}
+
+.tag-header {
+    margin-top: 20px;
+    margin-bottom: 5px;
+    padding-top: 5px;
 }
 
 .post-title {

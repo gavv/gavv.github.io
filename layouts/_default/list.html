@@ -2,6 +2,13 @@
   {{ .Site.Title }} - {{ .Title }}
 {{ end }}
 {{ define "main" }}
+  {{ if eq .Kind "taxonomy" }}
+    <section role="banner">
+      <div class="tag-header">
+        Filtered by:  <span class="tag-title">{{ lower .Title }}</span>
+      </div>
+    </section>
+  {{ end }}
   <section role="main">
     {{ range $i, $p := (.Paginate .Data.Pages).Pages }}
       {{ with $p }}
