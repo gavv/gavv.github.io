@@ -299,9 +299,10 @@ There are no snippets for these libraries, but they may be also useful.
 
 Portable audio I/O:
 
-* [libao](https://www.xiph.org/ao/)
 * [libsoundio](http://libsound.io/)
+* [libao](https://www.xiph.org/ao/)
 * [PortAudio](http://www.portaudio.com/)
+* [RtAudio](https://github.com/thestk/rtaudio)
 
 Media frameworks:
 
