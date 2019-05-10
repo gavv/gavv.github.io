@@ -28,7 +28,8 @@
 </script>
 
 <script>
-if (screen && screen.width < 480) {
+var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+if (width < 480) {
   document.write('<script src="/js/hyphenator-loader.js"><\/script>');
 }
 </script>
