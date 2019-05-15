@@ -144,7 +144,7 @@ PulseAudio has two major types of network transport: "native" and RTP. You can r
 
 The "native" transport is based on TCP, which is not well suited for the low-latency real-time streaming and shows worse service quality on lower latencies and an unreliable network. In contrast, Roc is based on RTP, which works on top of UDP and doesn't have these problems.
 
-The RTP transport uses UDP just like Roc does, but differs from it in two ways. First, it doesn't implement loss recovery, so the service quality is also worse. Second, Roc performs the clock rate adjustment on the receiver, while PulseAudio does it on the sender, and the frequency estimation algorithms are also different. Arguably, the PulseAudio implementation is sometimes laggy, but this needs more testing.
+The RTP transport uses UDP just like Roc does, but it doesn't implement loss recovery, so the service quality is also worse. The frequency estimation algorithms are also different. Arguably, the PulseAudio implementation is sometimes laggy, but this needs more testing.
 
 Some streaming software uses HTTP, in particular PulseAudio DLNA support. It works on top of TCP, which have problems that we already discussed above.
 
