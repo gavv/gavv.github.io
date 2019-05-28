@@ -6,7 +6,7 @@ title = "Software"
 
 * [Roc](https://github.com/roc-project/roc)
 
-    Development kit for real-time streaming of high-quality audio over unreliable network.
+    Library and tools for real-time media streaming over the network.
 
 * [httpexpect](https://github.com/gavv/httpexpect)
 
@@ -14,11 +14,11 @@ title = "Software"
 
 * [MiniSAPListener](https://github.com/gavv/MiniSAPListener)
 
-    Command line tool to listen SAP/SDP announcements.
+    Command-line tool to listen to SAP/SDP announcements.
 
 * [rdoc-generator-solarfish](https://github.com/rbdoc/rdoc-generator-solarfish)
 
-    Single page HTML5 generator for Ruby RDoc.
+    Single-page HTML5 generator for Ruby RDoc.
 
 #### Snippets
 

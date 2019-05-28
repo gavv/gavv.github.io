@@ -12,6 +12,7 @@ title = "Decoding and playing audio files in Linux"
 * [SoX](#sox)
 * [ALSA (libasound)](#alsa-libasound)
 * [PulseAudio](#pulseaudio)
+* [libsndfile](#libsndfile)
 * [Other libraries](#other-libraries)
 * [Notes](#notes)
 
