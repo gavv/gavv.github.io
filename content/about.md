@@ -21,6 +21,11 @@ Me on web:
 * [StackOverflow](https://stackoverflow.com/users/3169754/gavv)
 * [GoodReads](https://www.goodreads.com/user/show/46643060-victor-gaydov)
 
+Resume:
+
+* [StackOverflow](https://stackoverflow.com/cv/gavv)
+* [Upwork](https://www.upwork.com/o/profiles/users/_~01205fd34b306ddfd6/)
+
 #### Legal
 
 All original content on this site is licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
