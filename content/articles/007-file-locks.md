@@ -18,8 +18,9 @@ title = "File locking in Linux"
  * [Open file description locks (fcntl)](#open-file-description-locks-fcntl)
  * [Emulating Open file description locks](#emulating-open-file-description-locks)
  * [Test program](#test-program)
- * [Command line tools](#command-line-tools)
+ * [Command-line tools](#command-line-tools)
 * [Mandatory locking](#mandatory-locking)
+ * [Example usage](#example-usage)
 
 ---
 
@@ -225,6 +226,8 @@ fl.l_start = 0;         // starting offset is zero
 fl.l_len = 0;           // len is zero, which is a special value representing end
                         // of file (no matter how large the file grows in future)
 
+fl.l_pid = 0; // F_SETLK(W) ignores it; F_OFD_SETLK(W) requires it to be zero
+
 // F_SETLKW specifies blocking mode
 if (fcntl(fd, F_SETLKW, &fl) == -1) {
     exit(1);
@@ -341,13 +344,13 @@ Here is one possible approach:
 
 Now, you can implement lock operations as follows:
 
-* *Acquiring lock*
-Open file description locks (fcntl)
+* Acquiring lock
+
  * First, acquire the RW-mutex. If the user requested the shared mode, acquire a read lock. If the user requested the exclusive mode, acquire a write lock.
  * Check the counter. If it's zero, also acquire the file lock using `fcntl()`.
  * Increment the counter.
 
-* *Releasing lock*
+* Releasing lock
 
  * Decrement the counter.
  * If the counter becomes zero, release the file lock using `fcntl()`.
@@ -417,17 +420,82 @@ $ ./a.out fcntl_posix two_fds processes
 13:01:15 pid=5798 tid=5798 unlock
 ```
 
-### Command line tools
+### Command-line tools
 
-The following tools may be used to acquire and release locks from command line:
+The following tools may be used to acquire and release file locks from the command line:
 
-* [`flock`](http://man7.org/linux/man-pages/man1/flock.1.html)
+* [**`flock`**](http://man7.org/linux/man-pages/man1/flock.1.html)
 
-    Provided by `util-linux` package. Uses `flock()`.
+    Provided by `util-linux` package. Uses `flock()` function.
 
-* [`lockfile`](http://linuxcommand.org/man_pages/lockfile1.html)
+    There are two ways to use this tool:
 
-    Provided by `procmail` package. Uses `flock()`, `lockf()`, or `fcntl()` depending on what's available on the system.
+    * run a command while holding a lock:
+
+        ```
+        flock my.lock sleep 10
+        ```
+
+        `flock` will acquire the lock, run the command, and release the lock.
+
+    * open a file descriptor in bash and use `flock` to acquire and release the lock manually:
+
+      ```
+      set -e            # die on errors
+      exec 100>my.lock  # open file 'my.lock' and link file descriptor 100 to it
+      flock -n 100      # acquire a lock
+      echo hello
+      sleep 10
+      echo goodbye
+      flock -u -n 100   # release the lock
+      ```
+
+    You can try to run these two snippets in parallel in different terminals and see that while one is sleeping while holding the lock, another is blocked in flock.
+
+* [**`lockfile`**](https://linux.die.net/man/1/lockfile)
+
+    Provided by `procmail` package.
+
+    Runs the given command while holding a lock. Can use either `flock()`, `lockf()`, or `fcntl()` function, depending on what's available on the system.
+
+There are also two ways to inspect the currently acquired locks:
+
+* [**`lslocks`**](http://man7.org/linux/man-pages/man8/lslocks.8.html)
+
+    Provided by `util-linux` package.
+
+    Lists all the currently held file locks in the entire system. Allows to perform filtering by PID and to configure the output format.
+
+    Example output:
+
+    ```
+    COMMAND           PID   TYPE   SIZE MODE  M      START        END PATH
+    containerd       4498  FLOCK   256K WRITE 0          0          0 /var/lib/docker/containerd/...
+    dockerd          4289  FLOCK   256K WRITE 0          0          0 /var/lib/docker/volumes/...
+    (undefined)        -1 OFDLCK        READ  0          0          0 /dev...
+    dockerd          4289  FLOCK    16K WRITE 0          0          0 /var/lib/docker/builder/...
+    dockerd          4289  FLOCK    16K WRITE 0          0          0 /var/lib/docker/buildkit/...
+    dockerd          4289  FLOCK    16K WRITE 0          0          0 /var/lib/docker/buildkit/...
+    dockerd          4289  FLOCK    32K WRITE 0          0          0 /var/lib/docker/buildkit/...
+    (unknown)        4417  FLOCK        WRITE 0          0          0 /run...
+    ```
+
+* [**`/proc/locks`**](http://man7.org/linux/man-pages/man5/proc.5.html)
+
+    A file in `procfs` virtual file system that shows current file locks of all types. The `lslocks` tools relies on this file.
+
+    Example content:
+
+    ```
+    16: FLOCK  ADVISORY  WRITE 4417 00:17:23319 0 EOF
+    27: FLOCK  ADVISORY  WRITE 4289 08:03:9441686 0 EOF
+    28: FLOCK  ADVISORY  WRITE 4289 08:03:9441684 0 EOF
+    29: FLOCK  ADVISORY  WRITE 4289 08:03:9441681 0 EOF
+    30: FLOCK  ADVISORY  WRITE 4289 08:03:8528339 0 EOF
+    31: OFDLCK ADVISORY  READ  -1 00:06:9218 0 EOF
+    43: FLOCK  ADVISORY  WRITE 4289 08:03:8536567 0 EOF
+    52: FLOCK  ADVISORY  WRITE 4498 08:03:8520185 0 EOF
+    ```
 
 ---
 
@@ -455,6 +523,8 @@ However, the documentation mentions that current implementation is not reliable,
 * races are possible when using `mmap()`
 
 Since mandatory locks are not allowed for directories and are ignored by `unlink()` and `rename()` calls, you can't prevent file deletion or renaming using these locks.
+
+### Example usage
 
 Below you can find a usage example of mandatory locking.
 
