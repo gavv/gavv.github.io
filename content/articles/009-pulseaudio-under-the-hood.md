@@ -39,7 +39,7 @@ title = "PulseAudio under the hood"
 
 ## Preface
 
-I'm working on the [Roc](https://roc-project.github.io/) open-source project, a development kit for realtime streaming over the network. You can read more about this in [another article](https://gavv.github.io/articles/new-network-transport/).
+I'm working on the [Roc](https://roc-project.github.io/) open-source project, a development kit for realtime audio streaming over the network. You can read more about this in [another article](https://gavv.github.io/articles/new-network-transport/).
 
 We decided to implement a set of PulseAudio modules that will allow PulseAudio to use Roc as a network transport. Many Linux distros employ PulseAudio, and their users will be able to improve network service quality without changing the workflow. This led me to dig into PulseAudio internals and eventually to this document.
 
