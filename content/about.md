@@ -21,6 +21,12 @@ Me on web:
 * [StackOverflow](https://stackoverflow.com/users/3169754/gavv)
 * [GoodReads](https://www.goodreads.com/user/show/46643060-victor-gaydov)
 
+#### Hiring me
+
+Currently I have no full time job and spend my time freelancing and developing my open-source project.
+
+I'm open to short-time and part-time opportunities.
+
 Resume:
 
 * [StackOverflow](https://stackoverflow.com/cv/gavv)
