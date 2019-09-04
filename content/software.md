@@ -6,7 +6,7 @@ title = "Software"
 
 * [Roc](https://github.com/roc-project/roc)
 
-    Library and tools for real-time media streaming over the network.
+    Library and tools for real-time audio streaming over the network.
 
 * [httpexpect](https://github.com/gavv/httpexpect)
 

@@ -23,7 +23,7 @@ Me on web:
 
 #### Hiring me
 
-Currently I have no full time job and spend my time freelancing and developing my open-source project.
+Currently I have no full-time job and spend my time freelancing and developing my open-source project.
 
 I'm open to short-time and part-time opportunities.
 
