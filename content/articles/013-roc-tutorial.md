@@ -80,8 +80,8 @@ If you don't want to use PulseAudio, you can use Roc command-line tools that can
 ### Install dependencies
 
 ```
-$ sudo apt-get install g++ pkg-config scons gengetopt \
-    libuv1-dev libpulse-dev libsox-dev libcpputest-dev \
+$ sudo apt-get install g++ pkg-config scons ragel gengetopt \
+    libuv1-dev libunwind-dev libpulse-dev libsox-dev libcpputest-dev \
     libtool intltool autoconf automake make cmake
 ```
 
@@ -494,7 +494,7 @@ The following instructions are suitable for macOS 10.12 and later. If you're usi
 ### Install dependencies
 
 ```
-$ brew install scons gengetopt sox libuv cpputest \
+$ brew install scons ragel gengetopt sox libuv cpputest \
     libtool autoconf automake make cmake
 ```
 
