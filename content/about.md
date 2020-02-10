@@ -23,11 +23,11 @@ Me on web:
 
 #### Hiring me
 
-Currently I have no full-time job and spend my time freelancing and developing my open-source project.
+Currently I'm working on my open-source projects and earning money by freelancing.
 
-I'm open to short-time and part-time opportunities.
+I'm open to short-time and part-time opportunities and any paid work on my open-source projects.
 
-Resume:
+My resume:
 
 * [StackOverflow](https://stackoverflow.com/cv/gavv)
 * [Upwork](https://www.upwork.com/o/profiles/users/_~01205fd34b306ddfd6/)

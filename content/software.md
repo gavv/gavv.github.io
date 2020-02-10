@@ -2,19 +2,19 @@
 title = "Software"
 +++
 
-#### Libraries and tools
+#### Projects and tools
 
 * [Roc](https://github.com/roc-project/roc)
 
-    Library and tools for real-time audio streaming over the network.
+    Toolkit for real-time audio streaming over the network.
+
+* [Tagberry](https://github.com/tagberry/tagberry-qt)
+
+    Tag-oriented Qt5 desktop calendar, task manager, and todo list.
 
 * [httpexpect](https://github.com/gavv/httpexpect)
 
     Go library for end-to-end HTTP and REST API testing.
-
-* [Tagberry Qt](https://github.com/tagberry/tagberry-qt)
-
-    Tag-oriented Qt5 desktop calendar, task manager, and todo list.
 
 * [webrtc-cli](https://github.com/gavv/webrtc-cli)
 
@@ -22,19 +22,11 @@ title = "Software"
 
 * [signal-estimator](https://github.com/gavv/signal-estimator)
 
-    Command-line tool to measure characteristics of the signal looped back from audio output to audio input.
+    Command-line tool to measure characteristics of a looped back signal.
 
 * [MiniSAPListener](https://github.com/gavv/MiniSAPListener)
 
     Command-line tool to listen to SAP/SDP announcements.
-
-* [rdoc-generator-solarfish](https://github.com/rbdoc/rdoc-generator-solarfish)
-
-    Single-page HTML5 generator for Ruby RDoc.
-
-* [editing-helpers.el](https://github.com/gavv/editing-helpers.el)
-
-    Editing helper functions for Emacs.
 
 #### Miscellaneous
 
@@ -45,6 +37,10 @@ title = "Software"
 * [dotfiles](https://github.com/gavv/dotfiles)
 
     Personal configs.
+
+* [editing-helpers.el](https://github.com/gavv/editing-helpers.el)
+
+    Editing helper functions for Emacs.
 
 #### Gentoo
 
