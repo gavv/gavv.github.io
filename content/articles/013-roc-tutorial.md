@@ -198,7 +198,7 @@ $ docker run -t --rm -u "${UID}" -v "${PWD}:${PWD}" -w "${PWD}" \
         --disable-pulseaudio \
         --disable-tests \
         --host=arm-linux-gnueabihf \
-        --build-3rdparty=uv,openfec,alsa,sox
+        --build-3rdparty=libuv,libunwind,openfec,alsa,sox
 ```
 
 ### Install Roc
@@ -350,7 +350,7 @@ $ docker run -t --rm -u "${UID}" -v "${PWD}:${PWD}" -w "${PWD}" \
         --enable-pulseaudio-modules \
         --disable-tests \
         --host=arm-linux-gnueabihf \
-        --build-3rdparty=uv,openfec,alsa,pulseaudio:<VERSION>,sox
+        --build-3rdparty=libuv,libunwind,openfec,alsa,pulseaudio:<VERSION>,sox
 ```
 
 Here, **`<VERSION>`** is the exact PulseAudio version installed **on your board**, e.g. "10.0". You can determine it by ssh'ing to the box and running `pulseaudio --version`.
