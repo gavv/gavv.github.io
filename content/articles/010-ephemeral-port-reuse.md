@@ -160,3 +160,14 @@ conflict: port[0201] = port[7098] = 43873
 conflict: port[6667] = port[7099] = 45859
 conflicts = 42
 ```
+
+**UPDATE:** As reported in comments, the last case (tcp nolisten reuseaddr) is not reprdocuing anymore on recent kernels. Here is the output for kernel 4.19.102:
+
+```
+$ ulimit -n 10000
+$ ./a.out 7100 tcp nolisten reuseaddr
+protocol = tcp
+listen = no
+reuseaddr = yes
+conflicts = 0
+```

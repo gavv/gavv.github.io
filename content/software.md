@@ -34,10 +34,6 @@ title = "Software"
 
     Random code snippets.
 
-* [dotfiles](https://github.com/gavv/dotfiles)
-
-    Personal configs.
-
 * [editing-helpers.el](https://github.com/gavv/editing-helpers.el)
 
     Editing helper functions for Emacs.
