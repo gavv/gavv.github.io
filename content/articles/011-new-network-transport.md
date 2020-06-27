@@ -7,9 +7,9 @@ title = "Working on a new network transport for PulseAudio and ALSA"
 
 ## Intro
 
-Last few years I was working on [Roc](https://roc-project.github.io/), an open-source toolkit for real-time media streaming over the network. Due to lack of free time, we postponed release several times, but now it's almost ready. This article is, inter alia, some kind of a pre-release announcement.
+Last few years I was working on [Roc Toolkit](https://roc-streaming.org/), an open-source solution for real-time media streaming over the network. Due to lack of free time, we postponed release several times, but now it's almost ready. This article is, inter alia, some kind of a pre-release announcement.
 
-You can read more about the project [here](https://roc-project.github.io/roc/docs/about_project.html). The project scope is quite wide. It provides a general-purpose library and tools that can be used in numerous use-cases. However, to start with something feasible and practical, we decided to focus the first few releases on the home audio use-case.
+You can read more about the project [here](https://roc-streaming.org/toolkit/docs/about_project.html). The project scope is quite wide. It provides a general-purpose library and tools that can be used in numerous use-cases. However, to start with something feasible and practical, we decided to focus the first few releases on the home audio use-case.
 
 Other tools exist that solve the same or similar tasks, including built-in PulseAudio transports. However, they usually don't provide a good service quality when the latency is not high (I've tested latencies from 100 to 300 ms so far) and the network is not reliable (in particular on Wi-Fi). This is the use-case where Roc can help you.
 
@@ -87,7 +87,7 @@ Roc achieves this as follows:
 
 Thereby, the incoming queue at the receiver serves for the three purposes at the same time. It is used as a jitter buffer, as a recovery buffer, and for rate estimation. The first use is usual. The rest two are briefly discussed below.
 
-If you want to learn more about the implementation, see the [internals](https://roc-project.github.io/roc/docs/internals.html) section in our documentation. In particular, take a look at the [data flow](https://roc-project.github.io/roc/docs/internals/data_flow.html) page.
+If you want to learn more about the implementation, see the [internals](https://roc-streaming.org/toolkit/docs/internals.html) section in our documentation. In particular, take a look at the [data flow](https://roc-streaming.org/toolkit/docs/internals/data_flow.html) page.
 
 ## Loss recovery
 
@@ -97,7 +97,7 @@ One approach is to send ACKS or NACKS and retransmit lost packets. This approach
 
 Another approach is to use Forward Erasure Correction (FEC) codes. The idea is that the sender adds some redundant packets to the stream which then can be used on the receiver to recover some amount of losses.
 
-Roc uses the second approach. It implements the [FECFRAME](https://tools.ietf.org/html/rfc6363) specification with two FEC schemes. The implementation is based on the [OpenFEC](http://openfec.org/) library. See details in [our documentation](https://roc-project.github.io/roc/docs/internals/fec.html).
+Roc uses the second approach. It implements the [FECFRAME](https://tools.ietf.org/html/rfc6363) specification with two FEC schemes. The implementation is based on the [OpenFEC](http://openfec.org/) library. See details in [our documentation](https://roc-streaming.org/toolkit/docs/internals/fec.html).
 
 The following screencast demonstrates the packet recovery feature on a noisy channel:
 
@@ -122,7 +122,7 @@ If you're streaming audio between different devices, you should also deal with t
 
 The difference is quite small, but when the latency is low and the stream continues for hours, this difference will accumulate and lead to the latency lag and eventually to underruns or overruns on the receiver.
 
-Roc deals with it by adjusting the stream rate on the receiver side using a resampler. See details in [our documentation](https://roc-project.github.io/roc/docs/internals/fe_resampler.html).
+Roc deals with it by adjusting the stream rate on the receiver side using a resampler. See details in [our documentation](https://roc-streaming.org/toolkit/docs/internals/fe_resampler.html).
 
 The following diagram demonstrates the incoming queue size at the receiver when it is running with or without clock adjustment. As you can see, without the adjustment the queue has decreased by 40 milliseconds in a half of an hour.
 
@@ -132,7 +132,7 @@ The following diagram demonstrates the incoming queue size at the receiver when 
 
 Roc doesn't invent new protocols and heavily relies on existing open specifications. This allows us to take advantage of their careful design and potential interoperability with other software.
 
-Roc is designed to support arbitrary transport protocols, but for now, it implements RTP with A/V profile and FECFRAME with two FEC schemes, Reed-Solomon and LDPC-Staircase. See details in [our documentation](https://roc-project.github.io/roc/docs/internals/network_protocols.html).
+Roc is designed to support arbitrary transport protocols, but for now, it implements RTP with A/V profile and FECFRAME with two FEC schemes, Reed-Solomon and LDPC-Staircase. See details in [our documentation](https://roc-streaming.org/toolkit/docs/internals/network_protocols.html).
 
 There are also plans to add support for RTCP (for receiver feedback), SAP/SDP (for service discovery), and RTSP (for session negotiation and control) in upcoming releases.
 
@@ -189,20 +189,20 @@ However, these numbers can't be used everywhere. I saw Wi-Fi networks where 100 
 
 If you want to try Roc, consult the following documentation sections:
 
-* [Building](https://roc-project.github.io/roc/docs/building.html) --- building and installing;
-* [Running](https://roc-project.github.io/roc/docs/running.html) --- instructions for command-line tools and PulseAudio modules;
-* [Manuals](https://roc-project.github.io/roc/docs/manuals.html) --- reference for command-line tools;
-* [API](https://roc-project.github.io/roc/docs/api.html) --- reference and examples for the C library.
+* [Building](https://roc-streaming.org/toolkit/docs/building.html) --- building and installing;
+* [Running](https://roc-streaming.org/toolkit/docs/running.html) --- instructions for command-line tools and PulseAudio modules;
+* [Manuals](https://roc-streaming.org/toolkit/docs/manuals.html) --- reference for command-line tools;
+* [API](https://roc-streaming.org/toolkit/docs/api.html) --- reference and examples for the C library.
 
 As a quick start, it should be enough to take a look at these three pages:
 
-* [User cookbook](https://roc-project.github.io/roc/docs/building/user_cookbook.html)
-* [Command-line tools](https://roc-project.github.io/roc/docs/running/command_line_tools.html)
-* [PulseAudio modules](https://roc-project.github.io/roc/docs/running/pulseaudio_modules.html)
+* [User cookbook](https://roc-streaming.org/toolkit/docs/building/user_cookbook.html)
+* [Command-line tools](https://roc-streaming.org/toolkit/docs/running/command_line_tools.html)
+* [PulseAudio modules](https://roc-streaming.org/toolkit/docs/running/pulseaudio_modules.html)
 
-Currently, Roc supports GNU/Linux (command-line tools and PulseAudio modules) and macOS (command-line tools). See details in [the documentation](https://roc-project.github.io/roc/docs/portability/supported_platforms.html).
+Currently, Roc supports GNU/Linux (command-line tools and PulseAudio modules) and macOS (command-line tools). See details in [the documentation](https://roc-streaming.org/toolkit/docs/portability/supported_platforms.html).
 
-If you want to run Roc on a single-board computer, see also our [tested boards](https://roc-project.github.io/roc/docs/portability/tested_boards.html) and [cross compiling](https://roc-project.github.io/roc/docs/portability/cross_compiling.html) pages.
+If you want to run Roc on a single-board computer, see also our [tested boards](https://roc-streaming.org/toolkit/docs/portability/tested_boards.html) and [cross compiling](https://roc-streaming.org/toolkit/docs/portability/cross_compiling.html) pages.
 
 Various *nix operating systems may work too but were not tested yet. Other ports, including Android and Windows, are planned but are not a high priority yet, unless someone would like to maintain them.
 
@@ -212,7 +212,7 @@ We're going to make the first release (version 0.1) in a few weeks. We have to r
 
 The next few releases will be focused on adding more audio encodings (lossless and lossy including Opus) and protocols (RTCP for receiver feedback, SAP/SDP for service discovery, and RTSP for session negotiation and control). These features are important for Roc in general and for PulseAudio integration particularly.
 
-There are a lot of longer-term plans, including smaller features like dynamic latency and bitrate adjustment and larger features like video support. See our [roadmap](https://roc-project.github.io/roc/docs/development/roadmap.html) and the [project board](https://github.com/roc-project/roc/projects/2).
+There are a lot of longer-term plans, including smaller features like dynamic latency and bitrate adjustment and larger features like video support. See our [roadmap](https://roc-streaming.org/toolkit/docs/development/roadmap.html) and the [project board](https://github.com/roc-streaming/roc-toolkit/projects/2).
 
 There are also a lot of tests to do. It would be interesting to measure the transport latency more precisely, to measure the service quality on different network conditions and types (various 802.11 versions, Internet), to compare FECFRAME and Opus loss recovery, to investigate the quality of our resampler, etc.
 
@@ -236,6 +236,6 @@ Third, contributors are always welcome! We have quite a long roadmap. We'd also 
 
 Finally, feel free to contact us if you want to discuss the integration of Roc into your project or building something larger on top of it.
 
-You can reach us [via GitHub](https://github.com/roc-project/roc) or via the [mailing list](https://www.freelists.org/list/roc) (see instructions in README on GitHub).
+You can reach us [via GitHub](https://github.com/roc-streaming/roc-toolkit) or via the [mailing list](https://www.freelists.org/list/roc) (see instructions in README on GitHub).
 
 Thanks for reading!

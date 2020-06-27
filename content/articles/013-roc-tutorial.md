@@ -23,7 +23,7 @@ title = "A step-by-step tutorial for live audio streaming with Roc"
 
 ## What is Roc?
 
-Roc is an open-source toolkit for real-time audio streaming over the network. You can learn about the project here: [overview](https://roc-project.github.io/roc/docs/about_project/overview.html), [features](https://roc-project.github.io/roc/docs/about_project/features.html), [usage](https://roc-project.github.io/roc/docs/about_project/usage.html).
+Roc is an open-source toolkit for real-time audio streaming over the network. You can learn about the project here: [overview](https://roc-streaming.org/toolkit/docs/about_project/overview.html), [features](https://roc-streaming.org/toolkit/docs/about_project/features.html), [usage](https://roc-streaming.org/toolkit/docs/about_project/usage.html).
 
 Among other things, Roc can be used as a network transport for PulseAudio, ALSA, or macOS CoreAudio,  and connect audio applications and devices across the network. Roc has the following benefits in this case:
 
@@ -55,15 +55,15 @@ This tutorial describes how to use Roc to connect audio apps and devices running
 
 ## What's new?
 
-Since the [last publication](https://gavv.github.io/articles/roc-0.1/), I and Dmitriy have prepared two minor bugfix releases: [0.1.1](https://roc-project.github.io/roc/docs/development/changelog.html#version-0-1-1-jun-18-2019) and [0.1.2](https://roc-project.github.io/roc/docs/development/changelog.html#version-0-1-2-aug-14-2019). They fix numerous build issues reported by users, fix OpenFEC crashes and bugs in networking code, and add initial Android support.
+Since the [last publication](https://gavv.github.io/articles/roc-0.1/), I and Dmitriy have prepared two minor bugfix releases: [0.1.1](https://roc-streaming.org/toolkit/docs/development/changelog.html#version-0-1-1-jun-18-2019) and [0.1.2](https://roc-streaming.org/toolkit/docs/development/changelog.html#version-0-1-2-aug-14-2019). They fix numerous build issues reported by users, fix OpenFEC crashes and bugs in networking code, and add initial Android support.
 
-Thanks to everyone who have reported bugs and contributed patches! Special thanks to [S-trace](https://github.com/S-trace) who has helped a lot with the [porting to Android](https://github.com/roc-project/roc/issues/222).
+Thanks to everyone who have reported bugs and contributed patches! Special thanks to [S-trace](https://github.com/S-trace) who has helped a lot with the [porting to Android](https://github.com/roc-streaming/roc-toolkit/issues/222).
 
-Now we will focus on [0.2](https://github.com/roc-project/roc/issues?q=is%3Aopen+is%3Aissue+milestone%3A0.2.0), which will add RTCP and RTSP support and the Control API. These protocols will open a way towards adding more audio encodings, including non-stereo channel sets, non-44100 sample rates, and Opus support. These features are planned for 0.3 release.
+Now we will focus on [0.2](https://github.com/roc-streaming/roc-toolkit/issues?q=is%3Aopen+is%3Aissue+milestone%3A0.2.0), which will add RTCP and RTSP support and the Control API. These protocols will open a way towards adding more audio encodings, including non-stereo channel sets, non-44100 sample rates, and Opus support. These features are planned for 0.3 release.
 
-Longer-term plans (after 0.3) include service discovery, adaptive streaming, multi-room, a relay tool, and an Android app. These features are not scheduled to a specific release yet. I'll post updates to our [mailing list](https://roc-project.github.io/roc/docs/about_project/contacts.html) and to [my twitter](https://twitter.com/gavv42).
+Longer-term plans (after 0.3) include service discovery, adaptive streaming, multi-room, a relay tool, and an Android app. These features are not scheduled to a specific release yet. I'll post updates to our [mailing list](https://roc-streaming.org/toolkit/docs/about_project/contacts.html) and to [my twitter](https://twitter.com/gavv42).
 
-If you want to **help the project** in any way, you're highly welcome! We've prepared [contribution guidelines](https://roc-project.github.io/roc/docs/development/contribution_guidelines.html) and a bunch of issues tagged as ["help wanted"](https://github.com/roc-project/roc/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) and ["easy hacks"](https://github.com/roc-project/roc/issues?q=is%3Aissue+is%3Aopen+label%3A%22easy+hacks%22) (see the documentation for details).
+If you want to **help the project** in any way, you're highly welcome! We've prepared [contribution guidelines](https://roc-streaming.org/toolkit/docs/development/contribution_guidelines.html) and a bunch of issues tagged as ["help wanted"](https://github.com/roc-streaming/roc-toolkit/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) and ["easy hacks"](https://github.com/roc-streaming/roc-toolkit/issues?q=is%3Aissue+is%3Aopen+label%3A%22easy+hacks%22) (see the documentation for details).
 
 Finally, I've decided to write a step-by-step tutorial for typical usage scenarios. So here we go.
 
@@ -71,11 +71,11 @@ Finally, I've decided to write a step-by-step tutorial for typical usage scenari
 
 ## Ubuntu desktop
 
-The following instructions are suitable for Ubuntu 16.04 or later. If you're using another Linux distro, consult the [User cookbook](https://roc-project.github.io/roc/docs/building/user_cookbook.html) page from Roc documentation.
+The following instructions are suitable for Ubuntu 16.04 or later. If you're using another Linux distro, consult the [User cookbook](https://roc-streaming.org/toolkit/docs/building/user_cookbook.html) page from Roc documentation.
 
-These instructions assume that you're using PulseAudio and want to use Roc PulseAudio modules. The full documentation for them is available [here](https://roc-project.github.io/roc/docs/running/pulseaudio_modules.html).
+These instructions assume that you're using PulseAudio and want to use Roc PulseAudio modules. The full documentation for them is available [here](https://roc-streaming.org/toolkit/docs/running/pulseaudio_modules.html).
 
-If you don't want to use PulseAudio, you can use Roc command-line tools that can work, for example, with bare ALSA. The documentation for them is available [here](https://roc-project.github.io/roc/docs/running/command_line_tools.html) and [here](https://roc-project.github.io/roc/docs/manuals.html).
+If you don't want to use PulseAudio, you can use Roc command-line tools that can work, for example, with bare ALSA. The documentation for them is available [here](https://roc-streaming.org/toolkit/docs/running/command_line_tools.html) and [here](https://roc-streaming.org/toolkit/docs/manuals.html).
 
 ### Install dependencies
 
@@ -88,8 +88,8 @@ $ sudo apt-get install g++ pkg-config scons ragel gengetopt \
 ### Clone, build, install
 
 ```
-$ git clone https://github.com/roc-project/roc.git
-$ cd roc
+$ git clone https://github.com/roc-streaming/roc-toolkit.git
+$ cd roc-toolkit
 $ scons -Q --enable-pulseaudio-modules --build-3rdparty=openfec,pulseaudio
 $ sudo scons -Q --enable-pulseaudio-modules --build-3rdparty=openfec,pulseaudio install
 ```
@@ -165,13 +165,13 @@ And here is how you can connect Roc **sink-input** named "Roc" (which receives s
 
 It would be much handier if Roc was automatically discovering receivers available in LAN and creating a Roc sink for each one, just like PulseAudio does it for its "native" tunnel sinks.
 
-In our [roadmap](https://roc-project.github.io/roc/docs/development/roadmap.html), we have service discovery API and the corresponding support in tools and PulseAudio modules.
+In our [roadmap](https://roc-streaming.org/toolkit/docs/development/roadmap.html), we have service discovery API and the corresponding support in tools and PulseAudio modules.
 
 ---
 
 ## Raspberry Pi (ALSA)
 
-The following instructions are suitable for Raspberry Pi 2 and 3 with Raspbian. If you're using another board or distro, consult the [User cookbook](https://roc-project.github.io/roc/docs/building/user_cookbook.html), [Tested boards](https://roc-project.github.io/roc/docs/portability/tested_boards.html), and [Cross-compiling](https://roc-project.github.io/roc/docs/portability/cross_compiling.html) pages from the documentation.
+The following instructions are suitable for Raspberry Pi 2 and 3 with Raspbian. If you're using another board or distro, consult the [User cookbook](https://roc-streaming.org/toolkit/docs/building/user_cookbook.html), [Tested boards](https://roc-streaming.org/toolkit/docs/portability/tested_boards.html), and [Cross-compiling](https://roc-streaming.org/toolkit/docs/portability/cross_compiling.html) pages from the documentation.
 
 These instructions assume that you want to use Docker to get a pre-packaged (binary) toolchain for cross-compiling. If you want to prepare the toolchain manually, consult the documentation above.
 
@@ -190,8 +190,8 @@ $ sudo apt-get install docker.io
 ### Cross-compile Roc
 
 ```
-$ git clone https://github.com/roc-project/roc.git
-$ cd roc
+$ git clone https://github.com/roc-streaming/roc-toolkit.git
+$ cd roc-toolkit
 $ docker run -t --rm -u "${UID}" -v "${PWD}:${PWD}" -w "${PWD}" \
     rocproject/cross-arm-linux-gnueabihf \
       scons -Q \
@@ -317,13 +317,13 @@ For the single-board computer with bare ALSA it probably would be handy to have 
 
 Such a daemon can be probably written in Go or Python or other higher-level language compared to C++.
 
-Currently there are no plans for such a thing; however, if you think that it would be useful, please let us know. Even better, if you would like to help with this, feel free to contact us. See [contacts](https://roc-project.github.io/roc/docs/about_project/contacts.html) page or just leave a comment.
+Currently there are no plans for such a thing; however, if you think that it would be useful, please let us know. Even better, if you would like to help with this, feel free to contact us. See [contacts](https://roc-streaming.org/toolkit/docs/about_project/contacts.html) page or just leave a comment.
 
 ---
 
 ## Raspberry Pi (PulseAudio)
 
-The following instructions are suitable for Raspberry Pi 2 and 3 with Raspbian. If you're using another board or distro, consult the [User cookbook](https://roc-project.github.io/roc/docs/building/user_cookbook.html), [Tested boards](https://roc-project.github.io/roc/docs/portability/tested_boards.html), and [Cross-compiling](https://roc-project.github.io/roc/docs/portability/cross_compiling.html) pages from the documentation.
+The following instructions are suitable for Raspberry Pi 2 and 3 with Raspbian. If you're using another board or distro, consult the [User cookbook](https://roc-streaming.org/toolkit/docs/building/user_cookbook.html), [Tested boards](https://roc-streaming.org/toolkit/docs/portability/tested_boards.html), and [Cross-compiling](https://roc-streaming.org/toolkit/docs/portability/cross_compiling.html) pages from the documentation.
 
 These instructions assume that you want to use Docker to get a pre-packaged (binary) toolchain for cross-compiling. If you want to prepare the toolchain manually, consult the documentation above.
 
@@ -342,8 +342,8 @@ $ sudo apt-get install docker.io
 ### Cross-compile Roc
 
 ```
-$ git clone https://github.com/roc-project/roc.git
-$ cd roc
+$ git clone https://github.com/roc-streaming/roc-toolkit.git
+$ cd roc-toolkit
 $ docker run -t --rm -u "${UID}" -v "${PWD}:${PWD}" -w "${PWD}" \
     rocproject/cross-arm-linux-gnueabihf \
       scons -Q \
@@ -483,7 +483,7 @@ If everything works, you can now configure Roc sink-input or roc-recv on your ot
 
 ## macOS
 
-The following instructions are suitable for macOS 10.12 and later. If you're using an older version, consult the [User cookbook](https://roc-project.github.io/roc/docs/building/user_cookbook.html) page from Roc documentation.
+The following instructions are suitable for macOS 10.12 and later. If you're using an older version, consult the [User cookbook](https://roc-streaming.org/toolkit/docs/building/user_cookbook.html) page from Roc documentation.
 
 ### Prepare environment
 
@@ -501,8 +501,8 @@ $ brew install scons ragel gengetopt sox libuv cpputest \
 ### Clone, build, install
 
 ```
-$ git clone https://github.com/roc-project/roc.git
-$ cd roc
+$ git clone https://github.com/roc-streaming/roc-toolkit.git
+$ cd roc-toolkit
 $ scons -Q --build-3rdparty=openfec
 $ sudo scons -Q --build-3rdparty=openfec install
 ```
@@ -561,9 +561,9 @@ If everything works, you can now configure Roc sink-input or roc-recv on your ot
 
 It would be much handier if Roc was automatically discovering receivers available in LAN and creating a virtual device for each one, just like PulseAudio does it for its "native" tunnel sinks.
 
-It is possible to do so by adding service discovery to Roc, adopting virtual device implementation from [Soundflower](https://github.com/mattingalls/Soundflower), and creating a macOS app that puts all these things together. The service discovery support is in our [roadmap](https://roc-project.github.io/roc/docs/development/roadmap.html); the rest is not so far.
+It is possible to do so by adding service discovery to Roc, adopting virtual device implementation from [Soundflower](https://github.com/mattingalls/Soundflower), and creating a macOS app that puts all these things together. The service discovery support is in our [roadmap](https://roc-streaming.org/toolkit/docs/development/roadmap.html); the rest is not so far.
 
-If you need such an app, please let us know because currently, it's not clear how much people would use it. Even better, if you would like to help with this, feel free to contact us. See [contacts](https://roc-project.github.io/roc/docs/about_project/contacts.html) page or just leave a comment.
+If you need such an app, please let us know because currently, it's not clear how much people would use it. Even better, if you would like to help with this, feel free to contact us. See [contacts](https://roc-streaming.org/toolkit/docs/about_project/contacts.html) page or just leave a comment.
 
 ---
 
@@ -616,4 +616,4 @@ The described solution may work but it is, obviously, not very convenient. It wo
 
 We have plans for an app, but there is no estimate yet.
 
-If you need such an app, please let us know because currently, it's not clear how much people would use it. Even better, if you would like to help with this, feel free to contact us. See [contacts](https://roc-project.github.io/roc/docs/about_project/contacts.html) page or just leave a comment.
+If you need such an app, please let us know because currently, it's not clear how much people would use it. Even better, if you would like to help with this, feel free to contact us. See [contacts](https://roc-streaming.org/toolkit/docs/about_project/contacts.html) page or just leave a comment.

@@ -4,7 +4,7 @@ title = "Software"
 
 #### Projects and tools
 
-* [Roc](https://github.com/roc-project/roc)
+* [Roc Toolkit](https://github.com/roc-streaming/roc-toolkit)
 
     Toolkit for real-time audio streaming over the network.
 
