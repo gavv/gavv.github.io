@@ -33,17 +33,3 @@ title = "Software"
 * [snippets](https://github.com/gavv/snippets)
 
     Random code snippets.
-
-* [editing-helpers.el](https://github.com/gavv/editing-helpers.el)
-
-    Editing helper functions for Emacs.
-
-#### Gentoo
-
-* [gv-overlay](https://github.com/gavv/gv-overlay)
-
-    Personal Gentoo overlay.
-
-* [distfiles](https://github.com/gavv/distfiles)
-
-    Distfiles for some Gentoo ebuilds.
