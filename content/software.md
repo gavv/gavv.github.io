@@ -2,34 +2,46 @@
 title = "Software"
 +++
 
-#### Projects and tools
+### Audio-related projects
 
-* [Roc Toolkit](https://github.com/roc-streaming/roc-toolkit)
+* [**Roc Toolkit**](https://github.com/roc-streaming/roc-toolkit)
 
-    Toolkit for real-time audio streaming over the network.
+    Toolkit for real-time audio streaming over the network. A big project providing C library, bindings, command-line tools, modules for audio servers.
 
-* [Tagberry](https://github.com/tagberry/tagberry-qt)
+* [**libASPL**](https://github.com/gavv/libASPL)
 
-    Tag-oriented Qt5 desktop calendar, task manager, and todo list.
+    C++17 library for creating macOS Audio Server plugins.
 
-* [httpexpect](https://github.com/gavv/httpexpect)
-
-    Go library for end-to-end HTTP and REST API testing.
-
-* [webrtc-cli](https://github.com/gavv/webrtc-cli)
-
-    Command-line WebRTC peer.
-
-* [signal-estimator](https://github.com/gavv/signal-estimator)
+* [**signal-estimator**](https://github.com/gavv/signal-estimator)
 
     Command-line tool to measure characteristics of a looped back signal.
 
-* [MiniSAPListener](https://github.com/gavv/MiniSAPListener)
+* [**webrtc-cli**](https://github.com/gavv/webrtc-cli)
+
+    Command-line WebRTC peer.
+
+* [**MiniSAPListener**](https://github.com/gavv/MiniSAPListener)
 
     Command-line tool to listen to SAP/SDP announcements.
 
-#### Miscellaneous
+### End-user apps
 
-* [snippets](https://github.com/gavv/snippets)
+* [**Tagberry**](https://github.com/tagberry/tagberry-qt)
+
+    Tag-oriented Qt5 desktop calendar, task manager, and todo list.
+
+### Utilities
+
+* [**httpexpect**](https://github.com/gavv/httpexpect)
+
+    Go library for end-to-end HTTP and REST API testing.
+
+* [**httpshd**](https://github.com/gavv/httpshd)
+
+    Tiny HTTP server that runs shell commands.
+
+### Miscellaneous
+
+* [**snippets**](https://github.com/gavv/snippets)
 
     Random code snippets.
