@@ -14,7 +14,7 @@ title = "Software"
 
 * [**signal-estimator**](https://github.com/gavv/signal-estimator)
 
-    Command-line tool to measure characteristics of a looped back signal.
+    Command-line and GUI tools to measure characteristics of a looped back signal.
 
 * [**webrtc-cli**](https://github.com/gavv/webrtc-cli)
 
@@ -40,8 +40,16 @@ title = "Software"
 
     Tiny HTTP server that runs shell commands.
 
+* [**pull-request-artifacts**](https://github.com/gavv/pull-request-artifacts)
+
+     GitHub Action to post build artifacts in PR comments.
+
 ### Miscellaneous
 
 * [**snippets**](https://github.com/gavv/snippets)
 
     Random code snippets.
+
+* [**bfu**](https://github.com/gavv/bfu)
+
+    Fancy / puzzling BF debugger.
