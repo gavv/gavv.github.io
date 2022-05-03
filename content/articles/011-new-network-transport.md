@@ -140,7 +140,7 @@ Roc is also designed to support arbitrary encodings, but currently, it supports 
 
 ## Comparison with other transports
 
-PulseAudio has two major types of network transport: "native" and RTP. You can read about them in [this article](https://gavv.github.io/articles/pulseaudio-under-the-hood/).
+PulseAudio has two major types of network transport: "native" and RTP. You can read about them in [this article](https://gavv.net/articles/pulseaudio-under-the-hood/).
 
 The "native" transport is based on TCP, which is not well suited for the low-latency real-time streaming and shows worse service quality on lower latencies and an unreliable network. In contrast, Roc is based on RTP, which works on top of UDP and doesn't have these problems.
 

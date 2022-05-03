@@ -39,7 +39,7 @@ title = "PulseAudio under the hood"
 
 ## Preface
 
-I'm working on the [Roc Toolkit](https://roc-streaming.org/) open-source project, a development kit for realtime audio streaming over the network. You can read more about the project in these two articles: [1](https://gavv.github.io/articles/new-network-transport/), [2](https://gavv.github.io/articles/roc-tutorial/).
+I'm working on the [Roc Toolkit](https://roc-streaming.org/) open-source project, a development kit for realtime audio streaming over the network. You can read more about the project in these two articles: [1](https://gavv.net/articles/new-network-transport/), [2](https://gavv.net/articles/roc-tutorial/).
 
 We decided to implement a set of PulseAudio modules that will allow PulseAudio to use Roc as a network transport. Many Linux distros employ PulseAudio, and their users will be able to improve network service quality without changing the workflow. This led me to dig into PulseAudio internals and eventually to this document.
 
@@ -5056,7 +5056,7 @@ This section demonstrates example PulseAudio configurations for several common a
 
 This section provides several examples of client applications and server modules. The source code and usage instructions are available [on GitHub](https://github.com/gavv/snippets/tree/master/pa).
 
-Also, some analysis of the client examples is available in [this post](https://gavv.github.io/articles/decode-play/).
+Also, some analysis of the client examples is available in [this post](https://gavv.net/articles/decode-play/).
 
 ### Documentation
 
@@ -5092,7 +5092,7 @@ This example is quite straightforward, so just look at the code.
 
 ### C API
 
-These examples are described in details in another [article](https://gavv.github.io/articles/decode-play/#pulseaudio).
+These examples are described in details in another [article](https://gavv.net/articles/decode-play/#pulseaudio).
 
 * [**`pa_play_simple`**](https://github.com/gavv/snippets/blob/master/pa/pa_play_simple.c)
 
@@ -5266,7 +5266,7 @@ Two PulseAudio servers can be connected either using the "native" protocol or us
 
 * the implementation of RTP sender and receiver in PulseAudio doesn't employ any RTP extensions for error correction or retransmission, and packet losses cause playback holes
 
-This problem is addressed by the [Roc Toolkit](https://roc-streaming.org/) project that I'm currently [working on](https://gavv.github.io/articles/new-network-transport/). A tutorial is [available here](https://gavv.github.io/articles/roc-tutorial/).
+This problem is addressed by the [Roc Toolkit](https://roc-streaming.org/) project that I'm currently [working on](https://gavv.net/articles/new-network-transport/). A tutorial is [available here](https://gavv.net/articles/roc-tutorial/).
 
 ### Usability
 

@@ -35,7 +35,7 @@ Among other things, Roc can be used as a network transport for PulseAudio, ALSA,
 
 * Roc transparently integrates into the PulseAudio workflow and can be controlled via the usual PulseAudio GUIs, just like the built-in PulseAudio transports, but provides a better service quality on Wi-Fi.
 
-My [earlier article](https://gavv.github.io/articles/new-network-transport/) describes how does Roc achieve this and provides some comparison with other software including built-in PulseAudio transports.
+My [earlier article](https://gavv.net/articles/new-network-transport/) describes how does Roc achieve this and provides some comparison with other software including built-in PulseAudio transports.
 
 What can you do with this? Some examples:
 
@@ -55,7 +55,7 @@ This tutorial describes how to use Roc to connect audio apps and devices running
 
 ## What's new?
 
-Since the [last publication](https://gavv.github.io/articles/roc-0.1/), I and Dmitriy have prepared two minor bugfix releases: [0.1.1](https://roc-streaming.org/toolkit/docs/development/changelog.html#version-0-1-1-jun-18-2019) and [0.1.2](https://roc-streaming.org/toolkit/docs/development/changelog.html#version-0-1-2-aug-14-2019). They fix numerous build issues reported by users, fix OpenFEC crashes and bugs in networking code, and add initial Android support.
+Since the [last publication](https://gavv.net/articles/roc-0.1/), I and Dmitriy have prepared two minor bugfix releases: [0.1.1](https://roc-streaming.org/toolkit/docs/development/changelog.html#version-0-1-1-jun-18-2019) and [0.1.2](https://roc-streaming.org/toolkit/docs/development/changelog.html#version-0-1-2-aug-14-2019). They fix numerous build issues reported by users, fix OpenFEC crashes and bugs in networking code, and add initial Android support.
 
 Thanks to everyone who have reported bugs and contributed patches! Special thanks to [S-trace](https://github.com/S-trace) who has helped a lot with the [porting to Android](https://github.com/roc-streaming/roc-toolkit/issues/222).
 

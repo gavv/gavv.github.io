@@ -40,9 +40,23 @@ title = "Software"
 
     Tiny HTTP server that runs shell commands.
 
+* [**linuxdeployqt6.py**](https://github.com/gavv/linuxdeployqt6.py)
+
+    Small tool to make Linux Qt6 applications self-contained.
+
 * [**pull-request-artifacts**](https://github.com/gavv/pull-request-artifacts)
 
-     GitHub Action to post build artifacts in PR comments.
+    GitHub Action to post build artifacts in PR comments.
+
+### Prebuilt bibaries
+
+* [**speexdsp-win64**](https://github.com/gavv/speexdsp-win64)
+
+    Prebuilt SpeexDSP binaries for Windows.
+
+* [**qt5-universal-binaries**](https://github.com/gavv/qt5-universal-binaries)
+
+    Prebuilt Qt5 universal binaries for macOS.
 
 ### Miscellaneous
 
