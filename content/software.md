@@ -48,7 +48,7 @@ title = "Software"
 
     GitHub Action to post build artifacts in PR comments.
 
-### Prebuilt bibaries
+### Pre-built binaries
 
 * [**speexdsp-win64**](https://github.com/gavv/speexdsp-win64)
 
