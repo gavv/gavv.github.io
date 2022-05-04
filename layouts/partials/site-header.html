@@ -5,7 +5,7 @@
   <div id="menu">
     <div>
       <div>
-        {{ if eq .URL "/about/" }}
+        {{ if eq .RelPermalink "/about/" }}
           <a href="/about/" class="menu-item menu-selected">
         {{ else }}
           <a href="/about/" class="menu-item">
@@ -16,7 +16,7 @@
     </div>
     <div>
       <div>
-        {{ if eq .URL "/software/" }}
+        {{ if eq .RelPermalink "/software/" }}
           <a href="/software/" class="menu-item menu-selected">
         {{ else }}
           <a href="/software/" class="menu-item">

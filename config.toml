@@ -12,5 +12,10 @@ paginate = 20
 [taxonomies]
   tag = "tags"
 
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
 [Params]
   author = "Victor Gaydov"
