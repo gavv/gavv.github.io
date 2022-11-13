@@ -12,7 +12,7 @@ This site is my homepage, containing some technical writings and links to the so
 
 I'm an open-source and Linux enthusiast, enjoying systems programming, networking, and audio.
 
-In recent times me and my girlfriend are nomading freelancers. Besides computers, I'm a not professional but passionate bike tourist.
+In recent times me and my girlfriend are nomading freelancers. Besides computers, I'm a not professional but passionate bike and hike tourist.
 
 You can contact me via victor@enise.org.
 

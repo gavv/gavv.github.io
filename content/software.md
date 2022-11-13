@@ -54,6 +54,10 @@ title = "Software"
 
     Prebuilt SpeexDSP binaries for Windows.
 
+* [**rnnoise-win64**](https://github.com/gavv/rnnoise-win64)
+
+    Prebuilt RNNoise binaries for Windows.
+
 * [**qt5-universal-binaries**](https://github.com/gavv/qt5-universal-binaries)
 
     Prebuilt Qt5 universal binaries for macOS.
