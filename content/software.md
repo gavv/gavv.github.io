@@ -36,6 +36,10 @@ title = "Software"
 
     Go library for end-to-end HTTP and REST API testing.
 
+* [**cobradoc**](https://github.com/gavv/cobradoc)
+
+    Go library for automatic documentation generation for CLI tools.
+
 * [**httpshd**](https://github.com/gavv/httpshd)
 
     Tiny HTTP server that runs shell commands.
