@@ -34,6 +34,17 @@ My resume:
 * [LinkedIn](https://www.linkedin.com/in/victor-gaydov/)
 * [Upwork](https://www.upwork.com/o/profiles/users/_~01205fd34b306ddfd6/)
 
+### Donations
+
+If you would like to sponsor my open-source work, you can use one of the following services for one-time or recurring donations:
+
+* [Liberapay](https://liberapay.com/gavv/)
+* [PayPal](https://www.paypal.com/paypalme/victorgaydov)
+
+Thank you!
+
+Also, feel free to contact me if you would like to sponsor development of a particular feature.
+
 ### Legal
 
 All original content on this site is licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
