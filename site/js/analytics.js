@@ -9,18 +9,15 @@ function getOriginReferrer() {
     }
 }
 
-function setupGA() {
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-93472390-1', 'auto');
+function setupGA(id) {
     var originReferrer = getOriginReferrer();
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
     if (originReferrer) {
-        ga('set', 'referrer', originReferrer);
+        gtag('set', 'page_referrer', originReferrer);
     }
-    ga('send', 'pageview');
+    gtag('config', id);
 }
 
 function dntEnabed() {
@@ -29,5 +26,10 @@ function dntEnabed() {
 }
 
 if (!dntEnabed()) {
-    setupGA();
+    document.write(' \
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PM79D0X342"> \
+</script> \
+<script> \
+    setupGA("G-PM79D0X342"); \
+</script>')
 }
