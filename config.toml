@@ -7,7 +7,7 @@ staticDir = ["site", "media", "redirects"]
 
 disableKinds = ["taxonomyTerm"]
 
-paginate = 20
+paginate = 15
 
 [taxonomies]
   tag = "tags"

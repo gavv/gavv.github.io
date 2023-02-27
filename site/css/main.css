@@ -22,6 +22,14 @@ body {
     font-family: 'Roboto Mono', monospace !important;
 }
 
+.verbatim-table th {
+    font-size: 16px;
+}
+
+.verbatim-table td {
+    font-family: 'Roboto Mono', monospace !important;
+}
+
 /* font size */
 
 body {
@@ -336,6 +344,24 @@ h2 .anchor i, h3 .anchor i, h4 .anchor i {
 
 h2:hover .anchor i, h3:hover .anchor i, h4:hover .anchor i {
     color: black;
+}
+
+/* block */
+
+.block-header {
+    font-size: 20px;
+    font-weight: bold;
+    font-family: 'Roboto Mono', monospace !important;
+}
+
+.block {
+    background-color: #f5f7f8;
+    border: 1px solid #bebab0;
+    margin-top: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    line-height: 38px;
 }
 
 /* youtube */

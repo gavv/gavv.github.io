@@ -26,9 +26,9 @@ title = "Software"
 
 ### End-user apps
 
-* [**Tagberry**](https://github.com/tagberry/tagberry-qt)
+* [**Tagberry**](https://github.com/gavv/tagberry)
 
-    Tag-oriented Qt5 desktop calendar, task manager, and todo list.
+    Tag-oriented calendar and to-do list.
 
 ### Utilities
 

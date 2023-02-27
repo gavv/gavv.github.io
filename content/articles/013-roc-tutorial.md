@@ -12,7 +12,7 @@ title = "A step-by-step tutorial for live audio streaming with Roc"
 **Table of contents**
 
 * [What is Roc?](#what-is-roc)
-* [What's new?](#what-s-new)
+* [What's new?](#whats-new)
 * [Ubuntu desktop](#ubuntu-desktop)
 * [Raspberry Pi (ALSA)](#raspberry-pi-alsa)
 * [Raspberry Pi (PulseAudio)](#raspberry-pi-pulseaudio)
@@ -20,6 +20,13 @@ title = "A step-by-step tutorial for live audio streaming with Roc"
 * [Android / Termux](#android-termux)
 
 ---
+
+<div class="block">
+  <div class="block-header">
+    UPDATE
+  </div>
+  You can find tutorial updated for <b>0.2.x</b> release series in <a href="https://gavv.net/articles/roc-tutorial-0.2/"><b>this article</b></a>.
+</div>
 
 ## What is Roc?
 

@@ -87,7 +87,7 @@ Roc achieves this as follows:
 
 Thereby, the incoming queue at the receiver serves for the three purposes at the same time. It is used as a jitter buffer, as a recovery buffer, and for rate estimation. The first use is usual. The rest two are briefly discussed below.
 
-If you want to learn more about the implementation, see the [internals](https://roc-streaming.org/toolkit/docs/internals.html) section in our documentation. In particular, take a look at the [data flow](https://roc-streaming.org/toolkit/docs/internals/data_flow.html) page.
+If you want to learn more about the implementation, see the [internals](https://roc-streaming.org/toolkit/docs/internals.html) section in our documentation.
 
 ## Loss recovery
 
@@ -190,15 +190,15 @@ However, these numbers can't be used everywhere. I saw Wi-Fi networks where 100 
 If you want to try Roc, consult the following documentation sections:
 
 * [Building](https://roc-streaming.org/toolkit/docs/building.html) --- building and installing;
-* [Running](https://roc-streaming.org/toolkit/docs/running.html) --- instructions for command-line tools and PulseAudio modules;
+* [Tools](https://roc-streaming.org/toolkit/docs/tools.html) --- about command-line tools, sound server modules, apps;
 * [Manuals](https://roc-streaming.org/toolkit/docs/manuals.html) --- reference for command-line tools;
 * [API](https://roc-streaming.org/toolkit/docs/api.html) --- reference and examples for the C library.
 
 As a quick start, it should be enough to take a look at these three pages:
 
 * [User cookbook](https://roc-streaming.org/toolkit/docs/building/user_cookbook.html)
-* [Command-line tools](https://roc-streaming.org/toolkit/docs/running/command_line_tools.html)
-* [PulseAudio modules](https://roc-streaming.org/toolkit/docs/running/pulseaudio_modules.html)
+* [Command-line tools](https://roc-streaming.org/toolkit/docs/tools/command_line_tools.html)
+* [Sound server modules](https://roc-streaming.org/toolkit/docs/tools/sound_server_modules.html)
 
 Currently, Roc supports GNU/Linux (command-line tools and PulseAudio modules) and macOS (command-line tools). See details in [the documentation](https://roc-streaming.org/toolkit/docs/portability/supported_platforms.html).
 
@@ -220,7 +220,7 @@ If people find our PulseAudio modules useful, we'll consider submitting them to 
 
 Finally, there are some ideas of end-user applications on top of Roc, for instance, some open-source audio and video sharing tools for mobile and desktop. There are no concrete plans right now though.
 
-If you're interested in how the project would evolve, you can subscribe to [my twitter](https://twitter.com/gavv42) or our [mailing list](https://www.freelists.org/list/roc).
+If you're interested in how the project would evolve, you can subscribe to [my twitter](https://twitter.com/gavv42) or [mastodon](https://fosstodon.org/@gavv), or our [mailing list](https://www.freelists.org/list/roc).
 
 ## Feedback
 

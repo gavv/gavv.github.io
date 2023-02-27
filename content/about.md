@@ -12,8 +12,6 @@ This site is my homepage, containing some technical writings and links to the so
 
 I'm an open-source and Linux enthusiast, enjoying systems programming, networking, and audio.
 
-In recent times me and my girlfriend are nomading freelancers. Besides computers, I'm a not professional but passionate bike and hike tourist.
-
 You can contact me via victor@enise.org.
 
 Me on web:
@@ -40,6 +38,8 @@ If you would like to sponsor my open-source work, you can use one of the followi
 
 * [Liberapay](https://liberapay.com/gavv/)
 * [PayPal](https://www.paypal.com/paypalme/victorgaydov)
+
+There are also accounts for Roc Streaming: [Open Collective](https://opencollective.com/roc-streaming),  [Liberapay](https://liberapay.com/roc-streaming/)
 
 Thank you!
 
