@@ -653,7 +653,7 @@ The following instructions are suitable for macOS 10.12 and later. If you're usi
 ### Install dependencies
 
 ```
-$ brew install scons ragel gengetopt libuv speexdsp sox \
+$ brew install pkg-config scons ragel gengetopt libuv speexdsp sox \
     libtool autoconf automake make cmake
 ```
 
