@@ -84,6 +84,10 @@ table, th, .flex_table {
     font-size: 14px;
 }
 
+.small-label {
+    font-size: 9px;
+}
+
 /* colors and borders */
 
 #header, .post-time, .paginator {
@@ -115,11 +119,11 @@ a:link, a:visited, a:hover {
     color: #336699;
 }
 
-th, td, .flex_table div {
+th, td, .flex_table div, .small-label {
     border: 1px solid #bebab0;
 }
 
-.hdr_table th, .flex_th {
+.hdr_table th, .flex_th, .small-label {
     background: #f5f7f8;
 }
 
@@ -290,6 +294,13 @@ td {
 
 .flex_th {
     font-weight: bolder;
+}
+
+.small-label {
+    display: inline-block;
+    padding: 1px;
+    margin-left: 2px;
+    margin-right: 2px;
 }
 
 /* code */
