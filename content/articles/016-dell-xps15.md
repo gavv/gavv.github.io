@@ -15,7 +15,7 @@ TL;DR:
 
 * on the whole, it works well
 * use Debian Bookworm
-* be aware of poor sound quality of built-in speakers on Linux
+* be aware of sound quality issues of built-in speakers on Linux
 * be aware of possible issues with dock station after hibernation
 
 **Table of contents**
@@ -182,7 +182,9 @@ I'm using X11.
   <div class="flex_th">NOT TESTED</div>
 </div>
 
-I tried to install `nvidia-driver` on Debian Bullseye, but got black screen after reboot. I didn't try to dig into it further.
+I tried to install `nvidia-driver` on Debian Bullseye, but got black screen after reboot.
+
+I didn't try to dig into it further, however people on Reddit told me that it works without issues on newer kernel and video drivers.
 
 ----
 
@@ -194,29 +196,23 @@ I tried to install `nvidia-driver` on Debian Bullseye, but got black screen afte
   <div class="flex_th">WORKS WITH ISSUES</div>
 </div>
 
-This laptop is claimed to have excellent sound quality, thanks to its 4 speakers, however on Linux the sound quality is actually poor, exactly because of these 4 speakers and, likely, lack of proper driver support for them.
+In reviews this laptop was claimed to have excellent sound quality, thanks to it's two pairs of speakers, however in my experience on Linux the sound quality was not so good.
 
-Two related issues are known:
+Here are the known issues:
 
-* In earlier kernel versions, the low frequency pair of speakers was disabled. It is fixed in kernels starting from 5.15.46.
+* In kernel versions below 5.15.46, the low frequency pair of speakers are not properly activated.
 
-  Links:
+  Links: [[1]](https://bugzilla.kernel.org/show_bug.cgi?id=216035), [[2]](https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1981364)
 
-    * https://bugzilla.kernel.org/show_bug.cgi?id=216035
-    * https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1981364
+* In kernel versions below 6.2, both pairs of speakers are employed, but for some reason the sound feels "flat".
 
-* Although the  low frequency speakers are now enabled, low frequencies are still clipped and the sound very clearly feels "flat" and "cut off".
+  Links: [[1]](https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/2162), [[2]](https://github.com/thesofproject/linux/issues/3729), [[3]](https://bugzilla.kernel.org/show_bug.cgi?id=215233), [[4]](https://bbs.archlinux.org/viewtopic.php?id=279883)
 
-  Links:
+* In kernel versions starting from 6.2, the sound feels way better, but for my taste I'd rate it average. I expected more based on reviews.
 
-    * https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/2162
-    * https://github.com/thesofproject/linux/issues/3729
-    * https://bugzilla.kernel.org/show_bug.cgi?id=215233
-    * https://bbs.archlinux.org/viewtopic.php?id=279883
+As far as I know, the problems below 6.2 were specific to Linux and were not reproducing on Windows when using Dell driver. However, I don't know whether on 6.2 it sounds the same as on Windows or still has Linux-specific issues.
 
-As far as I know, this problem is specific to Linux and is not reproducing on Windows with Dell driver. I'm not aware of any solution for Linux. I've seen one [incomplete workaround](https://askubuntu.com/questions/1226485/terrible-sound-on-ubuntu-18-04-with-dell-xps-15-7590/1230889#1230889), but I didn't try it.
-
-The resulting sound quality makes speakers bad for listening to music, however they are still pretty well for calls.
+In Debian Bullseye, the kernel version is 5.10. In Bookworm, it is 6.1. You can install 6.2 by yourself, but it's not stable yet. On my laptop 6.2 causes freezed on reboot.
 
 ### 3.5mm jack
 
@@ -345,7 +341,7 @@ I've tried connecting dock station via USB and Thunderbolt ports. Both worked fo
 
 I've tested Ethernet, USB, and HDMI ports of the dock station. Everything worked out of the box.
 
-One problem I experienced is that dock station stopped working after resuming from hibernation. I've rebooted, and USB ports of dock station started working, but HDMI didn't. After plugging and unplugging HDMI cable several time it started working too.
+One problem I experienced is that dock station HDMI stops working after resuming from hibernation or after reboot. To fix it, try to reboot dock station (power off and on) and then reconnect HDMI. You can also try to reboot laptop.
 
 ----
 
