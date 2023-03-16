@@ -2,7 +2,7 @@
 slug = "dell-xps15"
 date = "2023-03-15"
 tags = ["linux", "hardware", "debian", "dell"]
-title = "Linux on Dell XPS 15"
+title = "Debian Linux on Dell XPS 15"
 +++
 
 <a data-lightbox="roc_devicec" href="/articles/dell-xps15/dell.jpg">
@@ -14,7 +14,7 @@ This is a small report and how-to on running Debian on [Dell XPS 15 9520](https:
 TL;DR:
 
 * on the whole, it works well
-* use Debian Bookworm
+* use Debian Bookworm or later
 * be aware of sound quality issues of built-in speakers on Linux
 * be aware of possible issues with dock station after hibernation
 
@@ -23,9 +23,9 @@ TL;DR:
 * [Installing Debian](#installing-debian)
 * [Video](#video)
   * [3.5K OLED display](#35k-oled-display) <div class="small-label">WORKS</div>
-  * [Touch display](#touch-display) <div class="small-label">NOT TESTED</div>
+  * [Touch display](#touch-display) <div class="small-label">WORKS</div>
   * [Integrated Intel video card](#integrated-intel-video-card) <div class="small-label">WORKS</div>
-  * [Discrete NVIDIA video card](#discrete-nvidia-video-card) <div class="small-label">NOT TESTED</div>
+  * [Discrete NVIDIA video card](#discrete-nvidia-video-card) <div class="small-label">REPORTED TO WORK</div>
 * [Audio](#audio)
   * [Speakers](#speakers) <div class="small-label">WORKS WITH ISSUES</div>
   * [3.5mm jack](#35mm-jack) <div class="small-label">WORKS</div>
@@ -106,6 +106,10 @@ Configure X11:
 
     This will affect some Gtk apps that do not respect "Custom DPI setting" and "Window Scaling" settings above. In my case, Xfce "Log out" popup for some reason ignores Xfce settings, but honors Xft.dpi.
 
+Configure i3:
+
+* just use large font size for i3, i3status, and rofi (or whatever you use)
+
 Configure LightDM [[source]](https://evren-yurtesen.blogspot.com/2017/10/lightdm-and-4k-displays.html):
 
 * create `/usr/local/bin/setup-lightdm`, make it executable, and add the following:
@@ -164,7 +168,9 @@ Configure GRUB:
   <div class="flex_th">NOT TESTED</div>
 </div>
 
-I just disabled it in BIOS.
+Works out of the box.
+
+Didn't try to use it with dual display.
 
 ### Integrated Intel video card
 
@@ -179,7 +185,7 @@ I'm using X11.
 ### Discrete NVIDIA video card
 
 <div class="flex_table">
-  <div class="flex_th">NOT TESTED</div>
+  <div class="flex_th">REPORTED TO WORK</div>
 </div>
 
 I tried to install `nvidia-driver` on Debian Bullseye, but got black screen after reboot.
