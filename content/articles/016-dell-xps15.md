@@ -202,23 +202,23 @@ I didn't try to dig into it further, however people on Reddit told me that it wo
   <div class="flex_th">WORKS WITH ISSUES</div>
 </div>
 
-In reviews this laptop was claimed to have excellent sound quality, thanks to it's two pairs of speakers, however in my experience on Linux the sound quality was not so good.
+In reviews, this laptop was claimed to have excellent sound quality, thanks to it's two pairs of speakers. However, in my experience on Linux, the sound quality was not so good.
 
 Here are the known issues:
 
-* In kernel versions below 5.15.46, the low frequency pair of speakers are not properly activated.
+* In kernel versions below 5.15.46, the low frequency pair of speakers is not properly activated.
 
   Links: [[1]](https://bugzilla.kernel.org/show_bug.cgi?id=216035), [[2]](https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1981364)
 
-* In kernel versions below 6.2, both pairs of speakers are employed, but for some reason the sound feels "flat".
+* In kernel versions starting from 5.15.46 and below 6.2, both pairs of speakers are employed, but for some reason the sound feels "flat".
 
   Links: [[1]](https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/2162), [[2]](https://github.com/thesofproject/linux/issues/3729), [[3]](https://bugzilla.kernel.org/show_bug.cgi?id=215233), [[4]](https://bbs.archlinux.org/viewtopic.php?id=279883)
 
-* In kernel versions starting from 6.2, the sound feels way better, but for my taste I'd rate it average. I expected more based on reviews.
+* In kernel versions starting from 6.2, the sound feels way better, but for my taste, I'd rate it average. I expected more, based on reviews.
 
-As far as I know, the problems below 6.2 were specific to Linux and were not reproducing on Windows when using Dell driver. However, I don't know whether on 6.2 it sounds the same as on Windows or still has Linux-specific issues.
+As far as I know, the problems below 6.2 were specific to Linux and were not reproducing on Windows when using Dell driver. However, I don't know whether on 6.2 it sounds the same as on Windows, or still has Linux-specific issues.
 
-In Debian Bullseye, the kernel version is 5.10. In Bookworm, it is 6.1. You can install 6.2 by yourself, but it's not stable yet. On my laptop 6.2 causes freezed on reboot.
+In Debian Bullseye, the kernel version is 5.10. In Bookworm, it is 6.1. You can install 6.2 by yourself, but it's not stable yet. On my laptop, 6.2 causes freeze on reboot.
 
 ### 3.5mm jack
 
@@ -347,7 +347,7 @@ I've tried connecting dock station via USB and Thunderbolt ports. Both worked fo
 
 I've tested Ethernet, USB, and HDMI ports of the dock station. Everything worked out of the box.
 
-One problem I experienced is that dock station HDMI stops working after resuming from hibernation or after reboot. To fix it, try to reboot dock station (power off and on) and then reconnect HDMI. You can also try to reboot laptop.
+One problem I experienced is that dock station HDMI sometimes stops working after resuming from hibernation or after reboot. It is fixed by rebooting dock station (power off and on) and then reconnecting HDMI.
 
 ----
 
