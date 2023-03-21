@@ -8,8 +8,8 @@ title = "Updated tutorial for Roc 0.2"
 **Table of contents**
 
 * [What's new?](#whats-new)
-* [Ubuntu desktop (PulseAudio)](#ubuntu-desktop-pulseaudio)
-* [Ubuntu desktop (PipeWire)](#ubuntu-desktop-pipewire)
+* [Linux desktop (PulseAudio)](#linux-desktop-pulseaudio)
+* [Linux desktop (PipeWire)](#linux-desktop-pipewire)
 * [Raspberry Pi (ALSA)](#raspberry-pi-alsa)
 * [Raspberry Pi (PulseAudio)](#raspberry-pi-pulseaudio)
 * [macOS](#macos)
@@ -72,13 +72,13 @@ For more details, see updated [manual pages](https://roc-streaming.org/toolkit/d
 
 ---
 
-## Ubuntu desktop (PulseAudio)
-
-The following instructions are suitable for Ubuntu 16.04 or later. If you're using another Linux distro, consult the [User cookbook](https://roc-streaming.org/toolkit/docs/building/user_cookbook.html) page from Roc documentation.
+## Linux desktop (PulseAudio)
 
 These instructions assume that you're using PulseAudio and want to use Roc PulseAudio modules. The full documentation for them is repo's [README](https://github.com/roc-streaming/roc-pulse).
 
 ### Install dependencies
+
+On Debian-based systems, this command will install all needed dependencies:
 
 ```
 $ sudo apt install -y \
@@ -162,13 +162,13 @@ And here is how you can connect Roc **sink-input** named "Roc" (which receives s
 <img src="/articles/roc-tutorial/pavucontrol_roc_sink_input.png" width="680px"
     style="border: solid 1px; border-color: #bebab0;"/>
 
-## Ubuntu desktop (PipeWire)
+## Linux desktop (PipeWire)
 
-### Install PipeWire and Roc
+### Option 1: Install PipeWire + Roc from PPA
 
-PipeWire has builtin support for Roc ([1](https://docs.pipewire.org/page_module_roc_sink.html), [2](https://docs.pipewire.org/page_module_roc_source.html)), but it is not enabeld by default in most distros, since Roc itself is not yet packaged for most of them.
+PipeWire has builtin support for Roc ([1](https://docs.pipewire.org/page_module_roc_sink.html), [2](https://docs.pipewire.org/page_module_roc_source.html)), but it is not enabeld by default in most distros, since Roc itself is not yet packaged in most of them.
 
-For debian-based distros, there is [pipewire-debian](https://pipewire-debian.github.io/pipewire-debian/) PPA, which provides recent PipeWire with Roc modules enabled.
+For debian-based systems, there is [pipewire-debian](https://pipewire-debian.github.io/pipewire-debian/) PPA, which provides recent PipeWire with Roc modules enabled.
 
 First, follow instructions from the PPA website. After installing PipeWire from PPA, you will automatically have PipeWire Roc modules at:
 
@@ -183,30 +183,90 @@ Then, install libroc, which is used by those modules:
 sudo apt install -y libroc
 ```
 
+### Option 2: Build PipeWire Roc modules from sources
+
+Alternatively, you can continue using PipeWire package from your distro, and build PipeWire's Roc modules separately, using PipeWire source tree.
+
+First, install build dependencies according to [Roc documentation](https://roc-streaming.org/toolkit/docs/building/user_cookbook.html).
+
+On Debian-based systems, this command will install all needed dependencies:
+
+```
+$ sudo apt-get install g++ pkg-config scons ragel gengetopt \
+    libuv1-dev libunwind-dev libspeexdsp-dev libsox-dev libssl-dev libpulse-dev \
+    libtool intltool autoconf automake make cmake meson
+```
+
+Clone Roc sources:
+
+```
+$ git clone https://github.com/roc-streaming/roc-toolkit.git
+```
+
+Build and install Roc:
+
+```
+$ cd roc-toolkit
+$ scons -Q --build-3rdparty=openfec
+$ sudo scons -Q --build-3rdparty=openfec install
+```
+
+Then install build dependencies according to [PipeWire CI](https://gitlab.freedesktop.org/pipewire/pipewire/-/blob/master/.gitlab-ci.yml).
+
+On Debian-based systems, this command will install all needed dependencies:
+
+```
+$ sudo apt-get install \
+    libasound2-dev libdbus-1-dev libglib2.0-dev libgstreamer1.0-dev \
+    libudev-dev libva-dev libx11-dev \
+    ninja-build pkg-config \
+    systemd findutils python3-docutils
+```
+
+Clone PipeWire sources:
+
+```
+$ git clone https://github.com/PipeWire/pipewire.git
+```
+
+Checkout version which is used on your system:
+
+```
+$ cd pipewire
+$ git checkout $(pipewire --version | grep -Eo '[0-9.]+' | head -1)
+```
+
+Build PipeWire and all modules:
+
+```
+$ meson setup builddir
+$ meson configure builddir -Dprefix=/usr
+$ meson compile -C builddir
+```
+
+Install Roc modules into the system:
+
+```
+$ sudo cp builddir/src/modules/libpipewire-module-roc-source.so <PIPEWIRE_MODULE_DIR>/
+$ sudo cp builddir/src/modules/libpipewire-module-roc-source.so <PIPEWIRE_MODULE_DIR>/
+```
+
+On Debian-based systems with PipeWire 0.3.x, **`PIPEWIRE_MODULE_DIR`** is **`/usr/lib/x86_64-linux-gnu/pipewire-0.3`**.
+
 ### Configure PipeWire source (Roc receiver)
 
 Perform this step if you want to **receive** sound from remote Roc senders, for example from a Roc sink on another computer, and play it on your computer.
 
-Check if you already have **`~/.config/pipewire/pipewire.conf`**. If you don't, create it based on system config:
+First, ensure that you have pipewire configuration directory:
 
 ```
-$ mkdir -p ~/.config/pipewire
-$ cat /usr/share/pipewire/pipewire.conf > ~/.config/pipewire/pipewire.conf
+$ mkdir -p ~/.config/pipewire/pipewire.conf.d
 ```
 
-Then, open **`~/.config/pipewire/pipewire.conf`** and find modules section:
+Then, create **`~/.config/pipewire/pipewire.conf.d/roc-source.conf`** and add the following:
 
 ```
 context.modules = [
-    ...
-    <lots of text>
-    ...
-]
-```
-
-Add the following to the end of the section:
-
-```
   {   name = libpipewire-module-roc-source
       args = {
           local.ip = 0.0.0.0
@@ -221,6 +281,7 @@ Add the following to the end of the section:
           }
       }
   }
+]
 ```
 
 Then restart PipeWire:
@@ -239,30 +300,22 @@ $ pw-cli ls Module
  		module.name = "libpipewire-module-roc-source"
 ```
 
+After doing this, if remote Roc sender will send samples to your computer, it will be played.
+
 ### Configure PipeWire sink (Roc sender)
 
 Perform this step if you want to **send** sound from your computer to remote Roc receivers, for example, to send sound from a browser or an audio player to a Raspberry Pi board with speakers.
 
-Check if you already have **`~/.config/pipewire/pipewire.conf`**. If you don't, create it based on system config:
+First, ensure that you have pipewire configuration directory:
 
 ```
-$ mkdir -p ~/.config/pipewire
-$ cat /usr/share/pipewire/pipewire.conf > ~/.config/pipewire/pipewire.conf
+$ mkdir -p ~/.config/pipewire/pipewire.conf.d
 ```
 
-Then, open **`~/.config/pipewire/pipewire.conf`** and find modules section:
+Then, create **`~/.config/pipewire/pipewire.conf.d/roc-sink.conf`** and add the following:
 
 ```
 context.modules = [
-    ...
-    <lots of text>
-    ...
-]
-```
-
-Add the following to the end of the section:
-
-```
   {   name = libpipewire-module-roc-sink
       args = {
           fec.code = rs8m
@@ -275,6 +328,7 @@ Add the following to the end of the section:
           }
       }
   }
+]
 ```
 
 Here, **`<IP>`** is the IP address of the Roc receiver.
@@ -295,7 +349,7 @@ $ pw-cli ls Module
  		module.name = "libpipewire-module-roc-sink"
 ```
 
-Now, if you select "Roc Sink" as the output device, sound written to it will be send to remote Roc receiver.
+After doing this, if you select "ROC Sink" as the output device, sound written to it will be send to remote Roc receiver.
 
 ---
 
