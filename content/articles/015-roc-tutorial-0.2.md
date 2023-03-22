@@ -194,7 +194,7 @@ On Debian-based systems, this command will install all needed dependencies:
 ```
 $ sudo apt-get install g++ pkg-config scons ragel gengetopt \
     libuv1-dev libunwind-dev libspeexdsp-dev libsox-dev libssl-dev libpulse-dev \
-    libtool intltool autoconf automake make cmake meson
+    libtool intltool autoconf automake make cmake meson git
 ```
 
 Clone Roc sources:
@@ -217,16 +217,17 @@ On Debian-based systems, this command will install all needed dependencies:
 
 ```
 $ sudo apt-get install \
-    libasound2-dev libdbus-1-dev libglib2.0-dev libgstreamer1.0-dev \
-    libudev-dev libva-dev libx11-dev \
-    ninja-build pkg-config \
-    systemd findutils python3-docutils
+    findutils git systemd \
+    libasound2-dev libavcodec-dev libavformat-dev libva-dev libglib2.0-dev libgstreamer1.0-dev \
+    libdbus-1-dev libudev-dev libx11-dev \
+    meson ninja-build pkg-config \
+    python3-pip python3-docutils
 ```
 
 Clone PipeWire sources:
 
 ```
-$ git clone https://github.com/PipeWire/pipewire.git
+$ git clone https://gitlab.freedesktop.org/pipewire/pipewire.git
 ```
 
 Checkout version which is used on your system:
@@ -783,4 +784,4 @@ To see logs from PulseAudio modules, you can run daemon manually in terminal usi
 
 ### Shuttering
 
-If you hear shuttering, you can increase latency by using `sess_latency_msec=200` (for PulseAudio module) or `--sess-latency=200ms` (for command-line tool) on the receiver side. In this example, you set latency to 200 milliseconds; you may need higher value, depending on quality of your network.
+If you hear shuttering, you can increase latency by using `sess_latency_msec=200` (for PulseAudio module), or `sess.latency.msec=200` (for PipeWire module), or `--sess-latency=200ms` (for command-line tool) on the receiver side. In this example, you set latency to 200 milliseconds; you may need higher value, depending on quality of your network.
