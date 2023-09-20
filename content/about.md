@@ -17,7 +17,7 @@ You can contact me via victor@enise.org.
 Me on web:
 
 * [GitHub](https://github.com/gavv)
-* [Twitter](https://twitter.com/gavv42), [Mastodon](https://fosstodon.org/@gavv)
+* [Mastodon](https://fosstodon.org/@gavv)
 * [StackOverflow](https://stackoverflow.com/users/3169754/gavv)
 * [GoodReads](https://www.goodreads.com/user/show/46643060-victor-gaydov)
 
