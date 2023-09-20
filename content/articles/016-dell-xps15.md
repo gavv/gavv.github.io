@@ -57,7 +57,7 @@ Then you can boot from live USB and install Debian.
 
 I was installing Debian Bullseye, and it did not ship drivers for Wi-Fi adapter (they are in non-free section), so I installed via Ethernet connected to dock station.
 
-Sources: [[1]](https://github.com/825i/debian-10.4-dell-xps-9560), [[2]](https://wiki.debian.org/InstallingDebianOn/Dell/Dell%20XPS%2015%209560).
+Source: [[1]](https://wiki.debian.org/InstallingDebianOn/Dell/Dell%20XPS%2015%209560).
 
 ----
 
@@ -165,7 +165,7 @@ Configure GRUB:
 ### Touch display
 
 <div class="flex_table">
-  <div class="flex_th">NOT TESTED</div>
+  <div class="flex_th">WORKS</div>
 </div>
 
 Works out of the box.
@@ -361,19 +361,19 @@ $ nproc
 Comment: there are 20 threads and 14 cores (6 x 2-thread "performance" cores + 8 "efficient" cores).
 
 ```
-$ cat /proc/cpuinfo | pastebinit
+$ cat /proc/cpuinfo | gh gist create
 ```
 
-https://paste.debian.net/hidden/f5467bb7/
+https://gist.github.com/gavv/efbf569f1180672149c981f3dfdfaf3a
 
 ```
-$ lspci -k | pastebinit
+$ lspci -k | gh gist create
 ```
 
-https://paste.debian.net/hidden/293aa32b/
+https://gist.github.com/gavv/3ff8b3d52b02613994a533702918ca9a
 
 ```
-$ lshw | pastebinit
+$ lshw | gh gist create
 ```
 
-https://paste.debian.net/hidden/f35a4bc8/
+https://gist.github.com/gavv/4ca7b7499ace338590fdaba94e387cb0
