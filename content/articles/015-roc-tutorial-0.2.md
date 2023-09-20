@@ -192,7 +192,7 @@ First, install build dependencies according to [Roc documentation](https://roc-s
 On Debian-based systems, this command will install all needed dependencies:
 
 ```
-$ sudo apt-get install g++ pkg-config scons ragel gengetopt \
+$ sudo apt-get install build-essential g++ pkg-config scons ragel gengetopt \
     libuv1-dev libunwind-dev libspeexdsp-dev libsox-dev libssl-dev libpulse-dev \
     libtool intltool autoconf automake make cmake meson git
 ```
@@ -219,7 +219,7 @@ On Debian-based systems, this command will install all needed dependencies:
 $ sudo apt-get install \
     findutils git systemd \
     libasound2-dev libavcodec-dev libavformat-dev libva-dev libglib2.0-dev libgstreamer1.0-dev \
-    libdbus-1-dev libudev-dev libx11-dev \
+    libdbus-1-dev libdbus-glib-1-dev libudev-dev libx11-dev \
     meson ninja-build pkg-config \
     python3-pip python3-docutils
 ```
@@ -248,11 +248,11 @@ $ meson compile -C builddir
 Install Roc modules into the system:
 
 ```
-$ sudo cp builddir/src/modules/libpipewire-module-roc-source.so <PIPEWIRE_MODULE_DIR>/
+$ sudo cp builddir/src/modules/libpipewire-module-roc-sink.so <PIPEWIRE_MODULE_DIR>/
 $ sudo cp builddir/src/modules/libpipewire-module-roc-source.so <PIPEWIRE_MODULE_DIR>/
 ```
 
-On Debian-based systems with PipeWire 0.3.x, **`PIPEWIRE_MODULE_DIR`** is **`/usr/lib/x86_64-linux-gnu/pipewire-0.3`**.
+For example, on Debian-based x86_64 systems with PipeWire 0.3.x, **`PIPEWIRE_MODULE_DIR`** is **`/usr/lib/x86_64-linux-gnu/pipewire-0.3`**.
 
 ### Configure PipeWire source (Roc receiver)
 
