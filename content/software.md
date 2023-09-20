@@ -2,11 +2,33 @@
 title = "Software"
 +++
 
+### Roc projects
+
+Roc is a big project providing tooling for real-time audio streaming over the network. It has a C library, bindings, command-line tools, modules for audio servers, and other stuff.
+
+I am one of the founders and core maintainers.
+
+* [**roc-toolkit**](https://github.com/roc-streaming/roc-toolkit)
+
+    Toolkit for real-time streaming, with a C library and command-line tools.
+
+* [**roc-pulse**](https://github.com/roc-streaming/roc-pulse)
+
+    PulseAudio modules for Roc Toolkit.
+
+* [**roc-vad**](https://github.com/roc-streaming/roc-vad)
+
+    macOS virtual audio device for Roc Toolkit.
+
+* [**roc-go**](https://github.com/roc-streaming/roc-go)
+
+    Go bindings for Roc Toolkit.
+
+* [**roc-java**](https://github.com/roc-streaming/roc-java)
+
+    Java bindings for Roc Toolkit.
+
 ### Audio-related projects
-
-* [**Roc Toolkit**](https://github.com/roc-streaming/roc-toolkit)
-
-    Toolkit for real-time audio streaming over the network. A big project providing C library, bindings, command-line tools, modules for audio servers.
 
 * [**libASPL**](https://github.com/gavv/libASPL)
 
@@ -40,6 +62,10 @@ title = "Software"
 
     Go library for automatic documentation generation for CLI tools.
 
+* [**returnstyles**](https://github.com/gavv/returnstyles)
+
+    Go linter to check function return styles.
+
 * [**httpshd**](https://github.com/gavv/httpshd)
 
     Tiny HTTP server that runs shell commands.
@@ -61,6 +87,10 @@ title = "Software"
 * [**rnnoise-win64**](https://github.com/gavv/rnnoise-win64)
 
     Prebuilt RNNoise binaries for Windows.
+
+* [**crashpad-binaries**](https://github.com/gavv/crashpad-binaries)
+
+    Prebuilt Google Crashpad binaries for Windows and macOS.
 
 * [**qt5-universal-binaries**](https://github.com/gavv/qt5-universal-binaries)
 
