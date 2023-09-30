@@ -2,33 +2,17 @@
 title = "Software"
 +++
 
-### Roc projects
-
-Roc is a big project providing tooling for real-time audio streaming over the network. It has a C library, bindings, command-line tools, modules for audio servers, and other stuff.
-
-I am one of the founders and core maintainers.
-
-* [**roc-toolkit**](https://github.com/roc-streaming/roc-toolkit)
-
-    Toolkit for real-time streaming, with a C library and command-line tools.
-
-* [**roc-pulse**](https://github.com/roc-streaming/roc-pulse)
-
-    PulseAudio modules for Roc Toolkit.
-
-* [**roc-vad**](https://github.com/roc-streaming/roc-vad)
-
-    macOS virtual audio device for Roc Toolkit.
-
-* [**roc-go**](https://github.com/roc-streaming/roc-go)
-
-    Go bindings for Roc Toolkit.
-
-* [**roc-java**](https://github.com/roc-streaming/roc-java)
-
-    Java bindings for Roc Toolkit.
-
 ### Audio-related projects
+
+* [**Roc Toolkit**](https://github.com/roc-streaming)
+
+    Roc is a big project providing tooling for real-time audio streaming. I am one of the founders and core maintainers.
+
+    Main repo: [**roc-toolkit**](https://github.com/roc-streaming/roc-toolkit)
+
+    Bindings: [**roc-go**](https://github.com/roc-streaming/roc-go), [**roc-java**](https://github.com/roc-streaming/roc-java)
+
+    Sound server modules: [**roc-pulse**](https://github.com/roc-streaming/roc-pulse), [**roc-vad**](https://github.com/roc-streaming/roc-vad)
 
 * [**libASPL**](https://github.com/gavv/libASPL)
 
