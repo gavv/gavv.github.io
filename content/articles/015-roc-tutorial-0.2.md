@@ -444,7 +444,7 @@ Perform this step if you want to **receive** sound from remote Roc senders, for 
 
 ```
 pi@raspberrypi:~ $ /usr/bin/roc-recv -vv \
-    -s rtp+rs8m://0.0.0.0:10001 -r rs8m://0.0.0.0:10002 \
+    -s rtp+rs8m://0.0.0.0:10001 -r rs8m://0.0.0.0:10002 -c rtcp://0.0.0.0:10003 \
     -o alsa://default
 ```
 
@@ -459,7 +459,7 @@ After=network-online.target
 Wants=network-online.target systemd-networkd-wait-online.service
 
 [Service]
-ExecStart=/usr/bin/roc-recv -vv -s rtp+rs8m://0.0.0.0:10001 -r rs8m://0.0.0.0:10002
+ExecStart=/usr/bin/roc-recv -vv -s rtp+rs8m://0.0.0.0:10001 -r rs8m://0.0.0.0:10002 -c rtcp://0.0.0.0:10003
 Restart=on-failure
 RestartSec=1s
 
@@ -505,7 +505,7 @@ pi@raspberrypi:~ $ sudo modprobe snd-aloop
 
 ```
 pi@raspberrypi:~ $ /home/pi/roc-send -vv \
-    -s rtp+rs8m://<IP>:10001 -r rs8m://<IP>:10002 \
+    -s rtp+rs8m://<IP>:10001 -r rs8m://<IP>:10002 -c rtcp://<IP>:10003 \
     -i alsa://plughw:CARD=Loopback,DEV=1
 ```
 
@@ -522,7 +522,7 @@ After=network-online.target
 Wants=network-online.target systemd-networkd-wait-online.service
 
 [Service]
-ExecStart=/usr/bin/roc-send -vv -s rtp+rs8m://<IP>:10001 -r rs8m://<IP>:10002 -i alsa://<DEVICE>
+ExecStart=/usr/bin/roc-send -vv -s rtp+rs8m://<IP>:10001 -r rs8m://<IP>:10002 -c rtcp://<IP>:10003 -i alsa://<DEVICE>
 Restart=on-failure
 RestartSec=1s
 
@@ -726,7 +726,7 @@ $ sudo scons -Q --build-3rdparty=openfec install
 If you want to **receive** sound from remote Roc senders, for example from a Roc sink on another computer and play it on your macOS computer, run roc-recv:
 
 ```
-$ roc-recv -vv -s rtp+rs8m://0.0.0.0:10001 -r rs8m://0.0.0.0:10002
+$ roc-recv -vv -s rtp+rs8m://0.0.0.0:10001 -r rs8m://0.0.0.0:10002 -c rtcp://0.0.0.0:10003
 ```
 
 ### Run roc-send (Roc sender)
@@ -738,7 +738,7 @@ You can do it by [**installing Soundflower**](http://osxdaily.com/2013/02/25/rec
 Then you can run roc-send:
 
 ```
-$ roc-send -vv -s rtp+rs8m://<IP>:10001 -r rs8m://<IP>:10002 -i "core://Soundflower (2ch)"
+$ roc-send -vv -s rtp+rs8m://<IP>:10001 -r rs8m://<IP>:10002 -c rtcp://<IP>:10003 -i "core://Soundflower (2ch)"
 ```
 
 Here, **`<IP>`** is the destination IP address running Roc receiver, and "Soundflower (2ch)" is the Soundflower device name. It can be displayed by `system_profiler SPAudioDataType` command.
