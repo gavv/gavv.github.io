@@ -6,7 +6,7 @@ title = "Donations"
 
 This page lists donations I've received on my personal accounts. Big thanks to everyone donated!
 
-"Saving up" status means that I'm waiting until a more significant amount is collected, to fund development for a week or two. When it happens, I'll update status to indicate how they money were actually spent.
+"Saving up" status means that I'm waiting until a more significant amount is collected, to fund development for a week or two. When it happens, I'll update status to indicate how the money were actually spent.
 
 <table class="hdr_table">
   <tr>
