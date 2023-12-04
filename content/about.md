@@ -34,13 +34,13 @@ My resume:
 
 ### Donations
 
-If you would like to sponsor my open-source work, you can use one of the following services for one-time or recurring donations:
+If you would like to sponsor my open-source work, you can use one of the following platforms for one-time or recurring donations:
 
 * [Liberapay](https://liberapay.com/gavv/)
 * [Buy Me a Coffee](https://www.buymeacoffee.com/gavv)
 * [PayPal](https://www.paypal.com/paypalme/victorgaydov)
 
-There are also accounts for Roc Streaming: [Open Collective](https://opencollective.com/roc-streaming),  [Liberapay](https://liberapay.com/roc-streaming/)
+There are also team accounts for Roc Streaming: [Open Collective](https://opencollective.com/roc-streaming), [Liberapay](https://liberapay.com/roc-streaming/)
 
 I keep track of personal donations here: [Donation history](/donations/).
 
