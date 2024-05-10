@@ -396,7 +396,7 @@ $ sudo apt-get install docker.io
 $ git clone https://github.com/roc-streaming/roc-toolkit.git
 $ cd roc-toolkit
 $ docker run -t --rm -u "${UID}" -v "${PWD}:${PWD}" -w "${PWD}" \
-    rocstreaming/toolchain-aarch64-linux-gnu \
+    rocstreaming/toolchain-aarch64-linux-gnu:gcc-7.4 \
       scons -Q \
         --host=aarch64-linux-gnu \
         --build-3rdparty=all \
@@ -419,7 +419,7 @@ Here, **`<IP>`** is the IP address of your Raspberry Pi board.
 $ git clone https://github.com/roc-streaming/roc-toolkit.git
 $ cd roc-toolkit
 $ docker run -t --rm -u "${UID}" -v "${PWD}:${PWD}" -w "${PWD}" \
-    rocstreaming/toolchain-arm-linux-gnueabihf \
+    rocstreaming/toolchain-arm-linux-gnueabihf:gcc-4.9 \
       scons -Q \
         --host=arm-linux-gnueabihf \
         --build-3rdparty=all \
@@ -595,7 +595,7 @@ $ sudo apt-get install docker.io
 $ git clone https://github.com/roc-streaming/roc-pulse.git
 $ cd roc-pulse
 $ docker run -t --rm -u "${UID}" -v "${PWD}:${PWD}" -w "${PWD}" \
-    rocstreaming/toolchain-aarch64-linux-gnu \
+    rocstreaming/toolchain-aarch64-linux-gnu:gcc-7.4 \
         env TOOLCHAIN_PREFIX=aarch64-linux-gnu PULSEAUDIO_VERSION=<???> make
 ```
 
@@ -607,7 +607,7 @@ You should replace `<???>` with the exact version of PulseAudio which you're usi
 $ git clone https://github.com/roc-streaming/roc-pulse.git
 $ cd roc-pulse
 $ docker run -t --rm -u "${UID}" -v "${PWD}:${PWD}" -w "${PWD}" \
-    rocstreaming/toolchain-arm-linux-gnueabihf \
+    rocstreaming/toolchain-arm-linux-gnueabihf:gcc-4.9 \
         env TOOLCHAIN_PREFIX=arm-linux-gnueabihf PULSEAUDIO_VERSION=<???> make
 ```
 
@@ -782,6 +782,6 @@ Command-line tools write logs to standard output, if you specify `-vv` option. I
 
 To see logs from PulseAudio modules, you can run daemon manually in terminal using `pulseaudio -vvv` command.
 
-### Shuttering
+### Stuttering
 
-If you hear shuttering, you can increase latency by using `sess_latency_msec=200` (for PulseAudio module), or `sess.latency.msec=200` (for PipeWire module), or `--sess-latency=200ms` (for command-line tool) on the receiver side. In this example, you set latency to 200 milliseconds; you may need higher value, depending on quality of your network.
+If you hear stuttering, you can increase latency by using `sess_latency_msec=200` (for PulseAudio module), or `sess.latency.msec=200` (for PipeWire module), or `--sess-latency=200ms` (for command-line tool) on the receiver side. In this example, you set latency to 200 milliseconds; you may need higher value, depending on quality of your network.
