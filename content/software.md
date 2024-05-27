@@ -10,17 +10,19 @@ title = "Software"
 
     Main repo: [**roc-toolkit**](https://github.com/roc-streaming/roc-toolkit)
 
-    Bindings: [**roc-go**](https://github.com/roc-streaming/roc-go), [**roc-java**](https://github.com/roc-streaming/roc-java)
-
     Sound server modules: [**roc-pulse**](https://github.com/roc-streaming/roc-pulse), [**roc-vad**](https://github.com/roc-streaming/roc-vad)
+
+    Apps: [**roc-droid**](https://github.com/roc-streaming/roc-droid)
+
+    Bindings: [**roc-go**](https://github.com/roc-streaming/roc-go), [**roc-java**](https://github.com/roc-streaming/roc-java)
 
 * [**libASPL**](https://github.com/gavv/libASPL)
 
-    C++17 library for creating macOS Audio Server plugins.
+    C++17 library for creating macOS Audio Server plugins (virtual audio devices).
 
 * [**signal-estimator**](https://github.com/gavv/signal-estimator)
 
-    Command-line and GUI tools to measure characteristics of a looped back signal.
+    Tool to measure latency and other characteristics of an audio loopback.
 
 * [**webrtc-cli**](https://github.com/gavv/webrtc-cli)
 
@@ -30,11 +32,15 @@ title = "Software"
 
     Command-line tool to listen to SAP/SDP announcements.
 
-### End-user apps
+### Apps
 
-* [**Tagberry**](https://github.com/gavv/tagberry)
+* [**tagberry**](https://github.com/gavv/tagberry)
 
     Tag-oriented calendar and to-do list.
+
+* [**om-dash**](https://github.com/gavv/om-dash)
+
+    Emacs package for dynamic org-mode dashboards.
 
 ### Utilities
 
@@ -58,11 +64,7 @@ title = "Software"
 
     Small tool to make Linux Qt6 applications self-contained.
 
-* [**pull-request-artifacts**](https://github.com/gavv/pull-request-artifacts)
-
-    GitHub Action to post build artifacts in PR comments.
-
-### Pre-built binaries
+### Packages
 
 * [**speexdsp-win64**](https://github.com/gavv/speexdsp-win64)
 
@@ -75,6 +77,12 @@ title = "Software"
 * [**crashpad-binaries**](https://github.com/gavv/crashpad-binaries)
 
     Prebuilt Google Crashpad binaries for Windows and macOS.
+
+### Archived
+
+* [**pull-request-artifacts**](https://github.com/gavv/pull-request-artifacts)
+
+    GitHub Action to post build artifacts in PR comments.
 
 * [**qt5-universal-binaries**](https://github.com/gavv/qt5-universal-binaries)
 
