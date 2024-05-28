@@ -92,6 +92,10 @@ title = "Software"
 
     Go library for monotonic clock.
 
+* [**gv-overlay**](https://github.com/gavv/gv-overlay)
+
+    Personal Gentoo overlay.
+
 ### Miscellaneous
 
 * [**snippets**](https://github.com/gavv/snippets)
