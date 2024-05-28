@@ -88,6 +88,10 @@ title = "Software"
 
     Prebuilt Qt5 universal binaries for macOS.
 
+* [**monotime**](https://github.com/gavv/monotime)
+
+    Go library for monotonic clock.
+
 ### Miscellaneous
 
 * [**snippets**](https://github.com/gavv/snippets)
