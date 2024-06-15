@@ -2,7 +2,7 @@
 slug = "cpp-help-wanted"
 date = "2023-09-20"
 tags = ["audio", "networking", "roc", "help-wanted"]
-title = "Two beginner-friendly C++17 projects are looking for contributors"
+title = "Two C++17 projects are looking for contributors"
 +++
 
 ## Signal Estimator
@@ -52,9 +52,9 @@ Currently, the project has a build system, and a skeleton of one test that imple
 
 I've prepared a bunch of issues explaining details of futher tests that need to be developed. Current test skeleton is written in C++17 with the use of Google Test.
 
-## What is beginner-friendly?
+## Beginner friendly
 
-By saying that, I basically mean two things:
+Both projects are friendly to beginners. By saying that, I basically mean two things:
 
 * The code base is small. You can dive into it rather quickly.
 * I'll be happy to provide code review.

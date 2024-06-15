@@ -18,6 +18,13 @@ title = "Updated tutorial for Roc 0.2"
 
 ---
 
+<div class="block">
+  <div class="block-header">
+    UPDATE
+  </div>
+  You can find tutorial updated for <b>0.4.x</b> release series in <a href="/articles/roc-0.4/"><b>this article</b></a>.
+</div>
+
 ## What's new?
 
 This article is an updated version of [previous tutorial](https://gavv.net/articles/roc-tutorial/). An overview of the new release is [available here](https://gavv.net/articles/roc-0.2/).
@@ -25,7 +32,7 @@ This article is an updated version of [previous tutorial](https://gavv.net/artic
 There are two main changes that affect users:
 
 * PulseAudio modules moved to a [separate repo](https://github.com/roc-streaming/roc-pulse) and have their own build system and new build instructions.
-* Command-line tools now use univeral URI notation for network endpoints and audio devices.
+* Command-line tools now use universal URI notation for network endpoints and audio devices.
 
 This table provides examples of old and new notation.
 
@@ -166,7 +173,7 @@ And here is how you can connect Roc **sink-input** named "Roc" (which receives s
 
 ### Option 1: Install PipeWire + Roc from PPA
 
-PipeWire has builtin support for Roc ([1](https://docs.pipewire.org/page_module_roc_sink.html), [2](https://docs.pipewire.org/page_module_roc_source.html)), but it is not enabeld by default in most distros, since Roc itself is not yet packaged in most of them.
+PipeWire has builtin support for Roc ([1](https://docs.pipewire.org/page_module_roc_sink.html), [2](https://docs.pipewire.org/page_module_roc_source.html)), but it is not enabled by default in most distros, since Roc itself is not yet packaged in most of them.
 
 For debian-based systems, there is [pipewire-debian](https://pipewire-debian.github.io/pipewire-debian/) PPA, which provides recent PipeWire with Roc modules enabled.
 

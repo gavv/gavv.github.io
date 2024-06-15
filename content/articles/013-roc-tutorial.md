@@ -5,7 +5,7 @@ tags = ["audio", "networking", "roc"]
 title = "A step-by-step tutorial for live audio streaming with Roc"
 +++
 
-<a data-lightbox="roc_devicec" href="/articles/roc-tutorial/roc_devices.jpg">
+<a data-lightbox="roc_devices" href="/articles/roc-tutorial/roc_devices.jpg">
   <img src="/articles/roc-tutorial/roc_devices.jpg" width="430px"/>
 </a>
 
@@ -25,7 +25,7 @@ title = "A step-by-step tutorial for live audio streaming with Roc"
   <div class="block-header">
     UPDATE
   </div>
-  You can find tutorial updated for <b>0.2.x</b> release series in <a href="https://gavv.net/articles/roc-tutorial-0.2/"><b>this article</b></a>.
+  You can find tutorial updated for <b>0.4.x</b> release series in <a href="/articles/roc-0.4/"><b>this article</b></a>.
 </div>
 
 ## What is Roc?
