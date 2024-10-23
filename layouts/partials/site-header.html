@@ -1,46 +1,48 @@
 <header id="header" class="no-print">
-  <div id="caption">
-    Victor Gaydov
-  </div>
-  <div id="menu">
-    <div class="menu-button">
-      {{ if eq .RelPermalink "/about/" }}
-        <a href="/about/" class="menu-item menu-selected">
-      {{ else }}
-        <a href="/about/" class="menu-item">
-      {{ end }}
-          About
-        </a>
+  <div id="header-panel">
+    <div id="caption">
+      Victor Gaydov
     </div>
-    <div class="menu-button">
-      {{ if eq .RelPermalink "/projects/" }}
-        <a href="/projects/" class="menu-item menu-selected">
-      {{ else }}
-        <a href="/projects/" class="menu-item">
-      {{ end }}
-          Projects
-        </a>
+    <div id="menu">
+      <div class="menu-button">
+        {{ if eq .RelPermalink "/about/" }}
+          <a href="/about/" class="menu-item menu-selected">
+        {{ else }}
+          <a href="/about/" class="menu-item">
+        {{ end }}
+            About
+          </a>
+      </div>
+      <div class="menu-button">
+        {{ if eq .RelPermalink "/projects/" }}
+          <a href="/projects/" class="menu-item menu-selected">
+        {{ else }}
+          <a href="/projects/" class="menu-item">
+        {{ end }}
+            Projects
+          </a>
+      </div>
+      <div class="menu-button">
+        {{ if eq .Section "articles" }}
+          <a href="/articles/" class="menu-item menu-selected">
+        {{ else if eq .Kind "taxonomy" }}
+          <a href="/articles/" class="menu-item menu-selected">
+        {{ else }}
+          <a href="/articles/" class="menu-item">
+        {{ end }}
+            Articles
+          </a>
+      </div>
     </div>
-    <div class="menu-button">
-      {{ if eq .Section "articles" }}
-        <a href="/articles/" class="menu-item menu-selected">
-      {{ else if eq .Kind "taxonomy" }}
-        <a href="/articles/" class="menu-item menu-selected">
-      {{ else }}
-        <a href="/articles/" class="menu-item">
-      {{ end }}
-          Articles
+    <div id="tray">
+      <div>
+        <a href="https://fosstodon.org/@gavv" class="tray-button">
+          <i class="fa-brands fa-mastodon"></i>
         </a>
-    </div>
-  </div>
-  <div id="tray">
-    <div>
-      <a href="https://fosstodon.org/@gavv" class="tray-button">
-        <i class="fa-brands fa-mastodon"></i>
-      </a>
-      <a href="{{ "articles/index.xml" | absURL }}" class="tray-button">
-        <i class="rss-button fa fa-rss"></i>
-      </a>
+        <a href="{{ "articles/index.xml" | absURL }}" class="tray-button">
+          <i class="rss-button fa fa-rss"></i>
+        </a>
+      </div>
     </div>
   </div>
 </header>

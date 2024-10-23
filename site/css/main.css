@@ -38,6 +38,13 @@ body {
     background: #1f3043;
     align-items: center;
 }
+#header-panel {
+    display: flex;
+    justify-content: space-between;
+    width: 880px;
+    margin: auto;
+    align-items: center;
+}
 
 #caption {
     font-size: 21px;
@@ -88,13 +95,16 @@ a.menu-selected {
     font-size: 18px;
     color: white !important;
 }
+a:hover.tray-button {
+    background: none !important;
+}
 
 #content {
     max-width: 880px;
     width: 100%;
     min-height: 100%;
     margin: 20px auto;
-    margin-bottom: 50px;
+    margin-bottom: 30px;
 }
 
 .post-title {
@@ -107,6 +117,7 @@ a.menu-selected {
 }
 .post-title a {
     background: none !important;
+    padding-left: 0px !important;
 }
 .post-tags {
     padding-top: 12px;
@@ -199,6 +210,10 @@ h3 code {
 }
 h4 code {
     font-size: 15px !important;
+}
+
+h1 a {
+    color: #1c5589 !important;
 }
 
 /* formatting */

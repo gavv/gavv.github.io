@@ -2,7 +2,7 @@ name: deploy
 
 on:
   push:
-    branches: ["hugo"]
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -24,7 +24,7 @@ jobs:
       - name: Setup hugo
         uses: peaceiris/actions-hugo@v3
         with:
-          hugo-version: '0.135.0'
+          hugo-version: "0.135.0"
 
       - name: Setup pages
         id: pages
