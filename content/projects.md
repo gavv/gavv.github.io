@@ -1,5 +1,5 @@
 +++
-title = "Software"
+title = "Projects"
 +++
 
 # Audio-related projects

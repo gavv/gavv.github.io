@@ -35,7 +35,7 @@ body {
     height: 55px;
     padding: 0 50px 3px 50px;
     margin-bottom: 30px;
-    background: #306090;
+    background: #1f3043;
     align-items: center;
 }
 
@@ -175,7 +175,7 @@ h1 {
     font-size: 28px;
     margin-top: 20px;
     margin-bottom: 20px;
-    background: #0070ff0a;
+    background: #6e72781f;
     padding: 3px 0 3px 3px;
 }
 h2 {
@@ -219,7 +219,7 @@ pre {
     padding: 6px !important;
 }
 pre, pre code, pre code span {
-    background-color: #83a3cd05 !important;
+    background-color: #97a6ba0d !important;
 }
 pre code {
     border: none !important;
@@ -286,7 +286,7 @@ td {
 /* links */
 
 a:link, a:visited, a:hover {
-    color: #336699;
+    color: #4c6b89;
 }
 a:link {
     text-decoration: none;
@@ -296,7 +296,7 @@ a:visited {
 }
 a:hover {
     text-decoration: underline;
-    background: #ffe5b361;
+    background: #ffe5b33d;
 }
 
 /* anchors */
