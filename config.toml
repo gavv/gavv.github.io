@@ -5,9 +5,10 @@ title = "Victor Gaydov"
 pluralizelisttitles = false
 staticDir = ["site", "media", "redirects"]
 
-disableKinds = ["taxonomyTerm"]
+disableKinds = ["taxonomy"]
 
-paginate = 15
+[pagination]
+  pageSize = 15
 
 [taxonomies]
   tag = "tags"
@@ -16,6 +17,9 @@ paginate = 15
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
+  [markup.tableOfContents]
+    endLevel = 1
+    startLevel = 1
 
 [Params]
   author = "Victor Gaydov"

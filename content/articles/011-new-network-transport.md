@@ -5,7 +5,7 @@ tags = ["linux", "audio", "networking", "roc"]
 title = "Working on a new network transport for PulseAudio and ALSA"
 +++
 
-## Intro
+# Intro
 
 Last few years I was working on [Roc Toolkit](https://roc-streaming.org/), an open-source solution for real-time media streaming over the network. Due to lack of free time, we postponed release several times, but now it's almost ready. This article is, inter alia, some kind of a pre-release announcement.
 
@@ -21,7 +21,7 @@ Roc has the following tools for home audio:
 
 This article explains what features are available in Roc, how it is compared to the other software, how to use it, and what plans we have.
 
-## Example setup
+# Example setup
 
 Here is my demo setup:
 
@@ -69,7 +69,7 @@ Here is a video demonstrating this:
   </iframe>
 </div>
 
-## Design overview
+# Design overview
 
 Real-time streaming has the following implications:
 
@@ -89,7 +89,7 @@ Thereby, the incoming queue at the receiver serves for the three purposes at the
 
 If you want to learn more about the implementation, see the [internals](https://roc-streaming.org/toolkit/docs/internals.html) section in our documentation.
 
-## Loss recovery
+# Loss recovery
 
 If you're using an unreliable network such as 802.11, you should cope with packet losses somehow.
 
@@ -116,7 +116,7 @@ A block state report consists of two parts separated with space. The left part i
 
 Note that the receiver reports only blocks that contain some lost or recovered packets. Blocks that were received without losses are not reported.
 
-## Clock adjustment
+# Clock adjustment
 
 If you're streaming audio between different devices, you should also deal with the fact that every device has its own clock domain with a bit different frequency, even if nominally the frequencies are the same.
 
@@ -128,7 +128,7 @@ The following diagram demonstrates the incoming queue size at the receiver when 
 
 <img src="/articles/new-network-transport/plots/queue.png"/>
 
-## Protocols and encodings
+# Protocols and encodings
 
 Roc doesn't invent new protocols and heavily relies on existing open specifications. This allows us to take advantage of their careful design and potential interoperability with other software.
 
@@ -138,7 +138,7 @@ There are also plans to add support for RTCP (for receiver feedback), SAP/SDP (f
 
 Roc is also designed to support arbitrary encodings, but currently, it supports only the so-called CD-quality audio, i.e. 44100 Hz PCM 16-bit stereo. We are planning to add support for more audio encodings in the near future, in particular, add support for [Opus](http://opus-codec.org/). We're also planning to add video support, but probably a bit later.
 
-## Comparison with other transports
+# Comparison with other transports
 
 PulseAudio has two major types of network transport: "native" and RTP. You can read about them in [this article](https://gavv.net/articles/pulseaudio-under-the-hood/).
 
@@ -158,7 +158,7 @@ Another related technology is WebRTC, which also uses RTP, Opus, and has a draft
 
 There are also some more specialized technologies targeted to end-users and requiring either special hardware (Bluetooth) or certification (DLNA, AirPlay). Roc, in contrast, is a general-purpose and open-source solution.
 
-## Comparison with PulseAudio on Wi-Fi
+# Comparison with PulseAudio on Wi-Fi
 
 This section provides the results of a simple experiment.
 
@@ -172,7 +172,7 @@ The input signal was a sine wave generated using the `sox` tool. The output sign
 
 The exact commands I run may be found in [this gist](https://gist.github.com/gavv/e5834a8b0d30eb7ee48de30c88709660).
 
-## Typical configuration
+# Typical configuration
 
 The best configuration for Roc sender and receiver depends on your network characteristics and latency requirements. Here is the configuration that works well on my home Wi-Fi:
 
@@ -185,7 +185,7 @@ On this setup, most time all lost or delayed packets are successfully recovered.
 
 However, these numbers can't be used everywhere. I saw Wi-Fi networks where 100 ms network buffer also worked well. On the other hand, I also saw Wi-Fi networks where 300 ms and even 500 ms buffer was not enough.
 
-## How to use
+# How to use
 
 If you want to try Roc, consult the following documentation sections:
 
@@ -206,7 +206,7 @@ If you want to run Roc on a single-board computer, see also our [tested boards](
 
 Various *nix operating systems may work too but were not tested yet. Other ports, including Android and Windows, are planned but are not a high priority yet, unless someone would like to maintain them.
 
-## Status and plans
+# Status and plans
 
 We're going to make the first release (version 0.1) in a few weeks. We have to resolve two issues with the PulseAudio latency and FECFRAME support and after that, the transport part may be considered more or less usable.
 
@@ -222,7 +222,7 @@ Finally, there are some ideas of end-user applications on top of Roc, for instan
 
 If you're interested in how the project would evolve, you can subscribe to [my twitter](https://twitter.com/gavv42) or [mastodon](https://fosstodon.org/@gavv), or our [mailing list](https://www.freelists.org/list/roc).
 
-## Feedback
+# Feedback
 
 First of all, we'd be happy to hear some feedback:
 

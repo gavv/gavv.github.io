@@ -5,16 +5,7 @@ tags = ["audio", "networking", "roc"]
 title = "Updated tutorial for Roc 0.2"
 +++
 
-**Table of contents**
-
-* [What's new?](#whats-new)
-* [Linux desktop (PulseAudio)](#linux-desktop-pulseaudio)
-* [Linux desktop (PipeWire)](#linux-desktop-pipewire)
-* [Raspberry Pi (ALSA)](#raspberry-pi-alsa)
-* [Raspberry Pi (PulseAudio)](#raspberry-pi-pulseaudio)
-* [macOS](#macos)
-* [Android](#android)
-* [Troubleshooting](#troubleshooting)
+{{% toc %}}
 
 ---
 
@@ -25,7 +16,7 @@ title = "Updated tutorial for Roc 0.2"
   You can find tutorial updated for <b>0.4.x</b> release series in <a href="/articles/roc-0.4/"><b>this article</b></a>.
 </div>
 
-## What's new?
+# What's new?
 
 This article is an updated version of [previous tutorial](https://gavv.net/articles/roc-tutorial/). An overview of the new release is [available here](https://gavv.net/articles/roc-0.2/).
 
@@ -79,11 +70,11 @@ For more details, see updated [manual pages](https://roc-streaming.org/toolkit/d
 
 ---
 
-## Linux desktop (PulseAudio)
+# Linux desktop (PulseAudio)
 
 These instructions assume that you're using PulseAudio and want to use Roc PulseAudio modules. The full documentation for them is repo's [README](https://github.com/roc-streaming/roc-pulse).
 
-### Install dependencies
+## Install dependencies
 
 On Debian-based systems, this command will install all needed dependencies:
 
@@ -94,7 +85,7 @@ $ sudo apt install -y \
     pulseaudio
 ```
 
-### Clone, build, install
+## Clone, build, install
 
 ```
 $ git clone https://github.com/roc-streaming/roc-pulse.git
@@ -103,7 +94,7 @@ $ make
 $ sudo make install
 ```
 
-### Configure PulseAudio sink-input (Roc receiver)
+## Configure PulseAudio sink-input (Roc receiver)
 
 Perform this step if you want to **receive** sound from remote Roc senders, for example from a Roc sink on another computer, and play it on your computer.
 
@@ -130,7 +121,7 @@ $ pulseaudio --kill
 $ pulseaudio --start
 ```
 
-### Configure PulseAudio sink (Roc sender)
+## Configure PulseAudio sink (Roc sender)
 
 Perform this step if you want to **send** sound from your computer to remote Roc receivers, for example, to send sound from a browser or an audio player to a Raspberry Pi board with speakers.
 
@@ -157,7 +148,7 @@ $ pulseaudio --kill
 $ pulseaudio --start
 ```
 
-### Using pavucontrol
+## Using pavucontrol
 
 Here is how you can connect VLC player to a Roc **sink** named "Raspberry" (which sends sound to a Raspberry Pi board) using pavucontrol tool:
 
@@ -169,9 +160,11 @@ And here is how you can connect Roc **sink-input** named "Roc" (which receives s
 <img src="/articles/roc-tutorial/pavucontrol_roc_sink_input.png" width="680px"
     style="border: solid 1px; border-color: #bebab0;"/>
 
-## Linux desktop (PipeWire)
+---
 
-### Option 1: Install PipeWire + Roc from PPA
+# Linux desktop (PipeWire)
+
+## Option 1: Install PipeWire + Roc from PPA
 
 PipeWire has builtin support for Roc ([1](https://docs.pipewire.org/page_module_roc_sink.html), [2](https://docs.pipewire.org/page_module_roc_source.html)), but it is not enabled by default in most distros, since Roc itself is not yet packaged in most of them.
 
@@ -190,7 +183,7 @@ Then, install libroc, which is used by those modules:
 sudo apt install -y libroc
 ```
 
-### Option 2: Build PipeWire Roc modules from sources
+## Option 2: Build PipeWire Roc modules from sources
 
 Alternatively, you can continue using PipeWire package from your distro, and build PipeWire's Roc modules separately, using PipeWire source tree.
 
@@ -261,7 +254,7 @@ $ sudo cp builddir/src/modules/libpipewire-module-roc-source.so <PIPEWIRE_MODULE
 
 For example, on Debian-based x86_64 systems with PipeWire 0.3.x, **`PIPEWIRE_MODULE_DIR`** is **`/usr/lib/x86_64-linux-gnu/pipewire-0.3`**.
 
-### Configure PipeWire source (Roc receiver)
+## Configure PipeWire source (Roc receiver)
 
 Perform this step if you want to **receive** sound from remote Roc senders, for example from a Roc sink on another computer, and play it on your computer.
 
@@ -310,7 +303,7 @@ $ pw-cli ls Module
 
 After doing this, if remote Roc sender will send samples to your computer, it will be played.
 
-### Configure PipeWire sink (Roc sender)
+## Configure PipeWire sink (Roc sender)
 
 Perform this step if you want to **send** sound from your computer to remote Roc receivers, for example, to send sound from a browser or an audio player to a Raspberry Pi board with speakers.
 
@@ -361,7 +354,7 @@ After doing this, if you select "ROC Sink" as the output device, sound written t
 
 ---
 
-## Raspberry Pi (ALSA)
+# Raspberry Pi (ALSA)
 
 The following instructions are suitable for Raspberry Pi 2 and later. If you're using another board, consult the [User cookbook](https://roc-streaming.org/toolkit/docs/building/user_cookbook.html)  and [Cross-compiling](https://roc-streaming.org/toolkit/docs/portability/cross_compiling.html) pages from the documentation.
 
@@ -369,7 +362,7 @@ These instructions assume that you want to use Docker to get a pre-packaged (bin
 
 These instructions also assume that you're using **bare ALSA** (without PulseAudio) **on your board**. If you're using PulseAudio instead, consult the [next section](#raspberry-pi-pulseaudio).
 
-### Are you running 32-bit or 64-bit OS on Raspberry?
+## Are you running 32-bit or 64-bit OS on Raspberry?
 
 On your Raspberry board, both CPU and OS may be either 32-bit or 64-bit. What is important is the bitness of OS. If you're not sure, run:
 
@@ -379,7 +372,7 @@ pi@raspberrypi:~ $ uname -m
 
 on your board. If the output is `aarch64`, the the OS is 64-bit. If the output is `arm*` then it's 32-bit.
 
-### Install dependencies on Raspberry
+## Install dependencies on Raspberry
 
 To install runtime Roc dependencies, **ssh** to the board and run apt-get:
 
@@ -387,7 +380,7 @@ To install runtime Roc dependencies, **ssh** to the board and run apt-get:
 pi@raspberrypi:~ $ sudo apt-get install libasound2
 ```
 
-### Install Docker on desktop machine
+## Install Docker on desktop machine
 
 Follow the [official instructions](https://docs.docker.com/engine/install/) to install Docker from the upstream repo.
 
@@ -397,7 +390,7 @@ If you're running Ubuntu on your desktop, you can also install Docker packaged b
 $ sudo apt-get install docker.io
 ```
 
-### Cross-compile Roc tools on desktop machine (for 64-bit Raspberry)
+## Cross-compile Roc tools on desktop machine (for 64-bit Raspberry)
 
 ```
 $ git clone https://github.com/roc-streaming/roc-toolkit.git
@@ -410,7 +403,7 @@ $ docker run -t --rm -u "${UID}" -v "${PWD}:${PWD}" -w "${PWD}" \
         --disable-pulseaudio
 ```
 
-### Install Roc tools (to 64-bit Raspberry)
+## Install Roc tools (to 64-bit Raspberry)
 
 Copy command-line tools to the board via ssh:
 
@@ -420,7 +413,7 @@ $ scp ./bin/aarch64-linux-gnu/roc-{recv,send} <IP>:/usr/bin
 
 Here, **`<IP>`** is the IP address of your Raspberry Pi board.
 
-### Cross-compile Roc tools on desktop machine (for 32-bit Raspberry)
+## Cross-compile Roc tools on desktop machine (for 32-bit Raspberry)
 
 ```
 $ git clone https://github.com/roc-streaming/roc-toolkit.git
@@ -433,7 +426,7 @@ $ docker run -t --rm -u "${UID}" -v "${PWD}:${PWD}" -w "${PWD}" \
         --disable-pulseaudio
 ```
 
-### Install Roc tools (to 32-bit Raspberry)
+## Install Roc tools (to 32-bit Raspberry)
 
 Copy command-line tools to the board via ssh:
 
@@ -443,7 +436,7 @@ $ scp ./bin/arm-linux-gnueabihf/roc-{recv,send} <IP>:/usr/bin
 
 Here, **`<IP>`** is the IP address of your Raspberry Pi board.
 
-### Run roc-recv on Raspberry (Roc receiver)
+## Run roc-recv on Raspberry (Roc receiver)
 
 Perform this step if you want to **receive** sound from remote Roc senders, for example from a Roc sink on another computer, and play it on your Raspberry Pi board.
 
@@ -481,7 +474,7 @@ pi@raspberrypi:~ $ sudo systemctl daemon-reload
 pi@raspberrypi:~ $ sudo systemctl enable --now roc-recv.service
 ```
 
-### Run roc-send on Raspberry (Roc sender)
+## Run roc-send on Raspberry (Roc sender)
 
 Perform this step if you want to **send** sound played on your Raspberry Pi board to a remote Roc receiver, for example to a Roc sink-input on another computer.
 
@@ -552,7 +545,7 @@ snd-aloop
 
 ---
 
-## Raspberry Pi (PulseAudio)
+# Raspberry Pi (PulseAudio)
 
 The following instructions are suitable for Raspberry Pi 2 and later. If you're using another board, consult the [User cookbook](https://roc-streaming.org/toolkit/docs/building/user_cookbook.html)  and [Cross-compiling](https://roc-streaming.org/toolkit/docs/portability/cross_compiling.html) pages from the documentation.
 
@@ -560,7 +553,7 @@ These instructions assume that you want to use Docker to get a pre-packaged (bin
 
 These instructions also assume that you're using **PulseAudio on your board**. If you're using bare ALSA instead, consult the [previous section](#raspberry-pi-alsa).
 
-### Are you running 32-bit or 64-bit OS on Raspberry?
+## Are you running 32-bit or 64-bit OS on Raspberry?
 
 On your Raspberry board, both CPU and OS may be either 32-bit or 64-bit. What is important is the bitness of OS. If you're not sure, run:
 
@@ -570,7 +563,7 @@ pi@raspberrypi:~ $ uname -m
 
 on your board. If the output is `aarch64`, the the OS is 64-bit. If the output is `arm*` then it's 32-bit.
 
-### Which PulseAudio version are you running on Raspberry?
+## Which PulseAudio version are you running on Raspberry?
 
 It's important to build Roc PulseAudio modules against exactly same version of PulseAudio which is running on your board. If you're not sure, run:
 
@@ -578,7 +571,7 @@ It's important to build Roc PulseAudio modules against exactly same version of P
 pi@raspberrypi:~ $ pulseaudio --version
 ```
 
-### Install dependencies on Raspberry
+## Install dependencies on Raspberry
 
 To install runtime Roc dependencies, **ssh** to the board and run apt-get:
 
@@ -586,7 +579,7 @@ To install runtime Roc dependencies, **ssh** to the board and run apt-get:
 pi@raspberrypi:~ $ sudo apt-get install libasound2 libpulse0 libltdl7
 ```
 
-### Install Docker on desktop machine
+## Install Docker on desktop machine
 
 Follow the [official instructions](https://docs.docker.com/engine/install/) to install Docker from the upstream repo.
 
@@ -596,7 +589,7 @@ If you're running Ubuntu on your desktop, you can also install Docker packaged b
 $ sudo apt-get install docker.io
 ```
 
-### Cross-compile Roc PulseAudio modules on desktop machine (for 64-bit Raspberry)
+## Cross-compile Roc PulseAudio modules on desktop machine (for 64-bit Raspberry)
 
 ```
 $ git clone https://github.com/roc-streaming/roc-pulse.git
@@ -608,7 +601,7 @@ $ docker run -t --rm -u "${UID}" -v "${PWD}:${PWD}" -w "${PWD}" \
 
 You should replace `<???>` with the exact version of PulseAudio which you're using on your Raspberry Pi board, for example `15.99.1`.
 
-### Cross-compile Roc PulseAudio modules on desktop machine (for 32-bit Raspberry)
+## Cross-compile Roc PulseAudio modules on desktop machine (for 32-bit Raspberry)
 
 ```
 $ git clone https://github.com/roc-streaming/roc-pulse.git
@@ -620,7 +613,7 @@ $ docker run -t --rm -u "${UID}" -v "${PWD}:${PWD}" -w "${PWD}" \
 
 You should replace `<???>` with the exact version of PulseAudio which you're using on your Raspberry Pi board, for example `15.99.1`.
 
-### Install Roc PulseAudio modules to Raspberry
+## Install Roc PulseAudio modules to Raspberry
 
 Copy command-line tools to the board via ssh:
 
@@ -630,7 +623,7 @@ $ scp ./bin/module-roc-*.so <IP>:/usr/lib/pulse-<PULSE_VER>/modules/
 
 Here, **`<IP>`** is the IP address of your Raspberry Pi board, and **`<PULSE_VER>`** is the version of PulseAudio which you're using on your Raspberry Pi board, for example `15.99.1`.
 
-### Configure PulseAudio sink-input (Roc receiver)
+## Configure PulseAudio sink-input (Roc receiver)
 
 Perform this step if you want to **receive** sound from remote Roc senders, for example from a Roc sink on another computer, and play it on your Raspberry Pi box.
 
@@ -663,7 +656,7 @@ For example:
 pi@raspberrypi:~ $ pactl move-sink-input 0 0
 ```
 
-### Configure PulseAudio sink (Roc sender)
+## Configure PulseAudio sink (Roc sender)
 
 Perform this step if you want to **send** sound played on your Raspberry Pi box to a remote Roc receiver, for example to a Roc sink-input on another computer.
 
@@ -702,24 +695,24 @@ After doing this, newly started PulseAudio clients will automatically use this s
 
 ---
 
-## macOS
+# macOS
 
 The following instructions are suitable for macOS 10.12 and later. If you're using an older version, consult the [User cookbook](https://roc-streaming.org/toolkit/docs/building/user_cookbook.html) page from Roc documentation.
 
-### Prepare environment
+## Prepare environment
 
 * install Xcode Command Line Tools ([instructions](http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/)) or Xcode (from App Store)
 * install Homebrew ([instructions](http://osxdaily.com/2018/03/07/how-install-homebrew-mac-os/))
 * install Git ([instructions](https://www.atlassian.com/git/tutorials/install-git))
 
-### Install dependencies
+## Install dependencies
 
 ```
 $ brew install pkg-config scons ragel gengetopt libuv speexdsp sox \
     libtool autoconf automake make cmake
 ```
 
-### Clone, build, install
+## Clone, build, install
 
 ```
 $ git clone https://github.com/roc-streaming/roc-toolkit.git
@@ -728,7 +721,7 @@ $ scons -Q --build-3rdparty=openfec
 $ sudo scons -Q --build-3rdparty=openfec install
 ```
 
-### Run roc-recv (Roc receiver)
+## Run roc-recv (Roc receiver)
 
 If you want to **receive** sound from remote Roc senders, for example from a Roc sink on another computer and play it on your macOS computer, run roc-recv:
 
@@ -736,7 +729,7 @@ If you want to **receive** sound from remote Roc senders, for example from a Roc
 $ roc-recv -vv -s rtp+rs8m://0.0.0.0:10001 -r rs8m://0.0.0.0:10002 -c rtcp://0.0.0.0:10003
 ```
 
-### Run roc-send (Roc sender)
+## Run roc-send (Roc sender)
 
 If you want to **send** sound played on your macOS computer to a remote Roc receiver, for example to a Raspberry Pi box, you would need to create a **virtual device**.
 
@@ -758,7 +751,7 @@ Don't forget to make the "Soundflower (2ch)" the default output device in "Syste
 
 ---
 
-## Android
+# Android
 
 To run Roc receiver and sender on Android device, you can use [Roc Droid](https://github.com/roc-streaming/roc-droid/) project.
 
@@ -773,22 +766,22 @@ The app can work in two modes:
 
 ---
 
-## Troubleshooting
+# Troubleshooting
 
-### Sound
+## Sound
 
 Before running Roc tools on Raspberry, ensure that sound is working on your board using `aplay` or `arecord`. Other useful commands are `alsamixer` and `alsactl init`, but their usage it out of the scope of this tutorial.
 
-### Network
+## Network
 
 When you run Roc sender and Roc receiver, you should see information about connected sender in receiver's logs. If you don't, it indicates problems with network connection, e.g. you used incorrect address or port.
 
-### Logs
+## Logs
 
 Command-line tools write logs to standard output, if you specify `-vv` option. If you're using systemd to run them, logs can be seen using `journalctl`.
 
 To see logs from PulseAudio modules, you can run daemon manually in terminal using `pulseaudio -vvv` command.
 
-### Stuttering
+## Stuttering
 
 If you hear stuttering, you can increase latency by using `sess_latency_msec=200` (for PulseAudio module), or `sess.latency.msec=200` (for PipeWire module), or `--sess-latency=200ms` (for command-line tool) on the receiver side. In this example, you set latency to 200 milliseconds; you may need higher value, depending on quality of your network.

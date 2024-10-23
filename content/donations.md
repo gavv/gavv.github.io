@@ -2,7 +2,7 @@
 title = "Donations"
 +++
 
-### Donation history
+# Donation history
 
 This page lists donations I've received on my personal accounts. Big thanks to everyone donated!
 

@@ -1,14 +1,5 @@
 {{ with .Post }}
   <footer id="footer">
-    <script>
-      $('h2, h3, h4').each(function() {
-        var id = $(this).attr('id');
-        $(this).prepend(
-          '<a class="anchor" href="#' + id +'"><i class="fa fa-paragraph"></i></a>'
-        );
-      })
-    </script>
-
     <div id="disqus_thread" class="no-print"></div>
     <script>
       (function() {

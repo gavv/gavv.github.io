@@ -5,26 +5,30 @@ tags = ["linux", "posix", "ipc"]
 title = "File locking in Linux"
 +++
 
+<nav id="TableOfContents">
+
 **Table of contents**
 
 * [Introduction](#introduction)
 * [Advisory locking](#advisory-locking)
- * [Common features](#common-features)
- * [Differing features](#differing-features)
- * [File descriptors and i-nodes](#file-descriptors-and-i-nodes)
- * [BSD locks (flock)](#bsd-locks-flock)
- * [POSIX record locks (fcntl)](#posix-record-locks-fcntl)
- * [lockf function](#lockf-function)
- * [Open file description locks (fcntl)](#open-file-description-locks-fcntl)
- * [Emulating Open file description locks](#emulating-open-file-description-locks)
- * [Test program](#test-program)
- * [Command-line tools](#command-line-tools)
+  * [Common features](#common-features)
+  * [Differing features](#differing-features)
+  * [File descriptors and i-nodes](#file-descriptors-and-i-nodes)
+  * [BSD locks (flock)](#bsd-locks-flock)
+  * [POSIX record locks (fcntl)](#posix-record-locks-fcntl)
+  * [lockf function](#lockf-function)
+  * [Open file description locks (fcntl)](#open-file-description-locks-fcntl)
+  * [Emulating Open file description locks](#emulating-open-file-description-locks)
+  * [Test program](#test-program)
+  * [Command-line tools](#command-line-tools)
 * [Mandatory locking](#mandatory-locking)
- * [Example usage](#example-usage)
+  * [Example usage](#example-usage)
+
+</nav>
 
 ---
 
-## Introduction
+# Introduction
 
 [File locking](https://en.wikipedia.org/wiki/File_locking) is a mutual-exclusion mechanism for files. Linux supports two major kinds of file locks:
 
@@ -35,7 +39,7 @@ Below we discuss all lock types available in POSIX and Linux and provide usage e
 
 ---
 
-## Advisory locking
+# Advisory locking
 
 Traditionally, locks are [advisory](http://unix.stackexchange.com/questions/147392/what-is-advisory-locking-on-files-that-unix-systems-typically-employs) in Unix. They work only when a process explicitly acquires and releases locks, and are ignored if a process is not aware of locks.
 
@@ -55,7 +59,7 @@ Reference:
 * [Open File Description Locks](https://www.gnu.org/software/libc/manual/html_node/Open-File-Description-Locks.html), GNU libc manual
 * [File-private POSIX locks](https://lwn.net/Articles/586904/), an LWN article about the predecessor of open file description locks
 
-### Common features
+## Common features
 
 The following features are common for locks of all types:
 
@@ -63,7 +67,7 @@ The following features are common for locks of all types:
 * Locks are allowed only on files, but not directories.
 * Locks are automatically removed when the process exits or terminates. It's guaranteed that if a lock is acquired, the process acquiring the lock is still alive.
 
-### Differing features
+## Differing features
 
 This table summarizes the difference between the lock types. A more detailed description and usage examples are provided below.
 
@@ -119,7 +123,7 @@ This table summarizes the difference between the lock types. A more detailed des
  </tr>
 </table>
 
-### File descriptors and i-nodes
+## File descriptors and i-nodes
 
 A [*file descriptor*](https://en.wikipedia.org/wiki/File_descriptor) is an index in the per-process file descriptor table (in the left of the picture). Each file descriptor table entry contains a reference to a *file object*, stored in the file table (in the middle of the picture). Each file object contains a reference to an [i-node](https://en.wikipedia.org/wiki/Inode), stored in the i-node table (in the right of the picture).
 
@@ -131,7 +135,7 @@ File descriptors created by several `open()` calls for the same file path point 
 
 A BSD lock and an Open file description lock is associated with a file object, while a POSIX record lock is associated with an `[i-node, pid]` pair. We'll discuss it below.
 
-### BSD locks (flock)
+## BSD locks (flock)
 
 The simplest and most common file locks are provided by [`flock(2)`](http://man7.org/linux/man-pages/man2/flock.2.html).
 
@@ -185,7 +189,7 @@ if (flock(fd, LOCK_UN) == -1) {
 }
 ```
 
-### POSIX record locks (fcntl)
+## POSIX record locks (fcntl)
 
 POSIX record locks, also known as process-associated locks, are provided by [`fcntl(2)`](http://man7.org/linux/man-pages/man2/fcntl.2.html), see "Advisory record locking" section in the man page.
 
@@ -262,7 +266,7 @@ if (fcntl(fd, F_SETLK, &fl) == -1) {
 close(fd);
 ```
 
-### lockf function
+## lockf function
 
 [`lockf(3)`](http://man7.org/linux/man-pages/man3/lockf.3.html) function is a simplified version of POSIX record locks.
 
@@ -300,7 +304,7 @@ if (lockf(fd, F_ULOCK, 5) == -1) {
 }
 ```
 
-### Open file description locks (fcntl)
+## Open file description locks (fcntl)
 
 Open file description locks are Linux-specific and combine advantages of the BSD locks and POSIX record locks. They are provided by [`fcntl(2)`](http://man7.org/linux/man-pages/man2/fcntl.2.html), see "Open file description locks (non-POSIX)" section in the man page.
 
@@ -322,7 +326,7 @@ The API is the same as for POSIX record locks (see above). It uses `struct flock
 * `F_OFD_SETLKW` instead of `F_SETLKW`
 * `F_OFD_GETLK` instead of `F_GETLK`
 
-### Emulating Open file description locks
+## Emulating Open file description locks
 
 What do we have for multithreading and atomicity so far?
 
@@ -358,7 +362,7 @@ Now, you can implement lock operations as follows:
 
 This approach makes possible both thread and process synchronization.
 
-### Test program
+## Test program
 
 I've prepared a [small program](https://github.com/gavv/snippets/blob/master/fs/locks.c) that helps to learn the behavior of different lock types.
 
@@ -420,7 +424,7 @@ $ ./a.out fcntl_posix two_fds processes
 13:01:15 pid=5798 tid=5798 unlock
 ```
 
-### Command-line tools
+## Command-line tools
 
 The following tools may be used to acquire and release file locks from the command line:
 
@@ -499,7 +503,7 @@ There are also two ways to inspect the currently acquired locks:
 
 ---
 
-## Mandatory locking
+# Mandatory locking
 
 Linux has limited support for [mandatory file locking](https://www.kernel.org/doc/Documentation/filesystems/mandatory-locking.txt). See the "Mandatory locking" section in the [`fcntl(2)`](http://man7.org/linux/man-pages/man2/fcntl.2.html) man page.
 
@@ -524,7 +528,7 @@ However, the documentation mentions that current implementation is not reliable,
 
 Since mandatory locks are not allowed for directories and are ignored by `unlink()` and `rename()` calls, you can't prevent file deletion or renaming using these locks.
 
-### Example usage
+## Example usage
 
 Below you can find a usage example of mandatory locking.
 

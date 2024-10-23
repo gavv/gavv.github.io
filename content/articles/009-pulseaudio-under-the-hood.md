@@ -7,43 +7,17 @@ title = "PulseAudio under the hood"
 
 <img src="/articles/pulseaudio-under-the-hood/diagrams/features.png" width="480px"/>
 
-**Table of contents**
-
-* [Preface](#preface)
-* [About PulseAudio](#about-pulseaudio)
-* [High-level components](#high-level-components)
-* [Key abstractions](#key-abstractions)
-* [D-Bus API](#d-bus-api)
-* [C API](#c-api)
-* [Protocols and networking](#protocols-and-networking)
-* [Device drivers](#device-drivers)
-* [Sound processing](#sound-processing)
-* [Sample cache](#sample-cache)
-* [Stream management](#stream-management)
-* [Time management](#time-management)
-* [Power saving](#power-saving)
-* [Automatic setup and routing](#automatic-setup-and-routing)
-* [Desktop integrations](#desktop-integrations)
-* [Compatibility layers](#compatibility-layers)
-* [Server internals](#server-internals)
-* [Module list](#module-list)
-* [GUI tools](#gui-tools)
-* [Command line tools](#command-line-tools)
-* [Configuration](#configuration)
-* [Portability](#portability)
-* [Example setups](#example-setups)
-* [Example clients and modules](#example-clients-and-modules)
-* [Critique](#critique)
+{{% toc %}}
 
 ---
 
-## Preface
+# Preface
 
 I'm working on the [Roc Toolkit](https://roc-streaming.org/) open-source project, a development kit for realtime audio streaming over the network. You can read more about the project in these two articles: [1](https://gavv.net/articles/new-network-transport/), [2](https://gavv.net/articles/roc-tutorial/).
 
 We decided to implement a set of PulseAudio modules that will allow PulseAudio to use Roc as a network transport. Many Linux distros employ PulseAudio, and their users will be able to improve network service quality without changing the workflow. This led me to dig into PulseAudio internals and eventually to this document.
 
-### Motivation
+## Motivation
 
 PulseAudio has [Documentation](https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/) page covering many specific problems that may be encountered by user and developer. [Modules](https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/User/Modules/) page contains a complete list of existing modules with parameters. [D-Bus API](https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/Developer/Clients/DBus/) and [C API](https://freedesktop.org/software/pulseaudio/doxygen/index.html) are also documented well.
 
@@ -59,13 +33,13 @@ This document tries to fill the gap and provide an overview of the PulseAudio fe
 
 It does not provide a detailed reference or tutorial for PulseAudio configuration and APIs. Further details can be obtained from the official documentation (for configuration and client APIs) and from the source code (for internal interfaces).
 
-### Disclaimer
+## Disclaimer
 
 I'm not a PulseAudio developer. This document reflects my personal understanding of PulseAudio, obtained from the source code, experiments, official wiki, mailing lists, and blog articles. It may be inaccurate. Please let me know about any issues.
 
 PulseAudio tends to trigger flame wars, which I believe are non-constructive. This document tries to be neutral and provide an unbiased overview of the implemented features and design.
 
-### Thanks
+## Thanks
 
 I'd like to thank my friends and colleagues [Mikhail Baranov](https://medium.com/@baranov.mv) and [Dmitriy Shilin](https://dshil.github.io/) who read early drafts of the document and provided a valuable feedback.
 
@@ -73,7 +47,7 @@ Also big thanks to [Tanu Kaskinen](https://www.patreon.com/tanuk), a PulseAudio 
 
 They all definitely made it better!
 
-### Meta
+## Meta
 
 This document was last updated for PulseAudio 11.1.
 
@@ -81,13 +55,13 @@ Last major update: 21 Oct 2017.
 
 ---
 
-## About PulseAudio
+# About PulseAudio
 
 [PulseAudio](https://www.freedesktop.org/wiki/Software/PulseAudio/) is a sound server for POSIX OSes (mostly aiming Linux) acting as a proxy and router between hardware device drivers and applications on single or multiple hosts.
 
 See details on the [About](https://www.freedesktop.org/wiki/Software/PulseAudio/About/) page on wiki.
 
-### Design goals
+## Design goals
 
 PulseAudio is designed to meet a number of goals.
 
@@ -111,7 +85,7 @@ PulseAudio is designed to meet a number of goals.
 
     PulseAudio provides a framework for server extensions, and many built-in features are implemented as modules. Non-official third-party modules exist as well, however, the upstream doesn't provide a guarantee of a stable API for out-of-tree modules.
 
-### Feature overview
+## Feature overview
 
 The following list gives an idea of the features implemented in PulseAudio.
 
@@ -155,7 +129,7 @@ The following list gives an idea of the features implemented in PulseAudio.
 
     There are several compatibility layers with other sound systems, so that existing applications may automatically run on top of PulseAudio without modification.
 
-### Use cases
+## Use cases
 
 Here are some practical examples of how PulseAudio features may be used on the desktop:
 
@@ -179,7 +153,7 @@ Here are some practical examples of how PulseAudio features may be used on the d
 
 * Automatically integrating existing desktop applications into PulseAudio workflow, even if they are not aware of PulseAudio.
 
-### Problems and drawbacks
+## Problems and drawbacks
 
 There are several known disadvantages of using PulseAudio, including both fundamental issues, and implementation issues that may be resolved in the future:
 
@@ -194,7 +168,7 @@ There are several known disadvantages of using PulseAudio, including both fundam
 
 ---
 
-## High-level components
+# High-level components
 
 The diagram below demonstrates a simplified view of an example PulseAudio setup.
 
@@ -238,11 +212,11 @@ The diagram shows most important PulseAudio components:
 
 ---
 
-## Key abstractions
+# Key abstractions
 
 This sections discusses the key server-side object types.
 
-### Devices and streams
+## Devices and streams
 
 PulseAudio is built around devices (sources and sinks) connected to streams (source outputs and sink inputs). The diagram below illustrates these connections.
 
@@ -280,7 +254,7 @@ PulseAudio is built around devices (sources and sinks) connected to streams (sou
 
     The typical sink input represents a playback stream opened by an application. PulseAudio automatically creates a sink input for every opened playback stream.
 
-### Object hierarchy
+## Object hierarchy
 
 The diagram below shows the hierarchy of the server-side objects.
 
@@ -384,7 +358,7 @@ The diagram below shows the hierarchy of the server-side objects.
 
 ---
 
-## D-Bus API
+# D-Bus API
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -396,7 +370,7 @@ PulseAudio server-side objects may be inspected and controlled via an experiment
 
 Unfortunately, the D-Bus API has never left the experimental stage, and it has no stability guarantees and is not actively maintained. Applications are generally advised to use the C API instead.
 
-### Buses and services
+## Buses and services
 
 D-Bus has several modes of communication:
 
@@ -411,7 +385,7 @@ PulseAudio implements several D-Bus services:
 * Server API (peer-to-peer)
 * Server API extensions (peer-to-peer)
 
-### Device reservation API
+## Device reservation API
 
 [Device reservation API](http://git.0pointer.net/reserve.git/tree/reserve.txt) provides methods for coordinating access to audio devices, typically ALSA or OSS devices. It is used to ensure that nobody else is using the device at the same time.
 
@@ -419,13 +393,13 @@ If an application needs to use a device directly (bypassing PulseAudio), it shou
 
 This API is designed to be generic. It is a small standalone D-Bus interface with no dependencies on PulseAudio abstractions, so it may be easily implemented by other software.
 
-### Server lookup API
+## Server lookup API
 
 PulseAudio server API uses peer-to-peer D-Bus mode. In this mode, clients communicate directly with the server instead of using a session bus, which acts as a proxy. In contrast to the session bus mode, this mode permits remote access and has lower latency. However, clients need a way to determine the server address before connecting to it.
 
 To solve this problem, PulseAudio server registers [server lookup interface](https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/Developer/Clients/DBus/ConnectingToServer/) on the session bus. A client should first connect to the session bus in order to discover PulseAudio server address and then connect to PulseAudio server directly for peer-to-peer communication.
 
-### Server API
+## Server API
 
 [Server API](https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/Developer/Clients/DBus/) is available through a peer-to-peer connection to PulseAudio server.
 
@@ -488,7 +462,7 @@ In addition to the core interface, PulseAudio modules can register custom server
 
 ---
 
-## C API
+# C API
 
 PulseAudio provides [C API](https://freedesktop.org/software/pulseaudio/doxygen/index.html) for client applications.
 
@@ -501,7 +475,7 @@ The API is divided into two alternative parts:
 * Asynchronous API (libpulse), complicated but complete
 * Simple API (libpulse-simple), a simplified synchronous wrapper for the recording and playback subset of the asynchronous API
 
-### Asynchronous API
+## Asynchronous API
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -562,7 +536,7 @@ The diagram below demonstrates the workflow.
 
         [Stream Events](https://freedesktop.org/software/pulseaudio/doxygen/stream_8h.html#a5690ed098466233860e632abfa61fe50) are generated to acknowledge the client of the stream state change or ask it to do something, e.g. pause the stream. Such event has a textual name and arbitrary binary payload.
 
-### Simple API
+## Simple API
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -578,7 +552,7 @@ Limitations:
 
 ---
 
-## Protocols and networking
+# Protocols and networking
 
 PulseAudio server supports a variety of network protocols to communicate with clients, remote servers, and third-party software. See [Network](https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/User/Network/) page on wiki.
 
@@ -601,7 +575,7 @@ And two control protocols:
 * D-Bus API
 * CLI protocol
 
-### Native protocol
+## Native protocol
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -640,7 +614,7 @@ With the "native" protocol, the client is clocked by the server. Server requests
 
 Since the protocol uses stream sockets, it's not real time. The delays introduced by the sender or network cause playback delays on the receiver.
 
-### Zero-copy mode
+## Zero-copy mode
 
 When the "native" protocol is used for client and server on the same host, the zero-copy mode may be employed.
 
@@ -669,7 +643,7 @@ Two additional messages are used in this mode:
 
 To achieve true zero-copy when playing samples, an application should use the [Asynchronous API](https://freedesktop.org/software/pulseaudio/doxygen/async.html) and [delegate memory allocation](https://freedesktop.org/software/pulseaudio/doxygen/stream_8h.html#a6cf50cfc4ea8897391941184d74d7dfa) to the library. When the zero-copy mode is enabled, memory is automatically allocated from the shared pool.
 
-### Authentication
+## Authentication
 
 When a client connects to the server via the "native" protocol, the server performs several authentication checks in the following order:
 
@@ -701,7 +675,7 @@ When a client connects to the server via the "native" protocol, the server perfo
 
     If all checks have failed, then the client is rejected.
 
-### Tunnels
+## Tunnels
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -722,7 +696,7 @@ Each tunnel acts as a regular PulseAudio client and connects to a remote PulseAu
 
 Tunnel devices may be created either manually by the user or automatically if the Zeroconf support is enabled.
 
-### mDNS (Zeroconf)
+## mDNS (Zeroconf)
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -748,7 +722,7 @@ To achieve this, PulseAudio uses automatically configured tunnels:
 
     Discovery is implemented only for Avahi (module-zeroconf-discover).
 
-### RTP/SDP/SAP
+## RTP/SDP/SAP
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -799,7 +773,7 @@ RTP sender can't be clocked by RTP receiver because the sender has no feedback f
 
 RTP is a real time protocol. The delays introduced by the sender or network cause playback holes on the receiver. Playback is never delayed and packets delivered too late are just dropped.
 
-### RAOP (AirPlay)
+## RAOP (AirPlay)
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -822,7 +796,7 @@ RAOP support consists of two parts:
 
     Every RAOP sink is connected to a single AirPlay device. It uses RTSP to negotiate session parameters and RTP to transmit samples.
 
-### HTTP support
+## HTTP support
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -846,7 +820,7 @@ The HTTP support provides two features:
 
     After sending headers, PulseAudio creates a new source output connected to the source or sink monitor which writes all new samples to the HTTP connection. Samples are sent as-is, without any additional encoding.
 
-### DLNA and Chromecast
+## DLNA and Chromecast
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -876,7 +850,7 @@ There are two implementations of DLNA and/or Chromecast support:
 
     The communication with the PulseAudio server is done via the D-Bus API (to query and configure server objects) and `parec` tool (to receive samples from a sink monitor).
 
-### ESound
+## ESound
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -888,7 +862,7 @@ PulseAudio server may be accessed via the protocol used in [Enlightened Sound Da
 
 The documentation says that it supports playback, recording, and control commands, so switching to PulseAudio should be transparent for applications that are using ESound.
 
-### Simple
+## Simple
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -900,7 +874,7 @@ The "simple" protocol is used to send or receive raw PCM samples from the PulseA
 
 The user should configure the sample format and the source and sink to use. Then the user may use tools like `netcat` to send PCM samples over a Unix domain or TCP socket.
 
-### CLI
+## CLI
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -934,7 +908,7 @@ The TTY version requires that the server should be started in foreground mode in
 
 ---
 
-## Device drivers
+# Device drivers
 
 PulseAudio has several backends that implement audio I/O and device management. The diagram below illustrates backend-specific components.
 
@@ -964,7 +938,7 @@ Every backend should implement the following features of a source or sink:
 
 Currently, the only full-featured backends are ALSA and Bluetooth, which implement all object types listed above. Other backends provide only sources and sinks.
 
-### ALSA backend
+## ALSA backend
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -988,7 +962,7 @@ The concrete meaning of PulseAudio card profile and device ports depends on whet
 
 PulseAudio sources and sinks for ALSA devices implement a timer-based scheduler that manages latency and clocking. It is discussed later in a separate section.
 
-### ALSA device hierarchy
+## ALSA device hierarchy
 
 ALSA uses a device hierarchy that is different from the PulseAudio hierarchy. See [this post](http://delogics.blogspot.ru/2014/11/understanding-alsa-device-subdevice-and.html) for an overview.
 
@@ -1008,7 +982,7 @@ The ALSA hierarchy has three levels:
 
 ALSA device is identified by a card number and device number. PulseAudio by default interacts only with hardware ALSA devices. PulseAudio currently doesn't use hardware mixing and so don't employ multiple subdevices even if they're available.
 
-### ALSA kernel interfaces
+## ALSA kernel interfaces
 
 Each ALSA device has a corresponding device entry in the `"/dev/snd"` directory. Their meta-information may be discovered through the `"/proc/asound"` directory. See some details in [this post](http://www.sabi.co.uk/Notes/linuxSoundALSA.html).
 
@@ -1050,7 +1024,7 @@ A kcontrol typically represent a thing like a volume control (allows to adjust t
 
 The concrete set of the available kcontrols are defined by the sound card driver, though drivers try to provide similar kcontrols. The driver usually just exposes all available hardware controls, and it's up to the user space to provide a unified hardware-independent layer on top of them. This responsibility rests on the ALSA UCM and PulseAudio.
 
-### ALSA user space interfaces
+## ALSA user space interfaces
 
 ALSA provides numerous user space interfaces to interact with ALSA cards and devices and their properties. See libasound documentation: [1](http://www.alsa-project.org/alsa-doc/alsa-lib/index.html), [2](http://www.alsa-project.org/alsa-doc/alsa-lib/modules.html).
 
@@ -1106,7 +1080,7 @@ Here is the list of involved ALSA interfaces:
 
     Applications can describe their use-cases by selecting one of the available presets instead of configuring mixer elements manually. The UCM then performs all necessary configuration automatically, hiding machine-specific details and complexity of the Mixer interface.
 
-### ALSA routing
+## ALSA routing
 
 ALSA cards often have multiple inputs and outputs. For example, a card may have an analog output for internal speaker, an analog output for 3.5mm headphone connector, an analog input for internal microphone, an analog input for 3.5mm microphone connector, and an HDMI input and output.
 
@@ -1138,7 +1112,7 @@ Different drivers provide different sets of kcontrols, and it's up to the user s
 
 In both cases, PulseAudio goal is to probe what inputs and outputs are available and map them to device ports somehow. However, details vary depending on whether UCM is in use or not.
 
-### ALSA cards with UCM
+## ALSA cards with UCM
 
 ALSA Use Case Manager aims two goals:
 
@@ -1208,7 +1182,7 @@ This is how the mapping is used:
 
 * The currently active UCM verb, UCM modifier, and UCM devices define what card inputs and outputs are active, what device options are set, and what volume controls are used.
 
-### ALSA cards w/o UCM
+## ALSA cards w/o UCM
 
 Besides the UCM support, PulseAudio has its own configuration system on top of the ALSA Mixer. It was developed before UCM appeared. It is used when the UCM is not available for a card.
 
@@ -1338,7 +1312,7 @@ This is how the mapping is used:
 
 * The currently active elements, their volume policies, and their options define how to configure ALSA mixer elements of the ALSA device.
 
-### Bluetooth backend
+## Bluetooth backend
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -1420,7 +1394,7 @@ This is how the mapping is used:
 
 * The currently active card profile defines what Bluetooth profile and role are used, and so what transport protocols and codecs are used.
 
-### JACK backend
+## JACK backend
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -1446,7 +1420,7 @@ JACK backend for PulseAudio monitors when JACK is started using the JACK D-Bus A
 
 PulseAudio uses two threads for a JACK source or sink: one realtime thread for the JACK event loop, and another for the PulseAudio one. The reason for an extra thread is that it's not possible to add custom event sources to the JACK event loop, hence PulseAudio event loop can't be embedded into it. The extra thread costs extra latency, especially if PulseAudio is not configured to make its threads realtime using rtkit.
 
-### Other backends
+## Other backends
 
 The following backends are available but have limited functionality:
 
@@ -1508,7 +1482,7 @@ The following backends are available but have limited functionality:
 
     Note that PulseAudio server is also able to emulate ESound server.
 
-### Hotplug support
+## Hotplug support
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -1528,7 +1502,7 @@ In particular, PulseAudio uses [libudev](https://www.freedesktop.org/software/sy
 * when a new device is inserted, the server creates a card, card profiles, device ports, sources, and sinks, as described above
 * when the device is removed, all these objects are removed as well
 
-### Hardware controls
+## Hardware controls
 
 PulseAudio server has support for hardware controls. The user should manually specify a sink, and the server will forward volume up/down and mute requests to it.
 
@@ -1554,11 +1528,11 @@ Two types of controls are supported:
 
 ---
 
-## Sound processing
+# Sound processing
 
 PulseAudio implements various sound processing tools. Some of them are enabled automatically when necessary (like sample rate conversion), and others should be explicitly configured by the user (like echo cancellation).
 
-### Resampler
+## Resampler
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -1627,7 +1601,7 @@ The following methods are supported:
 
     This mode is usually used in GUI applications like `pavucontrol` that want to display volume level.
 
-### Mixing and volumes
+## Mixing and volumes
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -1658,7 +1632,7 @@ Software volumes use the cubic scale. Hardware volumes generally use an unspecif
 
 Finally, virtual source and sinks that are attached to a master source or sink usually use *volume sharing* mode. When it is enabled, the source or sink always uses the same volume as its master.
 
-### Volume range
+## Volume range
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -1705,7 +1679,7 @@ The points on the boundaries are the following:
 
     This may be useful, for example, if the device is under-powered or the audio content has been mastered with too low volume. However it may cause distortion.
 
-### Passthrough
+## Passthrough
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -1732,7 +1706,7 @@ PulseAudio server doesn't automatically detect actual encodings supported by har
 
 The user can enable encodings via `pavucontrol` GUI. Other applications may check which encodings are enabled for a source or sink and use passthrough mode if they support one of the enabled encodings.
 
-### Virtual devices and streams
+## Virtual devices and streams
 
 Pulseaudio provides several sound processing tools implemented as virtual devices (sources and sinks) and virtual streams (source outputs and sink inputs).
 
@@ -1807,7 +1781,7 @@ Pulseaudio provides several sound processing tools implemented as virtual device
 
     Pipe source or sink reads or writes samples to a preconfigured file on disk. This file may be a named pipe (FIFO).
 
-### Filter devices
+## Filter devices
 
 Filter sources and sinks are a special category of virtual devices. Such source or sink has a special virtual source output or sink input connected to another, master source or sink.
 
@@ -1839,7 +1813,7 @@ PulseAudio treats filter devices specially in several cases:
 
     Automatic routing rules have special cases for autoloaded filter sources and sinks.
 
-### Regular filters
+## Regular filters
 
 Several regular filters are available:
 
@@ -1881,7 +1855,7 @@ Several regular filters are available:
 
     Virtual source reads data from the master source and writes it to the connected source outputs. Virtual sink reads data from the connected sink inputs and writes it to the master sink.
 
-### Echo cancellation filter
+## Echo cancellation filter
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -1916,7 +1890,7 @@ Several AEC engines are implemented:
 
     No-op engine.
 
-### LADSPA plugin sink
+## LADSPA plugin sink
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -1931,7 +1905,7 @@ A concrete example may be found in [this post](https://www.bfccomputing.com/dyna
 
 Note that [LADSPA Version 2](https://en.wikipedia.org/wiki/LV2) (LV2) standard exists, but it's not supported in PulseAudio.
 
-### Constructing chains
+## Constructing chains
 
 Modules add new functionality to the server by implementing sources, source outputs, sinks, and sink inputs. The user then may combine them into a chain. However, only two types of direct connections are allowed:
 
@@ -1969,7 +1943,7 @@ The combinations not listed in the table aren't possible. It's not possible to r
 
 ---
 
-## Sample cache
+# Sample cache
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -2013,7 +1987,7 @@ Depending on the protocol, the client may also provide additional properties for
 
 ---
 
-## Stream management
+# Stream management
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -2031,7 +2005,7 @@ The diagram below illustrates the logical data flow from an application to a sou
   </a>
 </div>
 
-### Stream types
+## Stream types
 
 There are three types of the "native" protocol streams:
 
@@ -2047,7 +2021,7 @@ There are three types of the "native" protocol streams:
 
     An upload stream has a corresponding sink input that is connected to a sample cache entry. Samples are sent from the client to server. Control commands are sent in both directions.
 
-### Client to server
+## Client to server
 
 The client may send the following stream commands to the server:
 
@@ -2079,7 +2053,7 @@ The client may send the following stream commands to the server:
 
     The client asks the server to inform it when the server reads all samples from the server-side buffer of playback stream and it becomes empty and an underflow occurs. When this happens, all samples sent by the client are already sent to the sink, though they probably didn't reach the sound card yet.
 
-### Server to client
+## Server to client
 
 The client may register callbacks for the following stream commands from server:
 
@@ -2107,7 +2081,7 @@ The client may register callbacks for the following stream commands from server:
 
     The server may send custom events to the client with a textual name and arbitrary binary payload. Currently, three event types exist: `request-cork` (the client should pause stream), `request-uncork` (the client should unpause stream), `format-lost` (the stream was moved to another source or sink that doesn't support encoding being used currently).
 
-### Buffering
+## Buffering
 
 The diagram below shows what buffers are used to transfer sample chunks from the client to the sound card. See also [this post](http://voices.canonical.com/david.henningsson/2014/11/21/pulseaudio-buffers-and-protocol/) for an overview of buffering in PulseAudio.
 
@@ -2159,7 +2133,7 @@ The following buffers are employed:
 
     So the size of this buffer is no more than one chunk.
 
-### Rewinding
+## Rewinding
 
 Rewinding is a process of overwriting existing samples in buffers instead of appending to them. Implementation details are described in the [Rewinding](https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/Developer/Rewinding/) page.
 
@@ -2167,7 +2141,7 @@ It is an important feature that is necessary to combine a higher latency for pla
 
 For example, the volume change should be applied immediately even when the playback latency is 2s. To achieve this, all buffers that contain samples with an older volume value are rewound and refilled.
 
-### Rewinding and buffers
+## Rewinding and buffers
 
 Rewinding works by moving read and write pointers of the ring buffers.
 
@@ -2191,7 +2165,7 @@ The three buffers are employed:
 
     To support this, the stream buffer always keeps some amount of samples before the read pointer, equal to the size of the render queue, which includes the size of the device buffer.
 
-### Rewind processing
+## Rewind processing
 
 A rewind is separated into two parts:
 
@@ -2214,7 +2188,7 @@ The steps are:
 
 * The sink input processes the rewind. First, it moves back the read pointer of the render queue. If it's not enough, it also moves back the read pointer of the stream buffer.
 
-### Rewind requests
+## Rewind requests
 
 Here is the list of cases when a rewind request is issued on a sink input or sink:
 
@@ -2254,7 +2228,7 @@ Here is the list of cases when a rewind request is issued on a sink input or sin
 
     The parameters of a virtual sink (like equalizer sink) are changed. Buffers are rewound to apply new parameters immediately.
 
-### Moving streams
+## Moving streams
 
 At any time, a sink input or source output may be moved to another sink or source.
 
@@ -2262,7 +2236,7 @@ The move may be initiated explicitly by any application (typically via the mixer
 
 When the stream is moved, a rewind is requested to drop its samples from the sink or source it was previously connected to.
 
-### Synchronized streams
+## Synchronized streams
 
 When a client creates a stream, it may configure it to be synchronized with another stream.
 
@@ -2270,7 +2244,7 @@ PulseAudio guarantees that all streams synchronized together always go sample-by
 
 It's currently not possible to move a synchronized stream to another device.
 
-### Monitoring
+## Monitoring
 
 The client can monitor existing devices and streams:
 
@@ -2284,7 +2258,7 @@ The client can monitor existing devices and streams:
 
 ---
 
-## Time management
+# Time management
 
 Playback and recording are driven by a per-device timer-based scheduler that provides clocking and maintains optimal latency.
 
@@ -2296,7 +2270,7 @@ The diagram below illustrates the process. It shows the path of samples from an 
   </a>
 </div>
 
-### Clocking
+## Clocking
 
 There are no two devices with equal clocks. One of them is always slightly faster and another is slightly slower. This applies both to a pair of computers, as well as to a pair of separately clocked devices on the same computer.
 
@@ -2304,7 +2278,7 @@ Since sound cards have their own clocks, an application can't use a CPU timer to
 
 In PulseAudio, clocking is provided by sources and sinks. Hardware source or sink runs a thread that writes or read samples to source outputs or sink inputs using a timer synchronized with the sound card.
 
-### Clocking and native protocol
+## Clocking and native protocol
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -2318,7 +2292,7 @@ When source writes samples to the source output, source output forwards them to 
 
 When the asynchronous API is used, a callback is invoked when the server requests more samples. The callback should respond with a desired amount of samples. When the simple API is used, the client is blocked until the server requests more samples.
 
-### Clocking and RTP
+## Clocking and RTP
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -2339,7 +2313,7 @@ To prevent this, PulseAudio RTP receiver adjusts resampler rate on the fly to ma
 
 To prevent oscillations, an exponentially weighted average of the estimated rate is used. To prevent latency jumps, the rate is updated gradually with small steps. Algorithm details are described [in the source code](https://github.com/pulseaudio/pulseaudio/blob/master/src/modules/rtp/module-rtp-recv.c#L314).
 
-### Latency
+## Latency
 
 <div class="flex_table">  <div class="flex_th">component</div>
   <div>libpulse</div>
@@ -2387,7 +2361,7 @@ Note that compared to bare ALSA, PulseAudio increases the minimum possible laten
 
 On the other hand, PulseAudio may operate at a lower latency than a naive implementation of an ALSA client based on select/poll, due to its advanced timer-based scheduler (see below).
 
-### Controlling latency
+## Controlling latency
 
 Every source, sink, source output, and sink input has its own latency. PulseAudio server controls all of them and can adjust latency on the fly to reach the minimum acceptable value that causes no glitches. This value may depend on things like hardware capacity and current system load. See [LatencyControl](https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/Developer/Clients/LatencyControl/) page.
 
@@ -2414,7 +2388,7 @@ For every stream, PulseAudio server maintains a constant latency, depending on *
 
 Note that the actual stream latency may be higher than requested by an application. PulseAudio automatically increases the latency depending on hardware and OS scheduler constraints. In particular, the latency is increased in case of frequent ALSA underruns to avoid glitches.
 
-### Measuring latency
+## Measuring latency
 
 PulseAudio provides clients with the stream [timing info](https://freedesktop.org/software/pulseaudio/doxygen/structpa__timing__info.html), containing the stream latency divided into the three components:
 
@@ -2471,7 +2445,7 @@ Actual calculations in the source code differ from the formulas above in two det
 
 * when recording stream is connected to a monitor source, the latency of the monitored sink is taken into account in addition to the latency of monitor source.
 
-### Latency and backends
+## Latency and backends
 
 Non-ALSA backends generally don't support adjusting device buffer size. An application can determine if a source or sink supports it by checking the *dynamic latency* flag of the device.
 
@@ -2479,7 +2453,7 @@ Some backends, including Bluetooth devices, don't provide accurate information a
 
 To workaround problems with such backends, the user can manually set the *latency offset* for a device port, which is zero by default. When a source or sink is connected to a device port, the latency offset of the device port is added to the latency (device buffer size) reported by the source or sink.
 
-### ALSA challenges
+## ALSA challenges
 
 When a program uses ALSA, the program writes or reads samples from the ALSA ring buffer, and the sound card reads or writes samples from that buffer at a timer tick. The user can configure the *buffer size* (number of samples in whole ring buffer) and the *period size* (a.k.a. *fragment size*, the number of samples written or read per one timer tick).
 
@@ -2493,7 +2467,7 @@ This way, the whole process is driven by the sound card timer, which is good. Ho
 
 * It's not easy to guess optimal buffer size and period size because they depend on the latency, hardware, CPU, and average system load. When default parameters chosen by ALSA doesn't play well enough, the client programming becomes more tricky.
 
-### Timer-based scheduler (tsched)
+## Timer-based scheduler (tsched)
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -2556,11 +2530,11 @@ The timer-based scheduler may be enabled or disabled globally or per-sink. By de
 
 ---
 
-## Power saving
+# Power saving
 
 Several techniques are used to save the power. Some benchmarks may be found in [this post](http://linux-tipps.blogspot.ru/2011/04/power-performance-of-pulseaudio-alsa.html).
 
-### Device states
+## Device states
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -2584,7 +2558,7 @@ A source or sink may be in one of the following states:
 
 The source or sink is marked idle when there are no non-paused connected streams. If it remains in this state for some time, it may be suspended. When a non-paused stream appears again, the source or sink is resumed.
 
-### Reducing interrupts
+## Reducing interrupts
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -2595,7 +2569,7 @@ The less frequently sound card interrupts occur, the less frequently the driver 
 
 When the timer-based scheduler is used, PulseAudio reduces the number of sound card interrupts or completely disables them if it's supported by the driver.
 
-### Default latency
+## Default latency
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -2615,7 +2589,7 @@ High latency may be set for a stream automatically:
 
 ---
 
-## Automatic setup and routing
+# Automatic setup and routing
 
 PulseAudio automatically restores parameters for cards, devices, and streams, routes streams to devices, and performs other housekeeping actions.
 
@@ -2629,7 +2603,7 @@ Some examples:
 
 * When a client creates a new stream, the server may perform some automatic setup depending on stream properties, like autoloading sound processing tools, or silencing less important streams.
 
-### Databases
+## Databases
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -2647,7 +2621,7 @@ Two separate databases are involved in routing:
 * restoration database
 * device manager database
 
-### Stream roles
+## Stream roles
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -2663,7 +2637,7 @@ Roles are used in several places:
 * the restoration database may contain per-role routing rules
 * the device manager database may contain per-role priority lists of routing rules
 
-### Stream groups
+## Stream groups
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -2686,7 +2660,7 @@ Stream groups are used in two places:
 * in the restoration database
 * when autoloading group filters
 
-### Stream routing
+## Stream routing
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -2740,7 +2714,7 @@ Some side notes:
 
 * When the user changes the fallback source or sink, nothing happens. The new fallback device will be used only when a new stream is routed.
 
-### Restoration database
+## Restoration database
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -2791,7 +2765,7 @@ When the user changes the stream volume or moves it to another device, all other
 
 Besides the three modules described above, the module-default-device-restore saves (on a timer event) and restores (on start) the fallback source and sink. These two device names are stored in two text files instead of the restoration database.
 
-### Device manager database
+## Device manager database
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -2806,7 +2780,7 @@ The module-device-manager was developed for KDE, which uses it by default and pr
 
 * Provides a protocol and API extension that provides methods for inspecting and manipulating priority lists.
 
-### Device intended roles
+## Device intended roles
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -2843,7 +2817,7 @@ The intended role list is set for several types of sources and sinks:
 
     Acoustic echo cancellation module unconditionally sets "phone" role for its sources and sinks.
 
-### Priority routing proposal
+## Priority routing proposal
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -2869,7 +2843,7 @@ In result, it's hard for the user to figure it out how and why the routing works
 * modules may implement routing policies by registering or manipulating priority lists
 * the user can inspect and configure priority lists using GUI tools
 
-### Third-party routing modules
+## Third-party routing modules
 
 Some projects implement their own PulseAudio modules that replace or modify default routing scheme:
 
@@ -2919,7 +2893,7 @@ Some projects implement their own PulseAudio modules that replace or modify defa
 
     See details on [these slides](http://events.linuxfoundation.org/sites/events/files/slides/elc_telephony_piirainen_0.pdf).
 
-### Autodetecting properties
+## Autodetecting properties
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -2953,7 +2927,7 @@ Currently, the device form factor is set in two places:
 
 * If Udev rules can match the sound card model, the `SOUND_FORM_FACTOR` property is attached to the device. The server reads this property during source or sink initialization.
 
-### Autoloading filters
+## Autoloading filters
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -3011,7 +2985,7 @@ The autoloading support is divided into two modules:
 
     * Moves the stream or paired streams to the filter source or sink.
 
-### Automatic actions
+## Automatic actions
 
 Several modules implement various housekeeping actions that are performed automatically.
 
@@ -3112,7 +3086,7 @@ Several modules implement various housekeeping actions that are performed automa
 
     When a new stream appears, automatically update its volume based on its name and a preconfigured match table, by default loaded from `"~/.pulse/match"`. Each line contains a regular expression to match the stream name and the volume to set.
 
-### Role-based configuration of ALSA devices
+## Role-based configuration of ALSA devices
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -3127,7 +3101,7 @@ When a stream is moved to or from an ALSA source or sink which employs UCM, the 
 
 * The UCM modifier of a device port is enabled when there is at least one source output or sink input connected to the source or sink of the device port, which has the "media.role" property equal to the UCM modifier role.
 
-### Automated setup of Bluetooth devices
+## Automated setup of Bluetooth devices
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -3166,11 +3140,11 @@ PulseAudio provides two features that automate the setup of Bluetooth devices th
 
 ---
 
-## Desktop integrations
+# Desktop integrations
 
 This section describes features that integrate PulseAudio into the desktop environment. Some details are also available on the [Desktops](https://www.freedesktop.org/wiki/Software/PulseAudio/Desktops/) page on wiki.
 
-### Autospawn and autoexit
+## Autospawn and autoexit
 
 PulseAudio server usually starts and exits automatically:
 
@@ -3192,7 +3166,7 @@ PulseAudio server usually starts and exits automatically:
 
     When there are no connected clients during some period of time, the server automatically exits. However, the automatic exit may be prevented by one of the session management modules.
 
-### Session management
+## Session management
 
 There are several session management modules that prevent the server from exiting during the lifetime of a desktop session:
 
@@ -3223,7 +3197,7 @@ There are several session management modules that prevent the server from exitin
 
     This module connects to the [X session manager](https://en.wikipedia.org/wiki/X_session_manager) via [XSMP](https://www.x.org/releases/X11R7.7/doc/libSM/xsmp.html) protocol. It creates a fake client and removes it when the current X11 session ends.
 
-### X11 publishing
+## X11 publishing
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -3258,7 +3232,7 @@ Here is the list:
 
     These properties are optional. They may be set to a source or sink name provided by the user via the module arguments when starting the server. Clients will use these source and sink as defaults.
 
-### X11 events
+## X11 events
 
 PulseAudio can interact with X11 events in two ways:
 
@@ -3286,7 +3260,7 @@ PulseAudio can interact with X11 events in two ways:
 
     As a workaround, PulseAudio can artificially synthesize X11 media key events along with the cork or uncork request, as if the pause or play multimedia keyboard button was pressed. Some applications will handle these events and pause/resume playback. This scheme is known to be buggy, however.
 
-### RealtimeKit (rtkit)
+## RealtimeKit (rtkit)
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -3299,7 +3273,7 @@ PulseAudio may use it to enable [`SCHED_RR`](http://man7.org/linux/man-pages/man
 
 The realtime policy is enabled for the sink and source threads, including the ALSA sink thread that runs the timer-based scheduler. This helps to handle low latency values because when it's time to provide samples for the ALSA driver, PulseAudio will not be delayed even if there are other starved processes.
 
-### GNOME registry (GConf)
+## GNOME registry (GConf)
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -3330,11 +3304,11 @@ This feature is used in the `paprefs` GUI which may be used to configure and ena
 
 ---
 
-## Compatibility layers
+# Compatibility layers
 
 There are several compatibility layers with other sound systems, so that existing applications may automatically run on PulseAudio without modification.
 
-### Emulate ALSA
+## Emulate ALSA
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -3366,7 +3340,7 @@ This is how it works:
 
 * Finally, libasound asks the kernel space ALSA driver to write or read samples from the sound card ring buffer.
 
-### Emulate OSS
+## Emulate OSS
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -3404,7 +3378,7 @@ The same approach is used in aoss (OSS to ALSA), esddsp (OSS to ESound), and art
 
 Note that ALSA driver also provides in-kernel OSS emulation. However, it's not aware of the user space stuff, including libasound virtual devices, and therefore can't be used to forward sound to PulseAudio. See [OSS emulation](http://alsa.opensrc.org/OSS_emulation) on ALSA wiki.
 
-### Emulate ESound
+## Emulate ESound
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -3420,7 +3394,7 @@ For seamless migration, PulseAudio server provides two features:
 
 * Two modules that implement ESound autospawn conventions. An application may start PulseAudio server as if it were an ESound server, and PulseAudio will notify the application that it was successfully started with a signal of via a file descriptor.
 
-### Partially or completely disable PulseAudio
+## Partially or completely disable PulseAudio
 
 There are several methods of running applications that need PulseAudio on systems where PulseAudio is not the primary sound system or even is not installed.
 
@@ -3448,7 +3422,7 @@ There are several methods of running applications that need PulseAudio on system
 
     The [BlueALSA](https://github.com/Arkq/bluez-alsa) (bluez-alsa) project implements virtual ALSA device that uses Bluez5 as a backend. This allows to play and record audio from Bluetooth devices with any software that supports ALSA.
 
-### Temporary suspend PulseAudio
+## Temporary suspend PulseAudio
 
 [pasuspender](http://manpages.ubuntu.com/manpages/en/man1/pasuspender.1.html) is a wrapper tool for applications that need exclusive access to ALSA devices.
 
@@ -3458,11 +3432,11 @@ The typical use case for this method is to run JACK applications on a system tha
 
 ---
 
-## Server internals
+# Server internals
 
 This section provides a brief overview of PulseAudio server internals.
 
-### Components
+## Components
 
 PulseAudio server consists of several logical components:
 
@@ -3478,7 +3452,7 @@ PulseAudio server consists of several logical components:
 
     Modules are dynamically loaded libraries that extend server and implement many actual features, including network protocols, device drivers, sound processing tools, audio routing, etc. Modules use the libpulsecore library.
 
-### Core
+## Core
 
 The core provides building blocks and shared environment for modules:
 
@@ -3527,7 +3501,7 @@ The core provides building blocks and shared environment for modules:
     * platform wrappers
     * OOP helpers
 
-### Modules
+## Modules
 
 A module is a dynamically loadable server extension. Usually, it is a shared library loaded at run-time, but it's also possible to build it as a static library and link into the server at compile time.
 
@@ -3563,7 +3537,7 @@ There are several ways how a module may extend the server:
 
     This approach is used to provide an API to manage the restoration database and setup custom parameters for some sound processing tools.
 
-### Objects
+## Objects
 
 There are two base types that are used to implement objects:
 
@@ -3590,7 +3564,7 @@ There are two base types that are used to implement objects:
     * network connections
     * streams
 
-### Registries
+## Registries
 
 The core provides two global registries accessible in modules:
 
@@ -3609,7 +3583,7 @@ The core provides two global registries accessible in modules:
 
     The shared property subsystem (`pa_shared`) is a global hashmap that contains arbitrary data. Modules use it to register objects that may be accessed by name in related modules or other instances of the same module.
 
-### Hooks and subscriptions
+## Hooks and subscriptions
 
 Hooks are an internal notification mechanism. Hooks may be provided both by core and modules:
 
@@ -3629,7 +3603,7 @@ Subscription events are an alternative notification mechanism for registered obj
 * module or client subscribes events by a mask
 * core triggers event when an object is created, removed, or modified
 
-### Properties
+## Properties
 
 PulseAudio defines numerous properties that may be set for objects registered in the core. See [ApplicationProperties](https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/Developer/Clients/ApplicationProperties/) wiki page and the [Doxygen documentation](https://freedesktop.org/software/pulseaudio/doxygen/proplist_8h.html) with the full list of properties.
 
@@ -3726,7 +3700,7 @@ Properties are grouped into property classes. The table below summarizes them.
   </tr>
 </table>
 
-### Threads
+## Threads
 
 There are two types of threads used in PulseAudio server:
 
@@ -3770,7 +3744,7 @@ There are three types of message objects:
 
 * Other message objects, including source outputs and sink inputs, don't have a dedicated thread as well. They all share the core event loop thread which handles asynchronous messages sent to them.
 
-### Memory
+## Memory
 
 The memory management in PulseAudio is based on the following concepts:
 
@@ -3806,7 +3780,7 @@ The memory management in PulseAudio is based on the following concepts:
 
     When either the exporting process *revokes* the block or the importing process *releases* the block, it is returned to the memory pool.
 
-### I/O
+## I/O
 
 PulseAudio server uses the following I/O APIs:
 
@@ -3848,7 +3822,7 @@ PulseAudio server uses the following I/O APIs:
 
     Text client streams, like the CLI and HTTP streams, are based on this channel.
 
-### Packets
+## Packets
 
 The "native" protocol is implemented on top of packets, packet stream, and packet dispatcher:
 
@@ -3868,7 +3842,7 @@ The "native" protocol is implemented on top of packets, packet stream, and packe
 
     Packet dispatcher (`pa_pdispatch`) looks up and invokes a callback for a packet. The user first registers callbacks for commands in the dispatcher, and then passes incoming packets to it.
 
-### Audio files
+## Audio files
 
 Normally, it's up to the client application to read or write audio files, and both PulseAudio server and client libraries deal only with sample streams. However, there are two cases when the server can read an audio file directly:
 
@@ -3877,13 +3851,13 @@ Normally, it's up to the client application to read or write audio files, and bo
 
 In the latter case, the server creates a new sink input that reads samples from the file. Both features are available through the CLI protocol. The server uses [libsndfile](http://www.mega-nerd.com/libsndfile/) to read audio files.
 
-### Optimizations
+## Optimizations
 
 Depending on the target platform, PulseAudio may employ various optimized versions of the sample conversion and software volume functions.
 
 They include several functions written in the GCC inline assembly and employing MMX (x86), SSE (x86), or NEON (arm) instructions, and several functions written in the [Orc](https://gstreamer.freedesktop.org/data/doc/orc/) assembly. The latter may be compiled at run-time for the current CPU.
 
-### Watchdog
+## Watchdog
 
 PulseAudio server has a built-in watchdog based on the POSIX [rlimit](http://man7.org/linux/man-pages/man2/getrlimit.2.html) feature. It terminates the server process if it consumes too much CPU load and doesn't respond in time. The server may be then automatically started by a client if the autospawn feature is enabled.
 
@@ -3899,11 +3873,11 @@ The server configures the `RLIMIT_CPU` timer which has the soft and hard limits:
 
 ---
 
-## Module list
+# Module list
 
 The tables below provide a brief summary of modules available out of the box, grouped by categories. Further details may be found on the [Modules](https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/User/Modules/) page on wiki.
 
-### Protocols and networking
+## Protocols and networking
 
 <table class="hdr_table pa_table">
  <tr>
@@ -3993,7 +3967,7 @@ The tables below provide a brief summary of modules available out of the box, gr
  </tr>
 </table>
 
-### Device drivers
+## Device drivers
 
 <table class="hdr_table pa_table">
  <tr>
@@ -4098,7 +4072,7 @@ The tables below provide a brief summary of modules available out of the box, gr
  </tr>
 </table>
 
-### Sound processing
+## Sound processing
 
 <table class="hdr_table pa_table">
  <tr>
@@ -4173,7 +4147,7 @@ The tables below provide a brief summary of modules available out of the box, gr
  </tr>
 </table>
 
-### Power saving
+## Power saving
 
 <table class="hdr_table pa_table">
  <tr>
@@ -4188,7 +4162,7 @@ The tables below provide a brief summary of modules available out of the box, gr
  </tr>
 </table>
 
-### Automatic setup and routing
+## Automatic setup and routing
 
 <table class="hdr_table pa_table">
  <tr>
@@ -4288,7 +4262,7 @@ The tables below provide a brief summary of modules available out of the box, gr
  </tr>
 </table>
 
-### Desktop integrations
+## Desktop integrations
 
 <table class="hdr_table pa_table">
  <tr>
@@ -4333,7 +4307,7 @@ The tables below provide a brief summary of modules available out of the box, gr
  </tr>
 </table>
 
-### Compatibility layers
+## Compatibility layers
 
 <table class="hdr_table pa_table">
  <tr>
@@ -4350,11 +4324,11 @@ The tables below provide a brief summary of modules available out of the box, gr
 
 ---
 
-## GUI tools
+# GUI tools
 
 This section provides a brief summary of the three standard GUI tools for PulseAudio. Besides these tools, most desktop environments also provide their own tools or applets.
 
-### pavucontrol
+## pavucontrol
 
 [pavucontrol](https://freedesktop.org/software/pulseaudio/pavucontrol/) (PulseAudio Volume Control) provides the following features:
 
@@ -4386,7 +4360,7 @@ This tool uses the C API to communicate with the server. PulseAudio automaticall
   </a>
 </div>
 
-### paprefs
+## paprefs
 
 [paprefs](https://freedesktop.org/software/pulseaudio/paprefs/) (PulseAudio Preferences) provides methods to enable modules or module options that are disabled by default.
 
@@ -4407,7 +4381,7 @@ This tool just writes module names and arguments to the GNOME registry (GConf) a
   </a>
 </div>
 
-### qpaeq
+## qpaeq
 
 [qpaeq](https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/User/Equalizer/) (Qt PulseAudio Equalizer) is a frontend for the equalizer sink.
 
@@ -4423,11 +4397,11 @@ The number of sliders depends on the window size, so a larger window gives a hig
 
 ---
 
-## Command line tools
+# Command line tools
 
 PulseAudio package comes with several command line tools.
 
-### Server
+## Server
 
 * **pulseaudio**
 
@@ -4435,7 +4409,7 @@ PulseAudio package comes with several command line tools.
 
     The user may specify what configuration files to use, what modules to load and from where, configure log levels, and some other options.
 
-### Clients
+## Clients
 
 * **pacmd**
 
@@ -4473,7 +4447,7 @@ PulseAudio package comes with several command line tools.
 
         Create a recording stream, receive samples from the stream, and write raw samples to stdout.
 
-### Desktop
+## Desktop
 
 * **start-pulseaudio-x11**
 
@@ -4487,7 +4461,7 @@ PulseAudio package comes with several command line tools.
 
     The tool sets X11 properties that may be used by PulseAudio clients to connect to the server. The server address and credentials should be manually provided by the user via command line arguments. The tool is now superseded by the module-x11-publish and start-pulseaudio-x11 tool.
 
-### Compatibility
+## Compatibility
 
 * **pasuspender**
 
@@ -4509,7 +4483,7 @@ PulseAudio package comes with several command line tools.
 
 ---
 
-## Configuration
+# Configuration
 
 <div class="flex_table">
   <div class="flex_th">component</div>
@@ -4521,7 +4495,7 @@ PulseAudio configuration is documented on the [User](https://www.freedesktop.org
 
 The Arch Linux wiki may be also useful: [1](https://wiki.archlinux.org/index.php/PulseAudio), [2](https://wiki.archlinux.org/index.php/PulseAudio/Configuration), [3](https://wiki.archlinux.org/index.php/PulseAudio/Examples), [4](https://wiki.archlinux.org/index.php/PulseAudio/Troubleshooting).
 
-### System and user modes
+## System and user modes
 
 There are two ways to run the server:
 
@@ -4544,7 +4518,7 @@ From the usability and security points of view, the server is not designed to be
 
 * All connected clients share the same persistent state, including the default source and sink, the restoration database, etc.
 
-### System directories
+## System directories
 
 PulseAudio uses the following system-wide directories:
 
@@ -4572,7 +4546,7 @@ PulseAudio uses the following system-wide directories:
 
     Contains `"alsa-mixer"` directory with ALSA profiles for non-UCM ALSA cards. See [Profiles](https://www.freedesktop.org/wiki/Software/PulseAudio/Backends/ALSA/Profiles/) page on wiki.
 
-### User directories
+## User directories
 
 PulseAudio uses the following per-user directories (belonging to the "pulse" user in the system-wide mode):
 
@@ -4621,7 +4595,7 @@ PulseAudio uses the following per-user directories (belonging to the "pulse" use
     * pid file
     * lock files
 
-### Configuration files
+## Configuration files
 
 PulseAudio uses two types of configuration files:
 
@@ -4637,7 +4611,7 @@ Four files are used by default:
 
 If the user config directory contains `.conf` files, the system `.conf` files with the same name are ignored.
 
-### Sockets
+## Sockets
 
 PulseAudio uses two types of sockets:
 
@@ -4669,7 +4643,7 @@ The table below lists the non-standard TCP ports used by PulseAudio.
  </tr>
 </table>
 
-### Client startup
+## Client startup
 
 Every client that uses libpulse performs the following steps at startup:
 
@@ -4709,7 +4683,7 @@ Every client that uses libpulse performs the following steps at startup:
 
 ---
 
-## Portability
+# Portability
 
 PulseAudio may work on several POSIX-compatible platforms. See [About](https://www.freedesktop.org/wiki/Software/PulseAudio/About/) and [Ports](https://www.freedesktop.org/wiki/Software/PulseAudio/Ports/) pages on wiki.
 
@@ -4738,11 +4712,11 @@ In result, Linux is the only platform on which all of the important features are
 
 ---
 
-## Example setups
+# Example setups
 
 This section demonstrates example PulseAudio configurations for several common and advanced use cases.
 
-### Playback and recording
+## Playback and recording
 
 * **Connect a recording application to a source**
 
@@ -4793,7 +4767,7 @@ This section demonstrates example PulseAudio configurations for several common a
 
     1. Connect the paplay sink input to the equalizer sink using the pavucontrol tool.
 
-### Capturing sound
+## Capturing sound
 
 * **Connect a sink to a file**
 
@@ -4865,7 +4839,7 @@ This section demonstrates example PulseAudio configurations for several common a
 
     1. Connect the parecord source output to the monitor of the null sink using the pavucontrol tool.
 
-### Native protocol
+## Native protocol
 
 * **Connect a local playback application to a remote sink**
 
@@ -4968,7 +4942,7 @@ This section demonstrates example PulseAudio configurations for several common a
 
     1. Connect the remote sink input to the sink using the pavucontrol tool on the remote server.
 
-### RTP
+## RTP
 
 * **Connect a local playback application to a remote sink**
 
@@ -5052,13 +5026,13 @@ This section demonstrates example PulseAudio configurations for several common a
 
 ---
 
-## Example clients and modules
+# Example clients and modules
 
 This section provides several examples of client applications and server modules. The source code and usage instructions are available [on GitHub](https://github.com/gavv/snippets/tree/master/pa).
 
 Also, some analysis of the client examples is available in [this post](https://gavv.net/articles/decode-play/).
 
-### Documentation
+## Documentation
 
 The following official documentation is available:
 
@@ -5082,7 +5056,7 @@ The following official documentation is available:
     * [module-virtual-source](https://github.com/pulseaudio/pulseaudio/blob/master/src/modules/module-virtual-source.c)
     * [module-virtual-sink](https://github.com/pulseaudio/pulseaudio/blob/master/src/modules/module-virtual-sink.c)
 
-### D-Bus API
+## D-Bus API
 
 This example is quite straightforward, so just look at the code.
 
@@ -5090,7 +5064,7 @@ This example is quite straightforward, so just look at the code.
 
     Python3 script that prints various server-side objects using the D-Bus API.
 
-### C API
+## C API
 
 These examples are described in details in another [article](https://gavv.net/articles/decode-play/#pulseaudio).
 
@@ -5106,7 +5080,7 @@ These examples are described in details in another [article](https://gavv.net/ar
 
     Playback client using the Asynchronous API, based on polling.
 
-### Modules
+## Modules
 
 These examples have comments in the source code.
 
@@ -5132,7 +5106,7 @@ See also:
 
 ---
 
-## Critique
+# Critique
 
 Finally, I'd like to discuss some problems in the PulseAudio design and implementation that I've gathered while writing this document.
 
@@ -5146,7 +5120,7 @@ We *won't* discuss several kinds of issues:
 
 * Bugs and limitations of the existing code that can be just fixed at some point. There is a bug tracker for such things.
 
-### Documentation
+## Documentation
 
 A comprehensive documentation is a starting point for detecting problems and improving things. PulseAudio has a good documentation for public interfaces and troubleshooting. However, the following official documentation is partially or completely missing:
 
@@ -5158,7 +5132,7 @@ A comprehensive documentation is a starting point for detecting problems and imp
 * a detailed documentation for internal APIs
 * a rationale
 
-### Abstraction level
+## Abstraction level
 
 PulseAudio is built around the four fundamental object types: sources, sinks, source outputs, and sink inputs.
 
@@ -5218,7 +5192,7 @@ Here are some candidates of the high-level abstractions that are currently missi
 
     There are two problems. First, the implementation is duplicated in the source and in the sink. Second, the implementation is pretty complicated, and mixing it with the source or sink housekeeping makes things even more complicated. It would be much simpler to understand and improve it if it was a standalone component.
 
-### Mechanism and policy
+## Mechanism and policy
 
 Lack of the appropriate high-level abstractions leads to violation of the [separation of mechanism and policy](https://en.wikipedia.org/wiki/Separation_of_mechanism_and_policy) principle.
 
@@ -5238,7 +5212,7 @@ When this happens, and several modules need the same mechanism, two scenarios ar
 
     This happened with the network protocols and protocol extensions. Actually, the modularity is only an illusion in this particular case, because the "native", the "simple", the CLI, the HTTP, and the ESound protocol modules are just thin wrappers that use the functionality implemented completely in the core.
 
-### Code quality
+## Code quality
 
 There are some usual problems with the code quality, that could be resolved by introducing stricter code style guidelines:
 
@@ -5258,7 +5232,7 @@ There are some usual problems with the code quality, that could be resolved by i
 
 * Long function bodies, short variable names, reusing the same variable for several purposes, `#ifdef` madness in some modules.
 
-### Service quality
+## Service quality
 
 Two PulseAudio servers can be connected either using the "native" protocol or using RTP. Both implementations are not suited for unreliable networks like WiFi:
 
@@ -5268,7 +5242,7 @@ Two PulseAudio servers can be connected either using the "native" protocol or us
 
 This problem is addressed by the [Roc Toolkit](https://roc-streaming.org/) project that I'm currently [working on](https://gavv.net/articles/new-network-transport/). A tutorial is [available here](https://gavv.net/articles/roc-tutorial/).
 
-### Usability
+## Usability
 
 There are several sources of confusion for users:
 
@@ -5290,7 +5264,7 @@ There are several sources of confusion for users:
 
 * The autospawn feature is just weird. The user wants to kill the server, but the server is magically restarted by any background client. By the way, if the user disables autospawn, the server will not be automatically restarted after a crash, which still happens from time to time.
 
-### Final thoughts
+## Final thoughts
 
 This section lists some downsides, but there are upsides too:
 

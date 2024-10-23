@@ -9,7 +9,7 @@ Below you can find code snippets that match USB devices using libudev.
 
 A good tutorial is available here: [libudev and Sysfs Tutorial](http://www.signal11.us/oss/udev/).
 
-### Listing and monitoring USB devices
+## Listing and monitoring USB devices
 
 The snippet first prints all detected USB devices, and then enters monitoring mode and prints USB devices when they are inserted or removed.
 
@@ -30,7 +30,7 @@ usb usb_device remove 0000:0000 /dev/bus/usb/001/026
 ^C
 ```
 
-### Listing USB storage devices
+## Listing USB storage devices
 
 The snippet prints detected USB storage devices.
 

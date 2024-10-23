@@ -1,0 +1,7 @@
+{{ .Content
+  | replaceRE "(?s)^.*?<nav.*?TableOfContents.*?>.*?</nav>" ""
+  | replaceRE "(?s)^.*?<p>" "<p>"
+  | replaceRE "(?s)<h[0-9].*?>.*" ""
+  | plainify
+  | truncate 330
+}}

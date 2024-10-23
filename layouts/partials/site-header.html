@@ -3,50 +3,44 @@
     Victor Gaydov
   </div>
   <div id="menu">
-    <div>
-      <div>
-        {{ if eq .RelPermalink "/about/" }}
-          <a href="/about/" class="menu-item menu-selected">
-        {{ else }}
-          <a href="/about/" class="menu-item">
-        {{ end }}
-            About
-          </a>
-      </div>
-    </div>
-    <div>
-      <div>
-        {{ if eq .RelPermalink "/software/" }}
-          <a href="/software/" class="menu-item menu-selected">
-        {{ else }}
-          <a href="/software/" class="menu-item">
-        {{ end }}
-            Software
-          </a>
-      </div>
-    </div>
-    <div>
-      <div>
-        {{ if eq .Section "articles" }}
-          <a href="/articles/" class="menu-item menu-selected">
-        {{ else if eq .Kind "taxonomy" }}
-          <a href="/articles/" class="menu-item menu-selected">
-        {{ else }}
-          <a href="/articles/" class="menu-item">
-        {{ end }}
-            Articles
-          </a>
-      </div>
-    </div>
-    <div id="header-buttons">
-      <div>
-        <a href="https://fosstodon.org/@gavv" class="image-button">
-          <i class="fa-brands fa-mastodon"></i>
+    <div class="menu-button">
+      {{ if eq .RelPermalink "/about/" }}
+        <a href="/about/" class="menu-item menu-selected">
+      {{ else }}
+        <a href="/about/" class="menu-item">
+      {{ end }}
+          About
         </a>
-        <a href="{{ .Site.RSSLink | relURL }}" class="image-button">
-          <i class="rss-button fa fa-rss"></i>
+    </div>
+    <div class="menu-button">
+      {{ if eq .RelPermalink "/software/" }}
+        <a href="/software/" class="menu-item menu-selected">
+      {{ else }}
+        <a href="/software/" class="menu-item">
+      {{ end }}
+          Software
         </a>
-      </div>
+    </div>
+    <div class="menu-button">
+      {{ if eq .Section "articles" }}
+        <a href="/articles/" class="menu-item menu-selected">
+      {{ else if eq .Kind "taxonomy" }}
+        <a href="/articles/" class="menu-item menu-selected">
+      {{ else }}
+        <a href="/articles/" class="menu-item">
+      {{ end }}
+          Articles
+        </a>
+    </div>
+  </div>
+  <div id="tray">
+    <div>
+      <a href="https://fosstodon.org/@gavv" class="tray-button">
+        <i class="fa-brands fa-mastodon"></i>
+      </a>
+      <a href="{{ "articles/index.xml" | absURL }}" class="tray-button">
+        <i class="rss-button fa fa-rss"></i>
+      </a>
     </div>
   </div>
 </header>

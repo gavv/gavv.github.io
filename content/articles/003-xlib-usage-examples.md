@@ -5,15 +5,11 @@ tags = ["linux", "x11"]
 title = "Xlib usage examples"
 +++
 
-**Table of contents**
-
-* [What is Xlib?](#what-is-xlib)
-* [Printing pressed keys](#printing-pressed-keys)
-* [Embedding window](#embedding-window)
+{{% toc %}}
 
 ---
 
-## What is Xlib?
+# What is Xlib?
 
 [Xlib](https://en.wikipedia.org/wiki/Xlib) (also known as libX11) is an X11 client library. It contains functions for interacting with an X server.
 
@@ -21,7 +17,7 @@ This page provides several code snippets implementing complete X11 programs.
 
 ---
 
-## Printing pressed keys
+# Printing pressed keys
 
 The source code is available on GitHub: [`xlib_hello.c`](https://github.com/gavv/snippets/blob/master/xlib/xlib_hello.c).
 
@@ -39,11 +35,11 @@ Some documentation that was useful for me:
 
 ---
 
-## Embedding window
+# Embedding window
 
 The snippet implements a container window that can be used as a parent for an arbitrary X11 window.
 
-### Window hierarchy
+## Window hierarchy
 
 In X11, all windows are organized in a hierarchy, starting from a [root window](https://en.wikipedia.org/wiki/Root_window), so that every window (except root) has a parent window. Since this hierarchy is global, the child and parent windows are not required to belong to the same process.
 
@@ -52,9 +48,9 @@ There are two ways of setting the window parent:
 * when a new window is created, its creator specifies its parent window ID
 * any applications can change the parent of any window, given its window ID
 
-The latter feature is used by [re-paranting window managers](https://en.wikipedia.org/wiki/Re-parenting_window_manager) (i.e. any modern window manager).
+The latter feature is used by [re-parenting window managers](https://en.wikipedia.org/wiki/Re-parenting_window_manager) (i.e. any modern window manager).
 
-### Embedding
+## Embedding
 
 There are no special requirements for the child window that can be embedded. Almost every X11 application is already prepared for embedding its top-level window into some parent window (typically a window manager frame that contains the close button).
 
@@ -71,7 +67,7 @@ Some applications allow to specify the parent window ID that they will pass to `
 * `mplayer` accepts `-wid` command line argument
 * `xterm` accepts `-into` command line argument
 
-### The snippet
+## The snippet
 
 The source code is available on GitHub: [`xlib_container.c`](https://github.com/gavv/snippets/blob/master/xlib/xlib_container.c).
 
@@ -84,7 +80,7 @@ The snippet does the following:
 Here is the result of embedding an `xterm` window:
 
 ```
-$ ./xlib_container xterm -into
+./xlib_container xterm -into
 ```
 
 ![](/articles/xlib-usage-examples/embedded_xterm.png)

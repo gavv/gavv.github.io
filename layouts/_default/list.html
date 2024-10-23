@@ -15,11 +15,10 @@
         <article>
           {{ partial "post-header.html" (dict "Post" . "Site" .Site "IsPage" $.IsPage) }}
           <section class="post-excerpt">
-            <p>
-              {{ .Summary | truncate 330 }}
-            </p>
+            <p>{{ partial "pretty-summary.html" . }}</p>
           </section>
         </article>
+        <hr/>
       {{ end }}
     {{ end }}
   </section>

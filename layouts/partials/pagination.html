@@ -7,19 +7,27 @@
         newer
       </a>
     </div>
+    {{ else }}
+    <div class="page-prev page-blocked">
+        <i class="fa fa-angle-left"></i>
+        newer
+    </div>
     {{ end }}
 
+    <div class="page-number">
+      {{ .Paginator.PageNumber }} / {{ .Paginator.TotalPages }}
+    </div>
+
     {{ if .Paginator.HasNext }}
-    <div class="page-next">
+    <div class="page-next page-blocked">
       <a href="{{ .Paginator.Next.URL }}">
         older
         <i class="fa fa-angle-right"></i>
       </a>
     </div>
+    {{ else }}
+        older
+        <i class="fa fa-angle-right"></i>
     {{ end }}
-
-    <div class="page-number">
-      page {{ .Paginator.PageNumber }} of {{ .Paginator.TotalPages }}
-    </div>
   </div>
 </nav>

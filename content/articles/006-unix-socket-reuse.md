@@ -15,7 +15,7 @@ They have several advantages:
 
 See details [here](http://lists.freebsd.org/pipermail/freebsd-performance/2005-February/001143.html).
 
-### Lack of SO_REUSEADDR
+## Lack of SO_REUSEADDR
 
 A socket file is created by `bind(2)` call. If the file already exists, `EADDRINUSE` is returned.
 
@@ -33,7 +33,7 @@ There are two bad approaches to deal with this problem:
 
     The problem is that if our process crashes, `unlink()` will not be called and we'll have a dangling socket.
 
-### Using a lock file
+## Using a lock file
 
 One option is to use a lock file in addition to the socket file.
 
@@ -78,7 +78,7 @@ if (ret != 0)
     exit(1);
 ```
 
-### Using abstract namespace sockets
+## Using abstract namespace sockets
 
 Another option is to use Linux-specific abstract namespace sockets.
 

@@ -5,7 +5,7 @@ tags = ["scons"]
 title = "SCons rebuilds generated source files every launch"
 +++
 
-### Problem
+## Problem
 
 In a large project that uses SCons, [VariantDir](https://bitbucket.org/scons/scons/wiki/VariantDir%28%29), and source code generation, happens one of the following:
 
@@ -36,7 +36,7 @@ Exception OSError: OSError(2, 'No such file or directory') in
 
 Unfortunately, I was unable to reproduce this outside of my project.
 
-### Reason
+## Reason
 
 The problem occurs because:
 
@@ -52,7 +52,7 @@ $ scons --debug=explain
 scons: Cannot explain why `<FILENAME>' is being rebuilt: No previous build information found
 ```
 
-### Solution
+## Solution
 
 The workaround is to use single global `.sconsign` for the whole project. This feature is enabled by setting the `SConsignFile` to an absolute path:
 

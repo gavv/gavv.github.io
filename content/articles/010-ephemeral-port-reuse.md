@@ -5,7 +5,7 @@ tags = ["linux", "networking"]
 title = "Ephemeral ports and SO_REUSEADDR"
 +++
 
-### Ephemeral ports
+## Ephemeral ports
 
 The [ephemeral port](https://en.wikipedia.org/wiki/Ephemeral_port) range is a range of ports used by the kernel when the user wants the socket to be bound to a random unused port.
 
@@ -13,7 +13,7 @@ In particular, `bind`, `listen`, `connect`, and `sendto` may automatically alloc
 
 This feature is not specified in POSIX but is available in many operating systems that implement BSD sockets, including Linux.
 
-### Reusing address
+## Reusing address
 
 Be careful when using `SO_REUSEADDR` and the port is allowed to be ephemeral.
 
@@ -37,7 +37,7 @@ Note that when some application uses `bind` to allocate an ephemeral port for a 
 
 Thus, to prevent the probability of stealing a port of a random running application, take care not to accidentally enable `SO_REUSEADDR` when using ephemeral ports, both for UDP and TCP sockets.
 
-### Test program
+## Test program
 
 I've prepared a small program demonstrating the issue: [`ephemeral_reuse.c`](https://github.com/gavv/snippets/blob/master/net/ephemeral_reuse.c)
 

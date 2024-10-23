@@ -5,20 +5,11 @@ tags = ["linux", "audio"]
 title = "Decoding and playing audio files in Linux"
 +++
 
-**Table of contents**
-
-* [Overview](#overview)
-* [FFmpeg](#ffmpeg)
-* [SoX](#sox)
-* [ALSA (libasound)](#alsa-libasound)
-* [PulseAudio](#pulseaudio)
-* [libsndfile](#libsndfile)
-* [Other libraries](#other-libraries)
-* [Notes](#notes)
+{{% toc %}}
 
 ---
 
-## Overview
+# Overview
 
 I was playing with various media libraries recently and have prepared several snippets demonstrating how one can decode and play an audio file in two separate steps.
 
@@ -49,9 +40,16 @@ Below you can find a brief description of every snippet and some side notes.
 
 ---
 
-## FFmpeg
+# FFmpeg
 
-### [`ffmpeg_decode`](https://github.com/gavv/snippets/blob/master/decode_play/ffmpeg_decode.cpp)
+<div class="block">
+  <div class="block-header">
+    WARNING
+  </div>
+  FFMpeg examples below are heavily outdated due to changes in API.
+</div>
+
+## [`ffmpeg_decode`](https://github.com/gavv/snippets/blob/master/decode_play/ffmpeg_decode.cpp)
 
 This snippet decodes a file using FFmpeg (with automatic resampling and channel mapping).
 
@@ -73,7 +71,7 @@ Notes:
 
 * swresample context (`SwrContext`) enables buffering if input data is larger than the passed buffer, so we also read all buffered data (if any) before processing the next frame. The buffering can be avoided by carefully choosing the buffer size.
 
-### [`ffmpeg_play`](https://github.com/gavv/snippets/blob/master/decode_play/ffmpeg_play.cpp)
+## [`ffmpeg_play`](https://github.com/gavv/snippets/blob/master/decode_play/ffmpeg_play.cpp)
 
 This snippet plays decoded samples using FFmpeg.
 
@@ -90,7 +88,7 @@ Playback loop:
 * construct an audio packet (`AVPacket`) that references our buffer with raw samples
 * write the audio packet to the output device context (`AVFormatContext`)
 
-### [`ffmpeg_play_encoder`](https://github.com/gavv/snippets/blob/master/decode_play/ffmpeg_play_encoder.cpp)
+## [`ffmpeg_play_encoder`](https://github.com/gavv/snippets/blob/master/decode_play/ffmpeg_play_encoder.cpp)
 
 This snippet is a bit complicated version of the previous one, demonstrating encoder usage.
 
@@ -111,9 +109,9 @@ Playback loop:
 
 ---
 
-## SoX
+# SoX
 
-### [`sox_decode_simple`](https://github.com/gavv/snippets/blob/master/decode_play/sox_decode_simple.cpp)
+## [`sox_decode_simple`](https://github.com/gavv/snippets/blob/master/decode_play/sox_decode_simple.cpp)
 
 This snippet decodes a file using SoX (without resampling and channel mapping).
 
@@ -126,7 +124,7 @@ Decoding loop:
 * read samples from the input file
 * write samples to stdout
 
-### [`sox_decode_chain`](https://github.com/gavv/snippets/blob/master/decode_play/sox_decode_chain.cpp)
+## [`sox_decode_chain`](https://github.com/gavv/snippets/blob/master/decode_play/sox_decode_chain.cpp)
 
 This snippet also decodes file using SoX, but uses effects chain and supports resampling and channel mapping.
 
@@ -139,7 +137,7 @@ It opens input file and constructs effects chain:
 
 When the effects chain is constructed, it is executed using `sox_flow_effects()`.
 
-### [`sox_play`](https://github.com/gavv/snippets/blob/master/decode_play/sox_play.cpp)
+## [`sox_play`](https://github.com/gavv/snippets/blob/master/decode_play/sox_play.cpp)
 
 This snippet plays decoded samples using SoX.
 
@@ -154,9 +152,9 @@ Playback loop:
 
 ---
 
-## ALSA (libasound)
+# ALSA (libasound)
 
-### [`alsa_play_simple`](https://github.com/gavv/snippets/blob/master/decode_play/alsa_play_simple.cpp)
+## [`alsa_play_simple`](https://github.com/gavv/snippets/blob/master/decode_play/alsa_play_simple.cpp)
 
 This snippet plays decoded samples using ALSA with the default parameters.
 
@@ -171,7 +169,7 @@ Playback loop:
 * read samples from stdin (full period)
 * write samples to the output device
 
-### [`alsa_play_tuned`](https://github.com/gavv/snippets/blob/master/decode_play/alsa_play_tuned.cpp)
+## [`alsa_play_tuned`](https://github.com/gavv/snippets/blob/master/decode_play/alsa_play_tuned.cpp)
 
 This snippet also uses ALSA to play decoded samples but with non-default configuration.
 
@@ -204,9 +202,9 @@ Here are my recommendations:
 
 ---
 
-## PulseAudio
+# PulseAudio
 
-### [`pa_play_simple`](https://github.com/gavv/snippets/blob/master/pa/pa_play_simple.c)
+## [`pa_play_simple`](https://github.com/gavv/snippets/blob/master/pa/pa_play_simple.c)
 
 This snippet plays decoded samples using PulseAudio [Simple API](https://freedesktop.org/software/pulseaudio/doxygen/index.html#simple_sec).
 
@@ -219,7 +217,7 @@ Playback loop:
 * read samples from stdin
 * write samples to PulseAudio server
 
-### [`pa_play_async_cb`](https://github.com/gavv/snippets/blob/master/pa/pa_play_async_cb.c)
+## [`pa_play_async_cb`](https://github.com/gavv/snippets/blob/master/pa/pa_play_async_cb.c)
 
 This snippet plays decoded samples using PulseAudio [Asynchronous API](https://freedesktop.org/software/pulseaudio/doxygen/index.html#async_sec).
 
@@ -269,7 +267,7 @@ When PulseAudio server wants more samples, it invokes our callback which does th
 
 We could also do memory allocation by ourselves. However, delegating this function to PulseAudio prevents us from unnecessary copying when PulseAudio uses the zero-copy mode. Zero copy is usually a default for local clients.
 
-### [`pa_play_async_poll`](https://github.com/gavv/snippets/blob/master/pa/pa_play_async_poll.c)
+## [`pa_play_async_poll`](https://github.com/gavv/snippets/blob/master/pa/pa_play_async_poll.c)
 
 This snippet is just like previous one, but it uses polling instead of callbacks. Polling is performed between mainloop iterations.
 
@@ -277,9 +275,9 @@ This approach could be also used with a [threaded mainloop](https://freedesktop.
 
 ---
 
-## libsndfile
+# libsndfile
 
-### [`sndfile_decode`](https://github.com/gavv/snippets/blob/master/decode_play/sndfile_decode.cpp)
+## [`sndfile_decode`](https://github.com/gavv/snippets/blob/master/decode_play/sndfile_decode.cpp)
 
 This snippet decodes a file using libsndfile.
 
@@ -294,7 +292,7 @@ Decoding loop:
 
 ---
 
-## Other libraries
+# Other libraries
 
 There are no snippets for these libraries, but they may be also useful.
 
@@ -314,7 +312,7 @@ Media frameworks:
 
 ---
 
-## Notes
+# Notes
 
 SoX can use libsndfile for reading files. FFmpeg can use SoX for more precise resampling.
 

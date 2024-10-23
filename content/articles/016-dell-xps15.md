@@ -9,6 +9,8 @@ title = "Debian Linux on Dell XPS 15"
   <img src="/articles/dell-xps15/dell.jpg" width="430px"/>
 </a>
 
+{{% toc %}}
+
 This is a small report and how-to on running Debian on [Dell XPS 15 9520](https://www.dell.com/en-us/shop/dell-laptops/xps-15-laptop/spd/xps-15-9520-laptop).
 
 TL;DR:
@@ -18,35 +20,9 @@ TL;DR:
 * be aware of sound quality issues of built-in speakers on Linux
 * be aware of possible issues with dock station after hibernation
 
-**Table of contents**
-
-* [Installing Debian](#installing-debian)
-* [Video](#video)
-  * [3.5K OLED display](#35k-oled-display) <div class="small-label">WORKS</div>
-  * [Touch display](#touch-display) <div class="small-label">WORKS</div>
-  * [Integrated Intel video card](#integrated-intel-video-card) <div class="small-label">WORKS</div>
-  * [Discrete NVIDIA video card](#discrete-nvidia-video-card) <div class="small-label">REPORTED TO WORK</div>
-* [Audio](#audio)
-  * [Speakers](#speakers) <div class="small-label">WORKS WITH ISSUES</div>
-  * [3.5mm jack](#35mm-jack) <div class="small-label">WORKS</div>
-* [Connectivity](#connectivity)
-  * [Wi-Fi](#wi-fi) <div class="small-label">WORKS</div>
-  * [Bluetooth](#bluetooth) <div class="small-label">WORKS</div>
-* [Inputs](#inputs)
-  * [Keyboard](#keyboard) <div class="small-label">WORKS</div>
-  * [Touch pad](#touch-pad) <div class="small-label">WORKS</div>
-  * [Fingerprint scanner](#fingerprint-scanner) <div class="small-label">NOT TESTED</div>
-  * [Camera](#camera) <div class="small-label">WORKS</div>
-  * [Microphone](#microphone) <div class="small-label">WORKS</div>
-* [Suspend](#suspend)
-  * [Suspend to disk](#suspend-to-disk) <div class="small-label">WORKS</div>
-  * [Suspend to ram](#suspend-to-ram) <div class="small-label">WORKS</div>
-* [Dock station](#dock-station) <div class="small-label">WORKS WITH ISSUES</div>
-* [Info](#info)
-
 ----
 
-## Installing Debian
+# Installing Debian
 
 First of all, open BIOS (press F12 after turning on) and adjust a few settings:
 
@@ -61,15 +37,15 @@ Source: [[1]](https://wiki.debian.org/InstallingDebianOn/Dell/Dell%20XPS%2015%20
 
 ----
 
-## Video
+# Video
 
-### 3.5K OLED display
+## 3.5K OLED display
 
 <div class="flex_table">
   <div class="flex_th">WORKS</div>
 </div>
 
-I'm using Xfce + i3 on Debian, and I needed several tweeks to adjust apps for high resolution. I don't know whether these tweeks are needed on GNOME and KDE or on other distros.
+I'm using Xfce + i3 on Debian, and I needed several tweaks to adjust apps for high resolution. I don't know whether these tweaks are needed on GNOME and KDE or on other distros.
 
 *Note: all these changes will fully apply only after restart.*
 
@@ -128,7 +104,7 @@ Configure LightDM [[source]](https://evren-yurtesen.blogspot.com/2017/10/lightdm
     session-setup-script=/usr/local/bin/setup-lightdm
     ```
 
-    I did not find a working solution to scale login widgets properly, so I applied this workaround to scale the whole screen. It looks a bit blury, but at least it's readable.
+    I did not find a working solution to scale login widgets properly, so I applied this workaround to scale the whole screen. It looks a bit blurry, but at least it's readable.
 
 Configure TTY [[source]](https://askubuntu.com/a/1227821/566753):
 
@@ -162,7 +138,7 @@ Configure GRUB:
     sudo update-grub
     ```
 
-### Touch display
+## Touch display
 
 <div class="flex_table">
   <div class="flex_th">WORKS</div>
@@ -172,7 +148,7 @@ Works out of the box.
 
 Didn't try to use it with dual display.
 
-### Integrated Intel video card
+## Integrated Intel video card
 
 <div class="flex_table">
   <div class="flex_th">WORKS</div>
@@ -182,7 +158,7 @@ At first I tried Debian Bullseye (currently stable), and graphics was lagging wi
 
 I'm using X11.
 
-### Discrete NVIDIA video card
+## Discrete NVIDIA video card
 
 <div class="flex_table">
   <div class="flex_th">REPORTED TO WORK</div>
@@ -194,9 +170,9 @@ I didn't try to dig into it further, however people on Reddit told me that it wo
 
 ----
 
-## Audio
+# Audio
 
-### Speakers
+## Speakers
 
 <div class="flex_table">
   <div class="flex_th">WORKS WITH ISSUES</div>
@@ -220,7 +196,7 @@ As far as I know, the problems below 6.2 were specific to Linux and were not rep
 
 In Debian Bullseye, the kernel version is 5.10. In Bookworm, it is 6.1. You can install 6.2 by yourself, but it's not stable yet. On my laptop, 6.2 causes freeze on reboot.
 
-### 3.5mm jack
+## 3.5mm jack
 
 <div class="flex_table">
   <div class="flex_th">WORKS</div>
@@ -230,9 +206,9 @@ Nothing to say here, it just works.
 
 ----
 
-## Connectivity
+# Connectivity
 
-### Wi-Fi
+## Wi-Fi
 
 <div class="flex_table">
   <div class="flex_th">WORKS</div>
@@ -246,7 +222,7 @@ Then install the following packages:
 sudo apt install firmware-iwlwifi intel-microcode firmware-misc-nonfree
 ```
 
-### Bluetooth
+## Bluetooth
 
 <div class="flex_table">
   <div class="flex_th">WORKS</div>
@@ -267,9 +243,9 @@ systemctl --user restart pipewire.service
 
 ----
 
-## Inputs
+# Inputs
 
-### Keyboard
+## Keyboard
 
 <div class="flex_table">
   <div class="flex_th">WORKS</div>
@@ -277,7 +253,7 @@ systemctl --user restart pipewire.service
 
 Works out of the box including backlight and Fn hotkeys.
 
-### Touch pad
+## Touch pad
 
 <div class="flex_table">
   <div class="flex_th">WORKS</div>
@@ -285,7 +261,7 @@ Works out of the box including backlight and Fn hotkeys.
 
 Works out of the box.
 
-### Fingerprint scanner
+## Fingerprint scanner
 
 <div class="flex_table">
   <div class="flex_th">NOT TESTED</div>
@@ -293,7 +269,7 @@ Works out of the box.
 
 Never tried it.
 
-### Camera
+## Camera
 
 <div class="flex_table">
   <div class="flex_th">WORKS</div>
@@ -301,7 +277,7 @@ Never tried it.
 
 Works out of the box.
 
-### Microphone
+## Microphone
 
 <div class="flex_table">
   <div class="flex_th">WORKS</div>
@@ -313,9 +289,9 @@ Medium sound quality, good for calls.
 
 ----
 
-## Suspend
+# Suspend
 
-### Suspend to disk
+## Suspend to disk
 
 <div class="flex_table">
   <div class="flex_th">WORKS</div>
@@ -323,7 +299,7 @@ Medium sound quality, good for calls.
 
 Works out of the box. See also "Dock station" section.
 
-### Suspend to ram
+## Suspend to ram
 
 <div class="flex_table">
   <div class="flex_th">WORKS</div>
@@ -333,7 +309,7 @@ Works out of the box.
 
 ----
 
-## Dock station
+# Dock station
 
 <div class="flex_table">
   <div class="flex_th">WORKS WITH ISSUES</div>
@@ -341,7 +317,7 @@ Works out of the box.
 
 I'm using Dell Thunderbolt Dock WD19TBS 130W.
 
-(I chose this one because I heard that Dell modifiction of thunderbolt with 130 Watts is needed to properly power Dell laptops with OLED displays; probably that's not fully true).
+(I chose this one because I heard that Dell modification of thunderbolt with 130 Watts is needed to properly power Dell laptops with OLED displays; probably that's not fully true).
 
 I've tried connecting dock station via USB and Thunderbolt ports. Both worked for me, but in case of USB I got a warning from BIOS (at boot time) that Thunderbolt port is recommended.
 
@@ -351,7 +327,7 @@ One problem I experienced is that dock station HDMI sometimes stops working afte
 
 ----
 
-## Info
+# Info
 
 ```
 $ nproc

@@ -2,106 +2,86 @@
 title = "Software"
 +++
 
-### Audio-related projects
+# Audio-related projects
 
-* [**Roc Toolkit**](https://github.com/roc-streaming)
+* <h3><a href="https://roc-streaming.org">Roc Streaming</a></h3>
 
-    Roc is a big project providing tooling for real-time audio streaming. I am one of the founders and core maintainers.
+    Roc is a big project providing tooling for real-time audio streaming. I'm grateful to be one of its founders and core maintainers.
 
-    Main repo: [**roc-toolkit**](https://github.com/roc-streaming/roc-toolkit)
+    Main repo: [roc-toolkit](https://github.com/roc-streaming/roc-toolkit)
 
-    Sound server modules: [**roc-pulse**](https://github.com/roc-streaming/roc-pulse), [**roc-vad**](https://github.com/roc-streaming/roc-vad)
+    Bindings: [roc-go](https://github.com/roc-streaming/roc-go), [roc-java](https://github.com/roc-streaming/roc-java)
 
-    Apps: [**roc-droid**](https://github.com/roc-streaming/roc-droid)
+    Sound server modules: [roc-pulse](https://github.com/roc-streaming/roc-pulse), [roc-vad](https://github.com/roc-streaming/roc-vad)
 
-    Bindings: [**roc-go**](https://github.com/roc-streaming/roc-go), [**roc-java**](https://github.com/roc-streaming/roc-java)
+    Streaming daemon: [rocd](https://github.com/roc-streaming/rocd)
 
-* [**libASPL**](https://github.com/gavv/libASPL)
+    User app: [roc-droid](https://github.com/roc-streaming/roc-droid)
+
+* <h3><a href="https://github.com/gavv/libASPL">libASPL</a></h3>
 
     C++17 library for creating macOS Audio Server plugins (virtual audio devices).
 
-* [**signal-estimator**](https://github.com/gavv/signal-estimator)
+* <h3><a href="https://github.com/gavv/signal-estimator">signal-estimator</a></h3>
 
     Tool to measure latency and other characteristics of an audio loopback.
 
-* [**webrtc-cli**](https://github.com/gavv/webrtc-cli)
+* <h3><a href="https://github.com/gavv/webrtc-cli">webrtc-cli</a></h3>
 
     Command-line WebRTC peer.
 
-* [**MiniSAPListener**](https://github.com/gavv/MiniSAPListener)
+* <h3><a href="https://github.com/gavv/MiniSAPListener">MiniSAPListener</a></h3>
 
     Command-line tool to listen to SAP/SDP announcements.
 
-### Apps
+# Task tracking
 
-* [**tagberry**](https://github.com/gavv/tagberry)
+* <h3><a href="https://github.com/gavv/tagberry">Tagberry</a></h3>
 
     Tag-oriented calendar and to-do list.
 
-* [**om-dash**](https://github.com/gavv/om-dash)
+* <h3><a href="https://github.com/gavv/om-dash">om-dash</a></h3>
 
     Emacs package for dynamic org-mode dashboards.
 
-### Utilities
+# Utilities
 
-* [**httpexpect**](https://github.com/gavv/httpexpect)
+* <h3><a href="https://github.com/gavv/httpexpect">httpexpect</a></h3>
 
     Go library for end-to-end HTTP and REST API testing.
 
-* [**cobradoc**](https://github.com/gavv/cobradoc)
+* <h3><a href="https://github.com/gavv/cobradoc">cobradoc</a></h3>
 
     Go library for automatic documentation generation for CLI tools.
 
-* [**returnstyles**](https://github.com/gavv/returnstyles)
+* <h3><a href="https://github.com/gavv/returnstyles">returnstyles</a></h3>
 
     Go linter to check function return styles.
 
-* [**httpshd**](https://github.com/gavv/httpshd)
+* <h3><a href="https://github.com/gavv/httpshd">httpshd</a></h3>
 
     Tiny HTTP server that runs shell commands.
 
-* [**linuxdeployqt6.py**](https://github.com/gavv/linuxdeployqt6.py)
+* <h3><a href="https://github.com/gavv/linuxdeployqt6.py">linuxdeployqt6.py</a></h3>
 
     Small tool to make Linux Qt6 applications self-contained.
 
-### Packages
+# Random
 
-* [**speexdsp-win64**](https://github.com/gavv/speexdsp-win64)
-
-    Prebuilt SpeexDSP binaries for Windows.
-
-* [**rnnoise-win64**](https://github.com/gavv/rnnoise-win64)
-
-    Prebuilt RNNoise binaries for Windows.
-
-* [**crashpad-binaries**](https://github.com/gavv/crashpad-binaries)
-
-    Prebuilt Google Crashpad binaries for Windows and macOS.
-
-### Archived
-
-* [**pull-request-artifacts**](https://github.com/gavv/pull-request-artifacts)
-
-    GitHub Action to post build artifacts in PR comments.
-
-* [**qt5-universal-binaries**](https://github.com/gavv/qt5-universal-binaries)
-
-    Prebuilt Qt5 universal binaries for macOS.
-
-* [**monotime**](https://github.com/gavv/monotime)
-
-    Go library for monotonic clock.
-
-* [**gv-overlay**](https://github.com/gavv/gv-overlay)
-
-    Personal Gentoo overlay.
-
-### Miscellaneous
-
-* [**snippets**](https://github.com/gavv/snippets)
+* <h3><a href="https://github.com/gavv/snippets">snippets</a></h3>
 
     Random code snippets.
 
-* [**bfu**](https://github.com/gavv/bfu)
+* <h3><a href="https://github.com/gavv/bfu">bfu</a></h3>
 
     Fancy / puzzling BF debugger.
+
+# Archive
+
+* <h3><a href="https://github.com/gavv/pull-request-artifacts">pull-request-artifacts</a></h3>
+
+    GitHub Action to post build artifacts in PR comments.
+
+* <h3><a href="https://github.com/gavv/monotime">monotime</a></h3>
+
+    Go library for monotonic clock.
