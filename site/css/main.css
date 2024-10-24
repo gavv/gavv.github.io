@@ -152,7 +152,7 @@ a:hover.tray-button {
 }
 
 .paginator {
-    font-size: 20px;
+    font-size: 18px;
     text-align: center;
     overflow: hidden;
     padding: 4px;
@@ -183,10 +183,10 @@ a:hover.tray-button {
 /* text */
 
 h1 {
-    font-size: 28px;
+    font-size: 27px;
     margin-top: 20px;
     margin-bottom: 20px;
-    background: #6e72781f;
+    background: #7d8fa91f;
     padding: 3px 0 3px 3px;
 }
 h2 {
@@ -267,7 +267,7 @@ th {
     border: 1px solid #bebab054;
 }
 .hdr_table th {
-    background: #90af610d;
+    background: #99b4d11a;
 }
 td {
     text-align: left;
@@ -283,7 +283,7 @@ td {
 }
 .flex_th {
     font-weight: bolder;
-    background: #90af610d;
+    background: #99b4d11a;
 }
 .flex_table div {
     padding: 5px;
