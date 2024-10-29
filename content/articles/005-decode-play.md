@@ -42,8 +42,8 @@ Below you can find a brief description of every snippet and some side notes.
 
 # FFmpeg
 
-<div class="block">
-  <div class="block-header">
+<div class="info-block">
+  <div class="info-header">
     WARNING
   </div>
   FFMpeg examples below are heavily outdated due to changes in API.

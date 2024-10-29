@@ -9,8 +9,8 @@ title = "Updated tutorial for Roc 0.2"
 
 ---
 
-<div class="block">
-  <div class="block-header">
+<div class="info-block">
+  <div class="info-header">
     UPDATE
   </div>
   You can find tutorial updated for <b>0.4.x</b> release series in <a href="/articles/roc-0.4/"><b>this article</b></a>.
