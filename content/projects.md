@@ -34,15 +34,25 @@ title = "Projects"
 
     Command-line tool to listen to SAP/SDP announcements.
 
-# Task tracking
+# User apps
 
 * <h3><a href="https://github.com/gavv/tagberry">Tagberry</a></h3>
 
     Tag-oriented calendar and to-do list.
 
+# Emacs
+
 * <h3><a href="https://github.com/gavv/om-dash">om-dash</a></h3>
 
-    Emacs package for dynamic org-mode dashboards.
+    Building blocks for org-based dashboards.
+
+* <h3><a href="https://github.com/gavv/transient-compile">transient-compile</a></h3>
+
+    Dynamic transient menu for compilation.
+
+* <h3><a href="https://github.com/gavv/project-headerline">project-headerline</a></h3>
+
+    Customizable project headerline.
 
 # Utilities
 
