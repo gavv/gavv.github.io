@@ -14,12 +14,30 @@
           </a>
       </div>
       <div class="menu-button">
-        {{ if eq .RelPermalink "/projects/" }}
-          <a href="/projects/" class="menu-item menu-selected">
+        {{ if eq .RelPermalink "/cv/" }}
+          <a href="/cv/" class="menu-item menu-selected">
         {{ else }}
-          <a href="/projects/" class="menu-item">
+          <a href="/cv/" class="menu-item">
         {{ end }}
-            Projects
+            CV
+          </a>
+      </div>
+      <div class="menu-button">
+        {{ if eq .RelPermalink "/business/" }}
+          <a href="/business/" class="menu-item menu-selected">
+        {{ else }}
+          <a href="/business/" class="menu-item">
+        {{ end }}
+            Business
+          </a>
+      </div>
+      <div class="menu-button">
+        {{ if eq .RelPermalink "/open-source/" }}
+          <a href="/open-source/" class="menu-item menu-selected">
+        {{ else }}
+          <a href="/open-source/" class="menu-item">
+        {{ end }}
+            Open Source
           </a>
       </div>
       <div class="menu-button">

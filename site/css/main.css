@@ -124,12 +124,11 @@ a:hover.tray-button {
 }
 
 .post-title {
-    font-size: 30px;
+    font-size: 35px;
     margin-top: 22px;
     margin-bottom: 22px;
     background: none;
     border: none;
-    font-size: 35px;
 }
 .post-title a {
     background: none;
@@ -362,6 +361,15 @@ img {
     max-width: 48%;
 }
 
+/* notice block */
+
+.notice-block {
+    background-color: #fffae8;
+    border: 1px solid #d8a22163;
+    padding-left: 10px;
+    padding-right: 5px;
+}
+
 /* info block */
 
 .info-block {
@@ -413,6 +421,30 @@ div.youtube iframe {
 
 .pa_table tr td:nth-child(3) {
     width: 55%;
+}
+
+/* cv */
+
+.cv-header {
+    background: #e0ebf3db;
+    border: solid 1px #b6cbd7;
+    padding: 0px;
+    margin: 15px 0px 15px 0px;
+}
+.cv-header h1 {
+    font-size: 35px;
+    background: none;
+    padding: 10px 5px 5px 5px;
+    margin: 0px;
+}
+.cv-header h2 {
+    font-size: 25px;
+    background: none;
+    padding: 5px 5px 5px 5px;
+    margin: 0px;
+}
+.cv-contacts {
+    font-size: 15px;
 }
 
 /* mobile */

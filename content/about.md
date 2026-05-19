@@ -2,53 +2,36 @@
 title = "About"
 +++
 
-# About this site
-
-Welcome!
-
-This site is my homepage, containing some technical writings and links to the software projects I'm participating in.
-
 # About me
 
-I'm an open-source and Linux enthusiast, enjoying systems programming, networking, and audio.
+Hello! My name is **Victor Gaydov** (*VIK-tor GUY-dov*).
 
-You can contact me via victor@enise.org.
+I'm an open-source and Linux enthusiast, mostly interested in systems programming, networking, and audio.
 
-Me on web:
+On a more personal note, I'm also a dad, a digital nomad, a bike tourist, a hiker, and sometimes a gamer. I was born and raised in Russia. For the past few years, my family and I, dog included, have been traveling around the globe.
 
-* [GitHub](https://github.com/gavv)
-* [Mastodon](https://fosstodon.org/@gavv)
-* [StackOverflow](https://stackoverflow.com/users/3169754/gavv)
-* [GoodReads](https://www.goodreads.com/user/show/46643060-victor-gaydov)
+Welcome to my homepage! Here you can find:
 
-# Hiring me
+- [my CV](/cv/)
+- [commercial projects and contract work I do](/business/)
+- [open-source software I maintain](/open-source/)
+- [technical write-ups](/articles/)
 
-Currently I'm mostly working on my open-source projects and earning money by freelancing.
+# Contacts
 
-I'm open to short-time or part-time opportunities, jobs with flexible schedule, and paid work on my projects.
+You can contact me at victor@enise.org.
 
-My resume:
+Welcome to follow my microblog for occasional interesting bits from my projects: [@gavv@fosstodon.org](https://fosstodon.org/@gavv).
 
-* [LinkedIn](https://www.linkedin.com/in/victor-gaydov/)
-* [Upwork](https://www.upwork.com/o/profiles/users/_~01205fd34b306ddfd6/)
+Or find me on other platforms:
 
-# Donations
+- [LinkedIn](https://www.linkedin.com/in/victor-gaydov/)
+- [Upwork](https://www.upwork.com/o/profiles/users/_~01205fd34b306ddfd6/)
+- [GitHub](https://github.com/gavv)
+- [Stack Overflow](https://stackoverflow.com/users/3169754/gavv)
+- [Goodreads](https://www.goodreads.com/user/show/46643060-victor-gaydov)
 
-If you would like to sponsor my open-source work, you can use one of the following platforms for one-time or recurring donations:
-
-* [Buy Me a Coffee](https://www.buymeacoffee.com/gavv)
-* [Liberapay](https://liberapay.com/gavv/)
-* [PayPal](https://www.paypal.com/paypalme/victorgaydov)
-
-There are also team accounts for Roc Streaming: [Open Collective](https://opencollective.com/roc-streaming), [Liberapay](https://liberapay.com/roc-streaming/)
-
-I keep track of personal donations here: [donation history](/donations/).
-
-Thank you!
-
-Also, feel free to contact me if you would like to sponsor development of a particular feature.
-
-# Legal
+# Copyright
 
 All original content on this site is licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
 
