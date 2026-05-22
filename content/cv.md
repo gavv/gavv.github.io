@@ -119,6 +119,17 @@ Responsibilities:
 
 Below is a list of the most interesting freelance contracts that I've completed. You can find most of them, and some others, on my [Upwork profile](https://www.upwork.com/freelancers/_~01205fd34b306ddfd6/).
 
+## Probabilistic NAT traversal for WebRTC
+
+<div class="post-time">2025</div>
+
+Implemented NAT Hole Punching algorithm based on birthday paradox probing.
+
+- Establishing P2P connection in non-trivial scenarios when standard STUN doesn't work.
+- Custom STUN client stack.
+- Integration with WebRTC / libjuice.
+- Targeted embedded Linux.
+
 ## Real-time audio streaming over Internet
 
 <div class="post-time">2023 - 2025</div>
