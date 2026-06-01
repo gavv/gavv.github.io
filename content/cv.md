@@ -4,7 +4,7 @@ title = "CV"
 
 <div class="cv-header">
   <h1>Victor Gaydov</h1>
-  <h2>Real-Time Audio Systems Engineer</h2>
+  <h2>Real-Time Audio Software Engineer</h2>
 
   <div class="cv-contacts">
 
