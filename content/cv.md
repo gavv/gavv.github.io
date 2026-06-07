@@ -14,6 +14,11 @@ title = "CV"
   - Upwork: https://www.upwork.com/o/profiles/users/_~01205fd34b306ddfd6/
 
   </div>
+
+  <div class="cv-download">
+    <i class="fa-solid fa-file-pdf"></i>
+    <a href="/victor_gaydov_cv.pdf">PDF</a>
+  </div>
 </div>
 
 # Summary

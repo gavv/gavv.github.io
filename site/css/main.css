@@ -426,6 +426,7 @@ div.youtube iframe {
 /* cv */
 
 .cv-header {
+    position: relative;
     background: #e0ebf3db;
     border: solid 1px #b6cbd7;
     padding: 0px;
@@ -445,6 +446,13 @@ div.youtube iframe {
 }
 .cv-contacts {
     font-size: 15px;
+}
+.cv-download {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 18px;
+    font-weight: bold;
 }
 
 /* mobile */
