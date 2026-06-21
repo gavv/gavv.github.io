@@ -8,18 +8,18 @@ title = "Open Source"
 
 * <h3>For businesses</h3>
 
-    If you would like to sponsor development of a particular feature, get a consultation, extended support, or are interested in other paid work related to my open-source projects, please [see this page](/business/).
+    If you would like to sponsor development of a particular feature, get a consultation, extended support, or are interested in other paid work related to my open-source projects, please [refer to this page](/business/).
 
-* <h3>For users</h3>
+* <h3>For community</h3>
 
-    If you would like to support my open-source work, you're welcome to make a one-time or recurring donation on these platforms:
+    If you would like to support my open-source work, you can make a one-time or recurring donation through one of these platforms:
 
-    - My personal accounts: [Buy Me a Coffee](https://www.buymeacoffee.com/gavv), [Liberapay](https://liberapay.com/gavv/), [PayPal](https://www.paypal.com/paypalme/victorgaydov)
+    - Personal accounts: [Buy Me a Coffee](https://www.buymeacoffee.com/gavv), [Liberapay](https://liberapay.com/gavv/), [PayPal](https://www.paypal.com/paypalme/victorgaydov)
     - Roc Streaming team accounts: [GitHub Sponsors](https://github.com/sponsors/roc-streaming), [Open Collective](https://opencollective.com/roc-streaming), [Liberapay](https://liberapay.com/roc-streaming/)
 
     I keep track of personal donations here: [donation history](/donations/).
 
-    Donations directly help me allocate more time to open-source. **Thank you!**
+    Most of this work is done in my free time. Your support helps me dedicate more time to open-source development and keep projects growing. **Thank you!**
 
 </div>
 
