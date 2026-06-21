@@ -8,7 +8,7 @@ I'm a co-founder and core maintainer of [Roc Streaming](https://roc-streaming.or
 
 It is a growing, completely open-source ecosystem for real-time audio streaming, including libraries, tools, streaming daemons, sound server modules / virtual devices, and end-user apps.
 
-I provide personal contract-based services including:
+Our team provides professional services, including:
 
 - Turnkey or custom solutions built on Roc Streaming ecosystem
 - Development of specific features
@@ -16,7 +16,7 @@ I provide personal contract-based services including:
 - Prepaid support hours
 - Technical consulting
 
-Please reach me at victor@enise.org.
+Please reach us at contact@roc-streaming.org.
 
 # ViveSound
 
