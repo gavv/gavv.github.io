@@ -364,8 +364,8 @@ img {
 /* notice block */
 
 .notice-block {
-    background-color: #fffae8;
-    border: 1px solid #d8a22163;
+    background-color: #fdfaea;
+    border: 1px solid #e8dbb9;
     padding-left: 10px;
     padding-right: 5px;
 }
@@ -373,8 +373,8 @@ img {
 /* info block */
 
 .info-block {
-    background-color: #f3c75d2e;
-    border: 1px solid #d8a22163;
+    background-color: #fdfaea;
+    border: 1px solid #e8dbb9;
     margin-top: 20px;
     padding-top: 5px;
     padding-bottom: 5px;
@@ -427,25 +427,56 @@ div.youtube iframe {
 
 .cv-header {
     position: relative;
-    background: #e0ebf3db;
-    border: solid 1px #b6cbd7;
+    background: #e9f1f7db;
+    border: solid 1px #c2d3de;
     padding: 0px;
     margin: 15px 0px 15px 0px;
 }
-.cv-header h1 {
+.cv-name {
+    font-size: 25px;
+    color: #5c6875;
+    background: none;
+    padding: 5px 5px 0px 5px;
+    margin: 0px;
+}
+.cv-title {
     font-size: 35px;
     background: none;
-    padding: 10px 5px 5px 5px;
+    padding: 3px 5px 8px 5px;
     margin: 0px;
 }
-.cv-header h2 {
-    font-size: 25px;
-    background: none;
-    padding: 5px 5px 5px 5px;
-    margin: 0px;
+.cv-link {
+    margin-left: 12px;
+}
+.cv-stats {
+    font-size: 13px;
+    color: #000000a8;
+    margin-left: 12px;
+    white-space: nowrap;
+}
+.cv-stats i {
+    font-size: 11px;
+    margin-right: 2px;
 }
 .cv-contacts {
-    font-size: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 20px;
+    font-size: 14px;
+    padding: 5px 5px 12px 7px;
+}
+.cv-contacts-column {
+    display: flex;
+    flex-direction: column;
+    row-gap: 3px;
+}
+.cv-contacts-column:first-child {
+    min-width: 200px;
+}
+.cv-contacts i {
+    width: 1.2em;
+    text-align: center;
+    margin-right: 3px;
 }
 .cv-download {
     position: absolute;
@@ -483,6 +514,10 @@ div.youtube iframe {
     }
     #tray {
         display: none !important;
+    }
+    .cv-contacts {
+        flex-direction: column !important;
+        row-gap: 3px !important;
     }
 }
 

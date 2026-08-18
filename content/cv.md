@@ -3,276 +3,217 @@ title = "CV"
 +++
 
 <div class="cv-header">
-  <h1>Victor Gaydov</h1>
-  <h2>Real-Time Audio Software Engineer</h2>
+  <h2 class="cv-name">Victor Gaydov</h2>
+  <h1 class="cv-title">Real-time Systems Software Engineer</h1>
 
   <div class="cv-contacts">
-
-  - Email: victor@enise.org
-  - Website: https://gavv.net/
-  - LinkedIn: https://www.linkedin.com/in/victor-gaydov/
-  - Upwork: https://www.upwork.com/o/profiles/users/_~01205fd34b306ddfd6/
-
+    <div class="cv-contacts-column">
+      <div><i class="fa-solid fa-envelope"></i>
+        <a href="mailto:victor@enise.org">victor@enise.org</a></div>
+      <div><i class="fa-brands fa-github"></i>
+        <a href="https://github.com/gavv" target="_blank" rel="noopener">github.com/gavv</a></div>
+    </div>
+    <div class="cv-contacts-column">
+      <div><i class="fa-brands fa-linkedin"></i>
+        <a href="https://www.linkedin.com/in/victor-gaydov/" target="_blank" rel="noopener">linkedin.com/in/victor-gaydov</a></div>
+      <div><i class="fa-solid fa-briefcase"></i>
+        <a href="https://www.upwork.com/o/profiles/users/_~01205fd34b306ddfd6/" target="_blank" rel="noopener">upwork</a>,
+        <a href="https://www.toptal.com/developers/resume/victor-gaydov" target="_blank" rel="noopener">toptal</a></div>
+    </div>
   </div>
 
   <div class="cv-download">
     <i class="fa-solid fa-file-pdf"></i>
-    <a href="/victor_gaydov_cv.pdf">PDF</a>
+    <a href="/victor_gaydov_cv.pdf" target="_blank" rel="noopener">PDF</a>
   </div>
 </div>
 
 # Summary
 
-I've been working in software engineering for over 15 years.
+15 years in software engineering, the last decade on real-time and performance-critical systems in embedded, cloud, desktop, and mobile; much of it low-latency audio.
 
-Nowadays I help companies build latency-sensitive audio systems and performance-critical native applications for embedded, desktop, and mobile platforms.
-
-My core expertise is turning complex low-level requirements into reliable and scalable architectures and implementations.
+Co-founder of Roc Streaming (open-source real-time audio stack) and ViveSound (commercial desktop audio engine).
 
 # Expertise
 
-## Audio engineering
-
-* Building scalable, optimizable architectures that sustain real-time guarantees as the system evolves.
-
-* Low-latency audio systems: audio streaming, audio I/O, synchronization, virtual audio devices.
-
-* Cross-platform audio systems: Linux (ALSA, PulseAudio, PipeWire), macOS/iOS (CoreAudio, AVFoundation, HAL plug-ins), Windows (WASAPI, Windows APO), Android (Oboe, AAudio).
-
-* Strong knowledge of real-time media protocols: WebRTC, RTSP, RTP/RTCP, FECFRAME.
-
-* Experience with media frameworks and libraries: FFmpeg, GStreamer, Opus, SpeexDSP, OpenFEC.
-
-## Systems programming
-
-* Strong Linux and POSIX systems programming experience: networking, asynchronous I/O, performance.
-
-* Strong experience with multithreading, concurrency, and lock-free algorithms.
-
-* Strong experience with embedded systems development on Linux and non-Linux platforms, targeting ARM, MIPS, RISC-V, AVR.
-
-* Experience with backend development and high-load web services.
-
-* Experience with distributed and scientific computing.
-
-* Proficient in C++, C, Go, Python, and UNIX scripting. Familiar with Rust, Java, C#, and Objective-C.
+* **Real-time multimedia:** low-latency streaming, synchronization, DSP pipelines, FEC; latency and sync measurement; RTP/RTCP, WebRTC; voice AI integration.
+* **Audio drivers & APIs:** Linux, macOS, Windows; Core Audio, WASAPI, PipeWire, ALSA, AAudio, macOS HAL plug-ins, Windows APO, virtual audio devices.
+* **Concurrency & performance:** lock-free algorithms, real-time safety, profiling, contention analysis; Linux internals.
+* **Embedded:** Linux, Zephyr, cross-compilation; STM32, ARM, MIPS, RISC-V; hardware test rigs, hardware mocks.
+* **Broader experience:** data streaming backends (gRPC, WebSockets); high-load services; native platform integration (Win32, macOS, POSIX; Android JNI/NDK, iOS CF/AVF).
+* **Languages:** C++, C, Rust, Go; working knowledge: Python, C#, Java/Kotlin, Objective-C.
 
 # Open Source Work
 
-Below is a list of the most significant open-source projects that I've built and maintain. You can find the complete list on [my website](/open-source/).
+I maintain around 15 open-source projects of varying scale, spanning real-time audio and engineering tools; some have commercial adopters. The full list is on [gavv.net/open-source](/open-source/).
 
 ## Roc Streaming • Co-founder
 
-<div class="post-time">2015 - present</div>
+<span class="post-time">2015 - present</span> <span class="cv-link">[roc-streaming.org](https://roc-streaming.org/)</span> <span class="cv-stats"><i class="fa-solid fa-star"></i> 1.2K+&nbsp;&nbsp;<i class="fa-solid fa-user"></i> 50+</span>
 
-https://github.com/roc-streaming/
+Open ecosystem for real-time audio over IP, with open-source and commercial users. Co-founded and remain a core maintainer. My contributions:
 
-Roc Streaming is an open-source ecosystem for real-time audio streaming. I am one of the founders and core maintainers.
-
-It consists of reusable components of different abstraction levels: libraries, services, sound server integrations, virtual devices, and end-user apps.
-
-The ecosystem core, [Roc Toolkit](https://github.com/roc-streaming/roc-toolkit), implements real-time audio streaming with guaranteed latency, loss recovery, adaptive adjustment to network properties, and other essential features.
-
-Other technically challenging projects worth mentioning here are [Roc VAD](https://github.com/roc-streaming/roc-vad) (network virtual audio device for macOS) and [rocd](https://github.com/roc-streaming/rocd) (audio streaming daemon).
+- Real-time architecture with deadline-aware media pipelines and budgeted task scheduling.
+- Adaptive latency, clock synchronization, asynchronous resampling, streaming statistics, lock-free algorithms and allocators subsystem.
+- Custom RTP/FECFRAME stack with Reed-Solomon and LDPC-Staircase FEC.
+- ADC-to-DAC latency down to 10 ms, sync precision 1-2 ms, and resilient playback with loss recovery over Wi-Fi and Internet.
+- OS integrations: macOS virtual device with gRPC control and PulseAudio modules.
+- Go and Java bindings (JNI, AAR), native layer for Android (MediaProjection, foreground service), and Kotlin/Flutter bridge.
+- Cross-compilation and test infrastructure: QEMU-based CI and hardware acceptance testing across x86, ARM32, ARM64, RISC-V, MIPS.
+- Release cycle, code review, documentation, contributor onboarding.
 
 ## libASPL • Author
 
-<div class="post-time">2021 - present</div>
+<span class="post-time">2021 - present</span> <span class="cv-link">[gavv/libASPL](https://github.com/gavv/libASPL)</span> <span class="cv-stats"><i class="fa-solid fa-star"></i> 85+&nbsp;&nbsp;<i class="fa-solid fa-user"></i> 5+</span>
 
-https://github.com/gavv/libASPL
+Open-source C++17 library for building virtual audio devices on macOS.
 
-libASPL is a C++17 library for creating virtual audio devices for macOS. It saves you thousands of lines of code and makes it much easier to get started with Core Audio HAL plugins.
+- Type-safe, extensible abstraction layer over the Core Audio HAL object tree.
+- Real-time-safe audio I/O, lock-free control paths, HAL simulation for driver testing.
 
 ## Signal Estimator • Author
 
-<div class="post-time">2020 - present</div>
+<span class="post-time">2020 - present</span> <span class="cv-link">[gavv/signal-estimator](https://github.com/gavv/signal-estimator)</span> <span class="cv-stats"><i class="fa-solid fa-star"></i> 85+&nbsp;&nbsp;<i class="fa-solid fa-user"></i> 10+</span>
 
-https://github.com/gavv/signal-estimator
+Audio engineering tool for end-to-end latency and synchronization measurement.
 
-signal-estimator is an audio engineering tool for measuring signal latency and its other characteristics.
+- Measures the complete hardware+software path, from ADC input to DAC output.
+- Applies to a wide range of setups: sound cards, network streaming, acoustic paths, virtual devices.
+- Computes delay via FFT-based signal correlation, I/O jitter, driver delay, synchronization error.
 
-I often build project-specific software+hardware test setups and use this tool to measure end-to-end system latency in different scenarios: local I/O, network streaming, virtual device I/O, synchronization accuracy, etc.
+# Founder Experience
 
-## WebRTC CLI • Author
+## ViveSound • Technical Co-founder
 
-<div class="post-time">2019 - present</div>
+<span class="post-time">2024 - present</span> <span class="cv-link">[vivesound.com](https://vivesound.com/)</span>
 
-https://github.com/gavv/webrtc-cli
+Commercial engine for OS-level interception and processing of other apps audio on Windows and macOS. Joined as a freelance engineer, led it to commercial launch, later became an equity partner.
 
-webrtc-cli is a command-line tool for streaming to and from audio devices and files via WebRTC. It supports PulseAudio, Opus (with FEC and PLC), and has simplistic clock drift compensation.
-
-# Founder Work
-
-## ViveSound • Co-founder
-
-<div class="post-time">2024 - present</div>
-
-https://vivesound.com/
-
-ViveSound builds a commercial audio engine for system-wide audio routing and processing. It gives control over audio flows between apps, devices, and effects.
-
-I initially joined the company as a freelance engineer, designed and implemented its core audio engine, and helped shape the product's technical direction. Later I became an equity partner.
-
-Responsibilities:
-
-1. Technical direction and architecture.
-2. Turning product goals into technical plans and priorities.
-3. Core audio engine development.
-4. Release planning, acceptance criteria, and quality-control coordination.
+- Owned technical roadmap, release cycle, and QA.
+- Cross-platform, multi-process, multi-language architecture spanning background services, virtual devices, and OS integrations.
+- Low-latency inter-process audio pipelines with lock-free shared-memory transport and gRPC control.
+- Configurable DSP chains with built-in effects, in-process and out-of-process plugins, and on-device and cloud voice AI.
+- Native audio (WASAPI, Core Audio) and system layer (Win32, macOS frameworks).
+- Customer SDK and documentation (C#, Go).
 
 # Freelance Projects
 
-Below is a list of the most interesting freelance contracts that I've completed. You can find most of them, and some others, on my [Upwork profile](https://www.upwork.com/freelancers/_~01205fd34b306ddfd6/).
+I work independently since 2019. I hold Top Rated status and 100% Job Success Score on Upwork, and have delivered around 10 projects, including a few long-term ones lasting 1-2 years.
 
-## Probabilistic NAT traversal for WebRTC
+## Probabilistic NAT traversal for P2P streaming
 
 <div class="post-time">2025</div>
 
-Implemented NAT Hole Punching algorithm based on birthday paradox probing.
+Hole punching algorithm for a P2P streaming product on embedded Linux.
 
-- Establishing P2P connection in non-trivial scenarios when standard STUN doesn't work.
-- Custom STUN client stack.
-- Integration with WebRTC / libjuice.
-- Targeted embedded Linux.
+- Three-axis NAT classifier per RFC 5780, on a custom STUN client.
+- Random port probing on the birthday paradox; 1-2 minutes to connect in the hard case.
+- Physical network testbed emulating full-cone, port-restricted, and symmetric NATs.
+- Integrated into customer's streaming product, shipped and tested on real ISPs.
 
-## Real-time audio streaming over Internet
+## Consumer audio device for online music collaboration
 
 <div class="post-time">2023 - 2025</div>
 
-Implemented real-time audio streaming daemon for embedded Linux.
+Hardware box for jamming online with live instruments; custom PCB, Linux/ALSA.
 
-- Guaranteed latency below 40 ms over Internet.
-- Streaming high-quality audio.
-- Forward error correction (recovery of lost packets).
-- Packet loss concealment (masking of unrecoverable losses).
+- Built the audio stack from prototype to production and handed off to in-house engineers.
+- Real-time architecture isolating latency-sensitive paths from business logic.
+- Embedded Linux peer and cloud multipoint mixer (ARM64, ALSA, DSP).
+- P2P streaming with adaptive jitter buffer and forward error correction.
+- Tested and measured on a closed-loop calibration rig.
+- Achieved end-to-end latency below 30 ms over the Internet.
 
-## Airborne audio synchronization
-
-<div class="post-time">2023</div>
-
-Implemented real-time audio synchronization software based on embedded audio signatures.
-
-- Embedding and extraction of audio signatures into acoustic (over-the-air) signal.
-- Aligning network playback with the in-air stream with a precision of 1-2 milliseconds.
-- Targeted embedded Linux with ALSA.
-
-## Distributed playback synchronization
+## Wearable audio augmentation for live venues
 
 <div class="post-time">2023</div>
 
-Developed proof-of-concept software for synchronized playback across multiple independent network stream receivers.
+Wireless device for concertgoers: aligns network playback with the acoustic sound reaching the listener.
 
-- Worked reliably across high-jitter Internet connections.
-- Achieved sub-millisecond synchronization precision.
+- Embedded Linux receiver aligning playback with acoustic watermarks in the captured signal.
+- Real-time streaming over Wi-Fi and ALSA I/O with hardware-timestamp delay control.
+- Achieved synchronization precision below 0.25 ms.
 
-## Speech-to-text cloud server
+## GPU speech-to-text server with WebRTC
 
 <div class="post-time">2023</div>
 
-Developed a small speech-to-text web server using OpenAI Whisper.
+- Real-time self-hosted transcription service based on faster-whisper / CTranslate2.
+- Sliding window with segment retirement, making Whisper behave as a streaming model.
+- Go/Pion WebRTC with Opus and in-band FEC.
 
-## Audio processing injection using virtual devices
+## NTP server and client for Zephyr RTOS
 
-<div class="post-time">2020 - 2023</div>
+<div class="post-time">2023</div>
 
-Designed and implemented a solution for audio processing injection on macOS and Windows.
+- Ported the BusyBox ntpd server to Zephyr RTOS on STM32F7 with hardware RTC.
+- Custom SNTP client with IPv6 support.
 
-- macOS VAD (Virtual Audio Device) and Windows APO (Audio Processing Object).
-- Low-latency audio I/O and IPC.
-- Robust multi-service architecture.
-- Plugin management system.
+## Wireless audio multi-room software
+
+<div class="post-time">2021 - 2022</div>
+
+- Clock-synchronized low-latency streaming for multi-room home audio setups.
+- Hardware test rig for measuring sync error between speakers.
+- Achieved synchronization precision ~1-2 ms.
+
+## Synchronized video monitoring for remote operators
+
+<div class="post-time">2021</div>
+
+Live video fanned out to operators at distant sites who need to make decisions in lockstep.
+
+- RTSP cameras transcoded to RTP / H.264 with KCP FEC and fanned out to receivers (Go, FFmpeg).
+- Custom NTP-like clock sync protocol and fixed-latency frame scheduling (OpenGL).
+- Achieved presentation skew below 0.5 ms.
 
 ## Software hearing aid for Android and iOS
 
-<div class="post-time">2019 - 2020</div>
+<div class="post-time">2020</div>
 
-Designed and implemented a software hearing augmentation system for Android (Oboe/AAudio) and iOS (CoreAudio, AVFoundation).
+- Real-time hearing augmentation pipeline in a portable C++ core.
+- Platform-native low-latency audio with AAudio/Oboe and Core Audio (C++, Objective-C, Java).
+- 50 ms mouth-to-ear on budget phones from 2020.
+- Latency measured acoustically on a purpose-built hardware rig.
 
-## Fake Bluetooth headset with WebRTC streaming
+## Automated voice call testing over Bluetooth
 
 <div class="post-time">2019</div>
 
-Designed and implemented a real-time audio streaming daemon with REST API.
+Lab automation software for scoring voice call quality on mobile phones using PESQ/MOS.
 
-- Real-time streaming between desktop (PulseAudio), mobile (Android), and cloud storage using WebRTC / Opus (using Go and Pion).
-- Fake headset (using PulseAudio) for nearby Bluetooth devices with sound capture/injection.
-- Low-level control over Bluetooth devices.
+- Python service impersonating HFP/SCO headset for nearby mobile devices (PulseAudio, BlueZ).
+- Live streaming via WebRTC for call monitoring, with Opus in-band FEC and PLC.
+- Live upload of call recordings to cloud for storage and analysis (GStreamer, FFmpeg, SoX).
+- Deployed to lab and got unattended testing running on real phones and carrier networks.
 
-# Employment History
+# Prior Employment
 
-## Team lead • TradingView
+## Team Lead • TradingView
 
 <div class="post-time">2016 - 2019</div>
 
-Developed a high-load concurrent HTTP proxy for an internal time-series protocol, written in Go (stream multiplexing, routing, balancing, caching).
+High-load concurrent streaming hub in Go for real-time trading data (30k streams, 20k rps, 400 MBps).
 
-Responsibilities:
+- Led a team of 5-10, designed architecture, performed code review, owned release cycle.
+- Rate limiting, backpressure, admission control by memory and contention.
+- Debugged performance bottlenecks down to Go runtime: GC pauses, scheduler run-queue latency.
 
-- Leading a team of 5-10 developers and testers.
-- Architecture and code review (this part took most of the time).
-- Development and performance testing.
-- Planning sprints and releases.
+## Software Engineer • Zodiac Interactive, InfoTeCS, NTMR
 
-## Software Engineer • Zodiac Interactive
+<div class="post-time">2010 - 2016</div>
 
-<div class="post-time">2014 - 2016</div>
+Developed embedded software across digital TV, secure networking, and industrial scanners.
 
-Developed software for embedded Linux for set-top boxes (ARM, MIPS).
-
-1. Developed a library stack for video storage on the set-top boxes (for DVR and TimeShift functions). Implemented writing and reading real-time video streams, on-disk ring buffers, multi-process synchronization.
-
-2. Participated in development of a platform abstraction layer for a legacy system. Worked on caching, asynchronous fetching, and a download scheduler.
-
-3. Participated in porting of Chromium to Linux/MIPS.
-
-## Software Engineer • InfoTeCS, JSC
-
-<div class="post-time">2012 - 2014</div>
-
-Developed software for desktop Linux and MikroMedia SoC.
-
-1. Developed a client-server X11-like graphical stack, with a server running on for MikroMedia board with a touchscreen, and client running on Linux PC.
-
-2. Developed software serial-over-ip for Linux, using CUSE (character device in userspace).
-
-3. Maintained a C++ library for ASN.1 and crypto tokens (ruToken, eToken).
-
-4. Ported legacy codebase to PowerPC.
-
-## Software Engineer • NTMR, LLC
-
-<div class="post-time">2010 - 2012</div>
-
-Developed software for Linux, Windows, and UCOS-II for a millimeter-wave scanner of an access control system.
-
-1. Developed firmware for Altera SoC with UCOS-II RTOS in C and Verilog.
-
-2. Developed desktop libraries for peripheral control (TCP, CAN, LPT) and real-time gigabit measurements.
-
-3. Developed GUI apps using Qt, Qwt (for real-time plots), OpenCV (for video capture and marker detection), and OpenGL (for raycast renderer).
-
-4. Implemented random-forest ML algorithm with C++/MPI running on computing cluster.
-
-5. Implemented various MEX files and MATLAB scripts.
+- Embedded Linux for digital TV set-top boxes: video streaming and storage, platform abstraction layer, reproducible cross build (Broadcom, Cisco; ARM, MIPS; uclibc).
+- Bare-metal and RTOS firmware: Altera SoC (C, Verilog, UCOS-II), Mikromedia SoC (ARM Cortex-M3), servo and sensor control over CAN, RS-232, UART, live offloading over Ethernet.
+- Linux system software: Graphical stack on USB-connected microcontroller, serial-over-IP for remote industrial equipment, distributed computing on MPI cluster.
 
 # Technical Writing
 
-You can find all my articles and blog posts here: https://gavv.net/articles/
+Full list on [gavv.net/articles](/articles/).
 
-Below is the list of the most interesting ones.
-
-- **[PulseAudio under the hood](/articles/pulseaudio-under-the-hood/)**
-
-    Long-form (150 pages) in-depth article about PulseAudio architecture, interfaces, algorithms, and more. Was well received and nowadays is cited from official PulseAudio docs.
-
-- **[Working on a new network transport for PulseAudio and ALSA](/articles/new-network-transport/)**
-
-    A pre-announcement for the first release of Roc Toolkit (a real-time streaming library) with some interesting technical details. It was also well received on Reddit and HN.
-
-- **[File locking in Linux](/articles/file-locks/)**
-
-    Low-level details about different file-locking mechanisms available in POSIX and Linux.
-
-- **[Decoding and playing audio files in Linux](/articles/decode-play/)**
-
-    A tutorial to various media libraries on Linux, partially outdated nowadays.
+- **[Roc Toolkit docs](https://roc-streaming.org/toolkit/docs/)** — 50 pages on pipelines, threading, timestamp domains, FEC, resampling.
+- **[PulseAudio under the hood](/articles/pulseaudio-under-the-hood/)** — 150-page book; referred by the official PulseAudio documentation.
+- **[Working on a new network transport for PulseAudio and ALSA](/articles/new-network-transport/)** — Design and benchmarks of the first release of Roc Toolkit.
+- **[File locking in Linux](/articles/file-locks/)** — BSD, POSIX, and OFD locks: semantics, trade-offs, examples.

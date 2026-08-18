@@ -29,6 +29,7 @@ Or find me on other platforms:
 
 - [LinkedIn](https://www.linkedin.com/in/victor-gaydov/)
 - [Upwork](https://www.upwork.com/o/profiles/users/_~01205fd34b306ddfd6/)
+- [Toptal](https://www.toptal.com/developers/resume/victor-gaydov)
 - [GitHub](https://github.com/gavv)
 - [Stack Overflow](https://stackoverflow.com/users/3169754/gavv)
 - [Goodreads](https://www.goodreads.com/user/show/46643060-victor-gaydov)
