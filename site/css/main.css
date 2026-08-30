@@ -445,6 +445,13 @@ div.youtube iframe {
     padding: 3px 5px 8px 5px;
     margin: 0px;
 }
+.cv-subtitle {
+    font-size: 19px;
+    color: #5c6875;
+    background: none;
+    padding: 0px 5px 14px 5px;
+    margin: 0px;
+}
 .cv-link {
     margin-left: 12px;
 }
@@ -484,6 +491,11 @@ div.youtube iframe {
     right: 20px;
     font-size: 18px;
     font-weight: bold;
+}
+.cv-contacts i,
+.cv-stats i,
+.cv-download i {
+    color: #3b5570;
 }
 
 /* mobile */

@@ -3,8 +3,8 @@ title = "CV"
 +++
 
 <div class="cv-header">
-  <h2 class="cv-name">Victor Gaydov</h2>
-  <h1 class="cv-title">Real-time Systems Software Engineer</h1>
+  <h1 class="cv-title">Real-time Audio & Streaming Engineer</h1>
+  <h2 class="cv-subtitle">Networking, Drivers, Embedded</h2>
 
   <div class="cv-contacts">
     <div class="cv-contacts-column">
